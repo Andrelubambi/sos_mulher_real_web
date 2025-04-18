@@ -470,7 +470,7 @@
 
 		<div class="left-side-bar">
 			<div class="brand-logo">
-				<a href="{{ route('home') }}">
+				<a href="{{ route('index') }}">
 					<img src="vendors/images/deskapp-logo.svg" alt="" class="dark-logo" />
 					<img
 						src="vendors/images/deskapp-logo-white.svg"
@@ -488,7 +488,7 @@
 						<li class="dropdown">
 							<a href="javascript:;" class="dropdown-toggle">
 								<span class="micon bi bi-house"></span
-								><span class="mtext">Home</span>
+								><span class="mtext">index</span>
 							</a>
 							<ul class="submenu">
 								<li><a href="{{ route('index') }}">Dashboard style 1</a></li>
