@@ -7,22 +7,25 @@
 
 		<!-- Site favicon -->
 		<link
-			rel="apple-touch-icon"
-			sizes="180x180"
-			href="vendors/images/apple-touch-icon.png"
-		/>
-		<link
-			rel="icon"
-			type="image/png"
-			sizes="32x32"
-			href="vendors/images/favicon-32x32.png"
-		/>
-		<link
-			rel="icon"
-			type="image/png"
-			sizes="16x16"
-			href="vendors/images/favicon-16x16.png"
-		/>
+	rel="apple-touch-icon"
+	sizes="180x180"
+	href="{{ asset('vendors/images/apple-touch-icon.png') }}"
+/>
+
+<link
+rel="icon"
+type="image/png"
+sizes="32x32"
+href="{{ asset('vendors/images/favicon-32x32.png') }}"
+/>
+
+<link
+rel="icon"
+type="image/png"
+sizes="16x16"
+href="{{ asset('vendors/images/favicon-16x16.png') }}"
+/>
+
 
 		<!-- Mobile Specific Metas -->
 		<meta
@@ -36,12 +39,9 @@
 			rel="stylesheet"
 		/>
 		<!-- CSS -->
-		<link rel="stylesheet" type="text/css" href="vendors/styles/core.css" />
-		<link
-			rel="stylesheet"
-			type="text/css"
-			href="vendors/styles/icon-font.min.css"
-		/>
+		<link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/core.css') }}" />
+<link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/icon-font.min.css') }}" />
+
 		<link
 			rel="stylesheet"
 			type="text/css"
@@ -52,7 +52,8 @@
 			type="text/css"
 			href="src/plugins/datatables/css/responsive.bootstrap4.min.css"
 		/>
-		<link rel="stylesheet" type="text/css" href="vendors/styles/style.css" />
+		<link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}" />
+
 
 		<!-- Global site tag (gtag.js) - Google Analytics -->
 		<script
@@ -92,7 +93,8 @@
 		<div class="pre-loader">
 			<div class="pre-loader-box">
 				<div class="loader-logo">
-					<img src="vendors/images/deskapp-logo.svg" alt="" />
+					<img src="{{ asset('vendors/images/deskapp-logo.svg') }}" alt="" />
+
 				</div>
 				<div class="loader-progress" id="progress_div">
 					<div class="bar" id="bar1"></div>
@@ -196,17 +198,18 @@
 								<ul>
 									<li>
 										<a href="#">
-											<img src="vendors/images/img.jpg" alt="" />
+											<img src="{{ asset('vendors/images/img.jpg') }}" alt="" />
 											<h3>John Doe</h3>
 											<p>
 												Lorem ipsum dolor sit amet, consectetur adipisicing
 												elit, sed...
 											</p>
 										</a>
+										
 									</li>
 									<li>
 										<a href="#">
-											<img src="vendors/images/photo1.jpg" alt="" />
+											<img src="{{ asset('vendors/images/photo1.jpg') }}" alt="" />
 											<h3>Lea R. Frith</h3>
 											<p>
 												Lorem ipsum dolor sit amet, consectetur adipisicing
@@ -214,9 +217,10 @@
 											</p>
 										</a>
 									</li>
+									
 									<li>
 										<a href="#">
-											<img src="vendors/images/photo2.jpg" alt="" />
+											<img src="{{ asset('vendors/images/photo2.jpg') }}" alt="" />
 											<h3>Erik L. Richards</h3>
 											<p>
 												Lorem ipsum dolor sit amet, consectetur adipisicing
@@ -224,9 +228,10 @@
 											</p>
 										</a>
 									</li>
+									
 									<li>
 										<a href="#">
-											<img src="vendors/images/photo3.jpg" alt="" />
+											<img src="{{ asset('vendors/images/photo3.jpg') }}" alt="" />
 											<h3>John Doe</h3>
 											<p>
 												Lorem ipsum dolor sit amet, consectetur adipisicing
@@ -236,7 +241,7 @@
 									</li>
 									<li>
 										<a href="#">
-											<img src="vendors/images/photo4.jpg" alt="" />
+											<img src="{{ asset('vendors/images/photo4.jpg') }}" alt="" />
 											<h3>Renee I. Hansen</h3>
 											<p>
 												Lorem ipsum dolor sit amet, consectetur adipisicing
@@ -246,7 +251,7 @@
 									</li>
 									<li>
 										<a href="#">
-											<img src="vendors/images/img.jpg" alt="" />
+											<img src="{{ asset('vendors/images/img.jpg') }}" alt="" />
 											<h3>Vicki M. Coleman</h3>
 											<p>
 												Lorem ipsum dolor sit amet, consectetur adipisicing
@@ -254,6 +259,7 @@
 											</p>
 										</a>
 									</li>
+									
 								</ul>
 							</div>
 						</div>
@@ -267,9 +273,10 @@
 							role="button"
 							data-toggle="dropdown"
 						>
-							<span class="user-icon">
-								<img src="vendors/images/photo1.jpg" alt="" />
-							</span>
+						<span class="user-icon">
+							<img src="{{ asset('vendors/images/photo1.jpg') }}" alt="" />
+						</span>
+						
 							<span class="user-name">Ross C. Lopez</span>
 						</a>
 						<div
@@ -471,13 +478,10 @@
 		<div class="left-side-bar">
 			<div class="brand-logo">
 				<a href="{{ route('index') }}">
-					<img src="vendors/images/deskapp-logo.svg" alt="" class="dark-logo" />
-					<img
-						src="vendors/images/deskapp-logo-white.svg"
-						alt=""
-						class="light-logo"
-					/>
+					<img src="{{ asset('vendors/images/deskapp-logo.svg') }}" alt="" class="dark-logo" />
+					<img src="{{ asset('vendors/images/deskapp-logo-white.svg') }}" alt="" class="light-logo" />
 				</a>
+				
 				<div class="close-sidebar" data-toggle="left-sidebar-close">
 					<i class="ion-close-round"></i>
 				</div>
@@ -701,11 +705,12 @@
 								target="_blank"
 								class="dropdown-toggle no-arrow"
 							>
-								<span class="micon bi bi-layout-text-window-reverse"></span>
-								<span class="mtext"
-									>Landing Page
-									<img src="vendors/images/coming-soon.png" alt="" width="25"
-								/></span>
+							<span class="micon bi bi-layout-text-window-reverse"></span>
+							<span class="mtext">
+								Landing Page
+								<img src="{{ asset('vendors/images/coming-soon.png') }}" alt="" width="25" />
+							</span>
+							
 							</a>
 						</li>
 					</ul>
@@ -895,12 +900,13 @@
 										<div class="name-avatar d-flex align-items-center pr-2">
 											<div class="avatar mr-2 flex-shrink-0">
 												<img
-													src="vendors/images/photo1.jpg"
-													class="border-radius-100 box-shadow"
-													width="50"
-													height="50"
-													alt=""
-												/>
+    src="{{ asset('vendors/images/photo1.jpg') }}"
+    class="border-radius-100 box-shadow"
+    width="50"
+    height="50"
+    alt=""
+/>
+
 											</div>
 											<div class="txt">
 												<span
@@ -925,12 +931,13 @@
 										<div class="name-avatar d-flex align-items-center pr-2">
 											<div class="avatar mr-2 flex-shrink-0">
 												<img
-													src="vendors/images/photo2.jpg"
-													class="border-radius-100 box-shadow"
-													width="50"
-													height="50"
-													alt=""
-												/>
+    src="{{ asset('vendors/images/photo2.jpg') }}"
+    class="border-radius-100 box-shadow"
+    width="50"
+    height="50"
+    alt=""
+/>
+
 											</div>
 											<div class="txt">
 												<span
@@ -955,12 +962,13 @@
 										<div class="name-avatar d-flex align-items-center pr-2">
 											<div class="avatar mr-2 flex-shrink-0">
 												<img
-													src="vendors/images/photo3.jpg"
-													class="border-radius-100 box-shadow"
-													width="50"
-													height="50"
-													alt=""
-												/>
+    src="{{ asset('vendors/images/photo3.jpg') }}"
+    class="border-radius-100 box-shadow"
+    width="50"
+    height="50"
+    alt=""
+/>
+
 											</div>
 											<div class="txt">
 												<span
@@ -985,12 +993,13 @@
 										<div class="name-avatar d-flex align-items-center pr-2">
 											<div class="avatar mr-2 flex-shrink-0">
 												<img
-													src="vendors/images/photo4.jpg"
-													class="border-radius-100 box-shadow"
-													width="50"
-													height="50"
-													alt=""
-												/>
+    src="{{ asset('vendors/images/photo4.jpg') }}"
+    class="border-radius-100 box-shadow"
+    width="50"
+    height="50"
+    alt=""
+/>
+
 											</div>
 											<div class="txt">
 												<span
@@ -1051,8 +1060,9 @@
 					<div class="col-lg-4 col-md-12 mb-20">
 						<div class="card-box height-100-p pd-20 min-height-200px">
 							<div class="max-width-300 mx-auto">
-								<img src="vendors/images/upgrade.svg" alt="" />
+								<img src="{{ asset('vendors/images/upgrade.svg') }}" alt="" />
 							</div>
+							
 							<div class="text-center">
 								<div class="h5 mb-1">Upgrade to Pro</div>
 								<div
@@ -1087,12 +1097,13 @@
 									<div class="name-avatar d-flex align-items-center">
 										<div class="avatar mr-2 flex-shrink-0">
 											<img
-												src="vendors/images/photo4.jpg"
-												class="border-radius-100 shadow"
-												width="40"
-												height="40"
-												alt=""
-											/>
+    src="{{ asset('vendors/images/photo4.jpg') }}"
+    class="border-radius-100 shadow"
+    width="40"
+    height="40"
+    alt=""
+/>
+
 										</div>
 										<div class="txt">
 											<div class="weight-600">Jennifer O. Oster</div>
@@ -1127,12 +1138,13 @@
 									<div class="name-avatar d-flex align-items-center">
 										<div class="avatar mr-2 flex-shrink-0">
 											<img
-												src="vendors/images/photo5.jpg"
-												class="border-radius-100 shadow"
-												width="40"
-												height="40"
-												alt=""
-											/>
+    src="{{ asset('vendors/images/photo5.jpg') }}"
+    class="border-radius-100 shadow"
+    width="40"
+    height="40"
+    alt=""
+/>
+
 										</div>
 										<div class="txt">
 											<div class="weight-600">Doris L. Larson</div>
@@ -1167,12 +1179,13 @@
 									<div class="name-avatar d-flex align-items-center">
 										<div class="avatar mr-2 flex-shrink-0">
 											<img
-												src="vendors/images/photo6.jpg"
-												class="border-radius-100 shadow"
-												width="40"
-												height="40"
-												alt=""
-											/>
+    src="{{ asset('vendors/images/photo6.jpg') }}"
+    class="border-radius-100 shadow"
+    width="40"
+    height="40"
+    alt=""
+/>
+
 										</div>
 										<div class="txt">
 											<div class="weight-600">Joseph Powell</div>
@@ -1207,12 +1220,13 @@
 									<div class="name-avatar d-flex align-items-center">
 										<div class="avatar mr-2 flex-shrink-0">
 											<img
-												src="vendors/images/photo9.jpg"
-												class="border-radius-100 shadow"
-												width="40"
-												height="40"
-												alt=""
-											/>
+    src="{{ asset('vendors/images/photo9.jpg') }}"
+    class="border-radius-100 shadow"
+    width="40"
+    height="40"
+    alt=""
+/>
+
 										</div>
 										<div class="txt">
 											<div class="weight-600">Jake Springer</div>
@@ -1247,12 +1261,13 @@
 									<div class="name-avatar d-flex align-items-center">
 										<div class="avatar mr-2 flex-shrink-0">
 											<img
-												src="vendors/images/photo1.jpg"
-												class="border-radius-100 shadow"
-												width="40"
-												height="40"
-												alt=""
-											/>
+    src="{{ asset('vendors/images/photo1.jpg') }}"
+    class="border-radius-100 shadow"
+    width="40"
+    height="40"
+    alt=""
+/>
+
 										</div>
 										<div class="txt">
 											<div class="weight-600">Paul Buckland</div>
@@ -1287,12 +1302,13 @@
 									<div class="name-avatar d-flex align-items-center">
 										<div class="avatar mr-2 flex-shrink-0">
 											<img
-												src="vendors/images/photo2.jpg"
-												class="border-radius-100 shadow"
-												width="40"
-												height="40"
-												alt=""
-											/>
+    src="{{ asset('vendors/images/photo2.jpg') }}"
+    class="border-radius-100 shadow"
+    width="40"
+    height="40"
+    alt=""
+/>
+
 										</div>
 										<div class="txt">
 											<div class="weight-600">Neil Arnold</div>
@@ -1327,12 +1343,13 @@
 									<div class="name-avatar d-flex align-items-center">
 										<div class="avatar mr-2 flex-shrink-0">
 											<img
-												src="vendors/images/photo8.jpg"
-												class="border-radius-100 shadow"
-												width="40"
-												height="40"
-												alt=""
-											/>
+    src="{{ asset('vendors/images/photo8.jpg') }}"
+    class="border-radius-100 shadow"
+    width="40"
+    height="40"
+    alt=""
+/>
+
 										</div>
 										<div class="txt">
 											<div class="weight-600">Christian Dyer</div>
@@ -1367,12 +1384,13 @@
 									<div class="name-avatar d-flex align-items-center">
 										<div class="avatar mr-2 flex-shrink-0">
 											<img
-												src="vendors/images/photo1.jpg"
-												class="border-radius-100 shadow"
-												width="40"
-												height="40"
-												alt=""
-											/>
+    src="{{ asset('vendors/images/photo1.jpg') }}"
+    class="border-radius-100 shadow"
+    width="40"
+    height="40"
+    alt=""
+/>
+
 										</div>
 										<div class="txt">
 											<div class="weight-600">Doris L. Larson</div>
@@ -1414,8 +1432,9 @@
 					<div class="col-md-4 mb-20">
 						<a href="#" class="card-box d-block mx-auto pd-20 text-secondary">
 							<div class="img pb-30">
-								<img src="vendors/images/medicine-bro.svg" alt="" />
+								<img src="{{ asset('vendors/images/medicine-bro.svg') }}" alt="" />
 							</div>
+							
 							<div class="content">
 								<h3 class="h4">Services</h3>
 								<p class="max-width-200">
@@ -1427,8 +1446,9 @@
 					<div class="col-md-4 mb-20">
 						<a href="#" class="card-box d-block mx-auto pd-20 text-secondary">
 							<div class="img pb-30">
-								<img src="vendors/images/remedy-amico.svg" alt="" />
+								<img src="{{ asset('vendors/images/remedy-amico.svg') }}" alt="" />
 							</div>
+							
 							<div class="content">
 								<h3 class="h4">Medications</h3>
 								<p class="max-width-200">
@@ -1440,8 +1460,9 @@
 					<div class="col-md-4 mb-20">
 						<a href="#" class="card-box d-block mx-auto pd-20 text-secondary">
 							<div class="img pb-30">
-								<img src="vendors/images/paper-map-cuate.svg" alt="" />
+								<img src="vendors/images/paper-map-cuate.svg" alt="Paper Map Illustration" class="img-fluid" />
 							</div>
+							
 							<div class="content">
 								<h3 class="h4">Locations</h3>
 								<p class="max-width-200">
@@ -1535,16 +1556,20 @@
 		</button>
 		<!-- welcome modal end -->
 		<!-- js -->
-		<script src="vendors/scripts/core.js"></script>
-		<script src="vendors/scripts/script.min.js"></script>
-		<script src="vendors/scripts/process.js"></script>
-		<script src="vendors/scripts/layout-settings.js"></script>
-		<script src="src/plugins/apexcharts/apexcharts.min.js"></script>
-		<script src="src/plugins/datatables/js/jquery.dataTables.min.js"></script>
-		<script src="src/plugins/datatables/js/dataTables.bootstrap4.min.js"></script>
-		<script src="src/plugins/datatables/js/dataTables.responsive.min.js"></script>
-		<script src="src/plugins/datatables/js/responsive.bootstrap4.min.js"></script>
-		<script src="vendors/scripts/dashboard3.js"></script>
+		<script src="{{ asset('vendors/scripts/core.js') }}"></script>
+<script src="{{ asset('vendors/scripts/script.min.js') }}"></script>
+<script src="{{ asset('vendors/scripts/process.js') }}"></script>
+<script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
+
+<script src="{{ asset('src/plugins/apexcharts/apexcharts.min.js') }}"></script>
+
+<script src="{{ asset('src/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('src/plugins/datatables/js/dataTables.bootstrap4.min.js') }}"></script>
+<script src="{{ asset('src/plugins/datatables/js/dataTables.responsive.min.js') }}"></script>
+<script src="{{ asset('src/plugins/datatables/js/responsive.bootstrap4.min.js') }}"></script>
+
+<script src="{{ asset('vendors/scripts/dashboard3.js') }}"></script>
+
 		<!-- Google Tag Manager (noscript) -->
 		<noscript
 			><iframe
