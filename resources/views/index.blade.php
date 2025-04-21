@@ -501,170 +501,7 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 
 							</ul>
 						</li>
-						<li class="dropdown">
-							<a href="javascript:;" class="dropdown-toggle">
-								<span class="micon bi bi-textarea-resize"></span
-								><span class="mtext">Forms</span>
-							</a>
-							<ul class="submenu">
-								<li><a href="form-basic.html">Form Basic</a></li>
-								<li>
-									<a href="{{ route('advanced-components') }}">Advanced Components</a>
-								</li>
-								
-								<li><a href="{{ route('form-wizard') }}">Form Wizard</a></li>
-								<li><a href="{{ route('html5-editor') }}">HTML5 Editor</a></li>
-								<li><a href="{{ route('form-pickers') }}">Form Pickers</a></li>
-								<li><a href="{{ route('image-croper') }}">Image Cropper</a></li>
-								<li><a href="{{ route('image-dropzone') }}">Image Dropzone</a></li>
-
-							</ul>
-						</li>
-						<li class="dropdown">
-							<a href="javascript:;" class="dropdown-toggle">
-								<span class="micon bi bi-table"></span
-								><span class="mtext">Tables</span>
-							</a>
-							<ul class="submenu">
-								<li><a href="{{ route('basic-table') }}">Basic Tables</a></li>
-								<li><a href="{{ route('datatable') }}">DataTables</a></li>
-							</ul>
-							
-						</li>
-						<li>
-							<a href="calendar.html" class="dropdown-toggle no-arrow">
-								<span class="micon bi bi-calendar4-week"></span
-								><span class="mtext">Calendar</span>
-							</a>
-						</li>
-						<li class="dropdown">
-							<a href="javascript:;" class="dropdown-toggle">
-								<span class="micon bi bi-archive"></span
-								><span class="mtext"> UI Elements </span>
-							</a>
-							<ul class="submenu">
-								<li><a href="{{ route('ui-buttons') }}">Buttons</a></li>
-								<li><a href="{{ route('ui-cards') }}">Cards</a></li>
-								<li><a href="{{ route('ui-cards-hover') }}">Cards Hover</a></li>
-								<li><a href="{{ route('ui-modals') }}">Modals</a></li>
-								<li><a href="{{ route('ui-tabs') }}">Tabs</a></li>
-								<li><a href="{{ route('ui-tooltip-popover') }}">Tooltip &amp; Popover</a></li>
-								<li><a href="{{ route('ui-sweet-alert') }}">Sweet Alert</a></li>
-								<li><a href="{{ route('ui-notification') }}">Notification</a></li>
-								<li><a href="{{ route('ui-timeline') }}">Timeline</a></li>
-								<li><a href="{{ route('ui-progressbar') }}">Progressbar</a></li>
-								<li><a href="{{ route('ui-typography') }}">Typography</a></li>
-								<li><a href="{{ route('ui-list-group') }}">List group</a></li>
-								<li><a href="{{ route('ui-range-slider') }}">Range slider</a></li>
-								<li><a href="{{ route('ui-carousel') }}">Carousel</a></li>
-							</ul>
-							
-						</li>
-						<li class="dropdown">
-							<a href="javascript:;" class="dropdown-toggle">
-								<span class="micon bi bi-command"></span
-								><span class="mtext">Icons</span>
-							</a>
-							<ul class="submenu">
-								<li><a href="{{ route('bootstrap-icon') }}">Bootstrap Icons</a></li>
-								<li><a href="{{ route('font-awesome') }}">FontAwesome Icons</a></li>
-								<li><a href="{{ route('foundation') }}">Foundation Icons</a></li>
-								<li><a href="{{ route('ionicons') }}">Ionicons Icons</a></li>
-								<li><a href="{{ route('themify') }}">Themify Icons</a></li>
-								<li><a href="{{ route('custom-icon') }}">Custom Icons</a></li>
-							</ul>
-							
-						</li>
-						<li class="dropdown">
-							<a href="javascript:;" class="dropdown-toggle">
-								<span class="micon bi bi-pie-chart"></span
-								><span class="mtext">Charts</span>
-							</a>
-							<ul class="submenu">
-								<li><a href="{{ route('highchart') }}">Highchart</a></li>
-								<li><a href="{{ route('knob-chart') }}">jQuery Knob</a></li>
-								<li><a href="{{ route('jvectormap') }}">jvectormap</a></li>
-								<li><a href="{{ route('apexcharts') }}">Apexcharts</a></li>
-
-							</ul>
-						</li>
-						<li class="dropdown">
-							<a href="javascript:;" class="dropdown-toggle">
-								<span class="micon bi bi-file-earmark-text"></span
-								><span class="mtext">Additional Pages</span>
-							</a>
-							<ul class="submenu">
-								<li><a href="{{ route('video-player') }}">Video Player</a></li>
-								<li><a href="{{ route('login') }}">Login</a></li>
-								<li><a href="{{ route('forgot-password') }}">Forgot Password</a></li>
-								<li><a href="{{ route('reset-password') }}">Reset Password</a></li>
-							</ul>
-							
-						</li>
-						<li class="dropdown">
-							<a href="javascript:;" class="dropdown-toggle">
-								<span class="micon bi bi-bug"></span
-								><span class="mtext">Error Pages</span>
-							</a>
-							<ul class="submenu">
-								<li><a href="{{ route('400') }}">400</a></li>
-								<li><a href="{{ route('403') }}">403</a></li>
-								<li><a href="{{ route('404') }}">404</a></li>
-								<li><a href="{{ route('500') }}">500</a></li>
-								<li><a href="{{ route('503') }}">503</a></li>
-								
-							</ul>
-						</li>
-
-						<li class="dropdown">
-							<a href="javascript:;" class="dropdown-toggle">
-								<span class="micon bi bi-back"></span
-								><span class="mtext">Extra Pages</span>
-							</a>
-							<ul class="submenu">
-								<li><a href="{{ route('blank') }}">Blank</a></li>
-								<li><a href="{{ route('contact-directory') }}">Contact Directory</a></li>
-								<li><a href="{{ route('blog') }}">Blog</a></li>
-								<li><a href="{{ route('blog-detail') }}">Blog Detail</a></li>
-								<li><a href="{{ route('product') }}">Product</a></li>
-								<li><a href="{{ route('product-detail') }}">Product Detail</a></li>
-								<li><a href="{{ route('faq') }}">FAQ</a></li>
-								<li><a href="{{ route('profile') }}">Profile</a></li>
-								<li><a href="{{ route('gallery') }}">Gallery</a></li>
-								<li><a href="{{ route('pricing-table') }}">Pricing Tables</a></li>
-							</ul>
-							
-						</li>
-						<li class="dropdown">
-							<a href="javascript:;" class="dropdown-toggle">
-								<span class="micon bi bi-hdd-stack"></span
-								><span class="mtext">Multi Level Menu</span>
-							</a>
-							<ul class="submenu">
-								<li><a href="javascript:;">Level 1</a></li>
-								<li><a href="javascript:;">Level 1</a></li>
-								<li><a href="javascript:;">Level 1</a></li>
-								<li class="dropdown">
-									<a href="javascript:;" class="dropdown-toggle">
-										<span class="micon fa fa-plug"></span
-										><span class="mtext">Level 2</span>
-									</a>
-									<ul class="submenu child">
-										<li><a href="javascript:;">Level 2</a></li>
-										<li><a href="javascript:;">Level 2</a></li>
-									</ul>
-								</li>
-								<li><a href="javascript:;">Level 1</a></li>
-								<li><a href="javascript:;">Level 1</a></li>
-								<li><a href="javascript:;">Level 1</a></li>
-							</ul>
-						</li>
-						<li>
-							<a href="sitemap.html" class="dropdown-toggle no-arrow">
-								<span class="micon bi bi-diagram-3"></span
-								><span class="mtext">Sitemap</span>
-							</a>
-						</li>
+						
 						<li>
 							<a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
 								<span class="micon bi bi-chat-right-dots"></span>
@@ -672,13 +509,8 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 							</a>
 							
 						</li>
-						<li>
-							<a href="{{ route('invoice') }}" class="dropdown-toggle no-arrow">
-								<span class="micon bi bi-receipt-cutoff"></span>
-								<span class="mtext">Invoice</span>
-							</a>
-						</li>
 						
+<<<<<<< HEAD
 						<li>
 							<div class="dropdown-divider"></div>
 						</li>
@@ -714,6 +546,9 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 							</a>
 						</li>
 					</ul>
+=======
+										</ul>
+>>>>>>> f3128117b6845d31064d26bcd1486d7e57b8239f
 				</div>
 			</div>
 		</div>

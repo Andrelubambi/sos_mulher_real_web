@@ -283,10 +283,10 @@
 						<div
 							class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list"
 						>
-							<a class="dropdown-item" href="profile.html"
+							<a class="dropdown-item" href="{{ route('profile') }}"
 								><i class="dw dw-user1"></i> Profile</a
 							>
-							<a class="dropdown-item" href="profile.html"
+							<a class="dropdown-item" href="{{ route('profile') }}"
 								><i class="dw dw-settings2"></i> Setting</a
 							>
 							<a class="dropdown-item" href="faq.html"
@@ -499,9 +499,10 @@
 								><span class="mtext">Home</span>
 							</a>
 							<ul class="submenu">
-								<li><a href="index.html">Dashboard style 1</a></li>
-								<li><a href="index2.html">Dashboard style 2</a></li>
-								<li><a href="index3.html">Dashboard style 3</a></li>
+							<a href="{{ route('index') }}">Dashboard style 1</a>
+							<a href="{{ route('index2') }}">Dashboard style 2</a>
+							<a href="{{ route('index3') }}">Dashboard style 3</a>
+
 							</ul>
 						</li>
 						<li class="dropdown">
@@ -510,15 +511,14 @@
 								><span class="mtext">Forms</span>
 							</a>
 							<ul class="submenu">
-								<li><a href="form-basic.html">Form Basic</a></li>
-								<li>
-									<a href="advanced-components.html">Advanced Components</a>
-								</li>
-								<li><a href="form-wizard.html">Form Wizard</a></li>
-								<li><a href="html5-editor.html">HTML5 Editor</a></li>
-								<li><a href="form-pickers.html">Form Pickers</a></li>
-								<li><a href="image-cropper.html">Image Cropper</a></li>
-								<li><a href="image-dropzone.html">Image Dropzone</a></li>
+							<li><a href="{{ route('form.basic') }}">Form Basic</a></li>
+<li><a href="{{ route('advanced.components') }}">Advanced Components</a></li>
+<li><a href="{{ route('form.wizard') }}">Form Wizard</a></li>
+<li><a href="{{ route('html5.editor') }}">HTML5 Editor</a></li>
+<li><a href="{{ route('form.pickers') }}">Form Pickers</a></li>
+<li><a href="{{ route('image.cropper') }}">Image Cropper</a></li>
+<li><a href="{{ route('image.dropzone') }}">Image Dropzone</a></li>
+
 							</ul>
 						</li>
 						<li class="dropdown">
@@ -619,16 +619,16 @@
 								><span class="mtext">Extra Pages</span>
 							</a>
 							<ul class="submenu">
-								<li><a href="blank.html">Blank</a></li>
-								<li><a href="contact-directory.html">Contact Directory</a></li>
-								<li><a href="blog.html">Blog</a></li>
-								<li><a href="blog-detail.html">Blog Detail</a></li>
-								<li><a href="product.html">Product</a></li>
-								<li><a href="product-detail.html">Product Detail</a></li>
-								<li><a href="faq.html">FAQ</a></li>
-								<li><a href="profile.html">Profile</a></li>
-								<li><a href="gallery.html">Gallery</a></li>
-								<li><a href="pricing-table.html">Pricing Tables</a></li>
+								<li><a href="{{ route('blank') }}">Blank</a></li>
+								<li><a href="{{ route('contact-directory') }}">Contact Directory</a></li>
+								<li><a href="{{ route('blog') }}">Blog</a></li>
+								<li><a href="{{ route('blog-detail') }}">Blog Detail</a></li>
+								<li><a href="{{ route('product') }}">Product</a></li>
+								<li><a href="{{ route('product-detail') }}">Product Detail</a></li>
+								<li><a href="{{ route('faq') }}">FAQ</a></li>
+								<li><a href="{{ route('profile') }}">Profile</a></li>
+								<li><a href="{{ route('gallery') }}">Gallery</a></li>
+								<li><a href="{{ route('pricing-table') }}">Pricing Tables</a></li>
 							</ul>
 						</li>
 						<li class="dropdown">
@@ -662,13 +662,13 @@
 							</a>
 						</li>
 						<li>
-							<a href="chat.html" class="dropdown-toggle no-arrow">
+							<a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
 								<span class="micon bi bi-chat-right-dots"></span
 								><span class="mtext">Chat</span>
 							</a>
 						</li>
 						<li>
-							<a href="invoice.html" class="dropdown-toggle no-arrow">
+							<a href="{{ route('invoice') }}" class="dropdown-toggle no-arrow">
 								<span class="micon bi bi-receipt-cutoff"></span
 								><span class="mtext">Invoice</span>
 							</a>
@@ -685,9 +685,9 @@
 								><span class="mtext">Documentation</span>
 							</a>
 							<ul class="submenu">
-								<li><a href="introduction.html">Introduction</a></li>
-								<li><a href="getting-started.html">Getting Started</a></li>
-								<li><a href="color-settings.html">Color Settings</a></li>
+								<li><a href="{{ route('introduction') }}">Introduction</a></li>
+								<li><a href="{{ route('getting-started') }}">Getting Started</a></li>
+								<li><a href="{{ route('color-settings') }}">Color Settings</a></li>
 								<li>
 									<a href="third-party-plugins.html">Third Party Plugins</a>
 								</li>
