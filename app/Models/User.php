@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -12,19 +11,14 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    protected $table = 'users';
+    
     protected $fillable = [
         'name',
-        'email',
         'telefone',
         'password',
-        'role',
+        'role', 
     ];
-    
 
     /**
      * The attributes that should be hidden for serialization.
@@ -45,6 +39,8 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    // Relacionamentos
     public function consultasCriadas()
     {
         return $this->hasMany(Consulta::class, 'criador_id');
@@ -59,7 +55,4 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(GrupoApoio::class, 'grupo_user');
     }
-    
-
-
 }

@@ -1,8 +1,21 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MedicoController;
+use App\Http\Controllers\UserController;
+
 
 Route::view('/', 'index')->name('index');
+
+
+Route::get('/vitima', [UserController::class, 'createVitima'])->name('users.vitima');
+Route::get('/estagiario', [UserController::class, 'createAssistente'])->name('users.assistente');
+
+Route::get('/doutor', [UserController::class, 'createDoutor'])->name('users.doutor');
+Route::post('/users/doutor/store', [UserController::class, 'storeDoutor'])->name('users.doutor.store');
+Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
 
 Route::view('/400', '400')->name('400');
 Route::view('/403', '403')->name('403');
@@ -39,6 +52,11 @@ Route::view('/image', 'image')->name('image');
 Route::view('/image-dropzone', 'image-dropzone')->name('image-dropzone');
 Route::view('/index2', 'index2')->name('index2');
 Route::view('/index3', 'index3')->name('index3');
+
+
+Route::view('/vitima', 'vitima')->name('vitima');
+Route::view('/consulta', 'consulta')->name('consulta');
+Route::view('/assistente', 'assistente')->name('assistente');
 Route::view('/introduction', 'introduction')->name('introduction');
 Route::view('/invoice', 'invoice')->name('invoice');
 Route::view('/ionicons', 'ionicons')->name('ionicons');
