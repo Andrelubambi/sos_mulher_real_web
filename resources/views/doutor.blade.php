@@ -7,25 +7,22 @@
 
 		<!-- Site favicon -->
 		<link
-	rel="apple-touch-icon"
-	sizes="180x180"
-	href="{{ asset('vendors/images/apple-touch-icon.png') }}"
-/>
-
-<link
-rel="icon"
-type="image/png"
-sizes="32x32"
-href="{{ asset('vendors/images/favicon-32x32.png') }}"
-/>
-
-<link
-rel="icon"
-type="image/png"
-sizes="16x16"
-href="{{ asset('vendors/images/favicon-16x16.png') }}"
-/>
-
+			rel="apple-touch-icon"
+			sizes="180x180"
+			href="vendors/images/apple-touch-icon.png"
+		/>
+		<link
+			rel="icon"
+			type="image/png"
+			sizes="32x32"
+			href="vendors/images/favicon-32x32.png"
+		/>
+		<link
+			rel="icon"
+			type="image/png"
+			sizes="16x16"
+			href="vendors/images/favicon-16x16.png"
+		/>
 
 		<!-- Mobile Specific Metas -->
 		<meta
@@ -39,21 +36,13 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 			rel="stylesheet"
 		/>
 		<!-- CSS -->
-		<link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/core.css') }}" />
-<link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/icon-font.min.css') }}" />
-
+		<link rel="stylesheet" type="text/css" href="vendors/styles/core.css" />
 		<link
 			rel="stylesheet"
 			type="text/css"
-			href="src/plugins/datatables/css/dataTables.bootstrap4.min.css"
+			href="vendors/styles/icon-font.min.css"
 		/>
-		<link
-			rel="stylesheet"
-			type="text/css"
-			href="src/plugins/datatables/css/responsive.bootstrap4.min.css"
-		/>
-		<link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}" />
-
+		<link rel="stylesheet" type="text/css" href="vendors/styles/style.css" />
 
 		<!-- Global site tag (gtag.js) - Google Analytics -->
 		<script
@@ -111,64 +100,7 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 					class="search-toggle-icon bi bi-search"
 					data-toggle="header_search"
 				></div>
-				<div class="header-search">
-					<form>
-						<div class="form-group mb-0">
-							<i class="dw dw-search2 search-icon"></i>
-							<input
-								type="text"
-								class="form-control search-input"
-								placeholder="Search Here"
-							/>
-							<div class="dropdown">
-								<a
-									class="dropdown-toggle no-arrow"
-									href="#"
-									role="button"
-									data-toggle="dropdown"
-								>
-									<i class="ion-arrow-down-c"></i>
-								</a>
-								<div class="dropdown-menu dropdown-menu-right">
-									<div class="form-group row">
-										<label class="col-sm-12 col-md-2 col-form-label"
-											>From</label
-										>
-										<div class="col-sm-12 col-md-10">
-											<input
-												class="form-control form-control-sm form-control-line"
-												type="text"
-											/>
-										</div>
-									</div>
-									<div class="form-group row">
-										<label class="col-sm-12 col-md-2 col-form-label">To</label>
-										<div class="col-sm-12 col-md-10">
-											<input
-												class="form-control form-control-sm form-control-line"
-												type="text"
-											/>
-										</div>
-									</div>
-									<div class="form-group row">
-										<label class="col-sm-12 col-md-2 col-form-label"
-											>Subject</label
-										>
-										<div class="col-sm-12 col-md-10">
-											<input
-												class="form-control form-control-sm form-control-line"
-												type="text"
-											/>
-										</div>
-									</div>
-									<div class="text-right">
-										<button class="btn btn-primary">Search</button>
-									</div>
-								</div>
-							</div>
-						</div>
-					</form>
-				</div>
+				 
 			</div>
 			<div class="header-right">
 				<div class="dashboard-setting user-notification">
@@ -193,76 +125,7 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 							<i class="icon-copy dw dw-notification"></i>
 							<span class="badge notification-active"></span>
 						</a>
-						<div class="dropdown-menu dropdown-menu-right">
-							<div class="notification-list mx-h-350 customscroll">
-								<ul>
-									<li>
-										<a href="#">
-											<img src="{{ asset('vendors/images/img.jpg') }}" alt="" />
-											<h3>John Doe</h3>
-											<p>
-												Lorem ipsum dolor sit amet, consectetur adipisicing
-												elit, sed...
-											</p>
-										</a>
-										
-									</li>
-									<li>
-										<a href="#">
-											<img src="{{ asset('vendors/images/photo1.jpg') }}" alt="" />
-											<h3>Lea R. Frith</h3>
-											<p>
-												Lorem ipsum dolor sit amet, consectetur adipisicing
-												elit, sed...
-											</p>
-										</a>
-									</li>
-									
-									<li>
-										<a href="#">
-											<img src="{{ asset('vendors/images/photo2.jpg') }}" alt="" />
-											<h3>Erik L. Richards</h3>
-											<p>
-												Lorem ipsum dolor sit amet, consectetur adipisicing
-												elit, sed...
-											</p>
-										</a>
-									</li>
-									
-									<li>
-										<a href="#">
-											<img src="{{ asset('vendors/images/photo3.jpg') }}" alt="" />
-											<h3>John Doe</h3>
-											<p>
-												Lorem ipsum dolor sit amet, consectetur adipisicing
-												elit, sed...
-											</p>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<img src="{{ asset('vendors/images/photo4.jpg') }}" alt="" />
-											<h3>Renee I. Hansen</h3>
-											<p>
-												Lorem ipsum dolor sit amet, consectetur adipisicing
-												elit, sed...
-											</p>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<img src="{{ asset('vendors/images/img.jpg') }}" alt="" />
-											<h3>Vicki M. Coleman</h3>
-											<p>
-												Lorem ipsum dolor sit amet, consectetur adipisicing
-												elit, sed...
-											</p>
-										</a>
-									</li>
-									
-								</ul>
-							</div>
-						</div>
+						 
 					</div>
 				</div>
 				<div class="user-info-dropdown">
@@ -285,11 +148,7 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 							<a class="dropdown-item" href="profile.html"
 								><i class="dw dw-user1"></i> Profile</a
 							>
-							<a class="dropdown-item" href="profile.html"
-								><i class="dw dw-settings2"></i> Setting</a
-							>
-							<a class="dropdown-item" href="faq.html"
-								><i class="dw dw-help"></i> Help</a
+					 
 							>
 							<a class="dropdown-item" href="login.html"
 								><i class="dw dw-logout"></i> Log Out</a
@@ -304,177 +163,7 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 				</div>
 			</div>
 		</div>
-
-		<div class="right-sidebar">
-			<div class="sidebar-title">
-				<h3 class="weight-600 font-16 text-blue">
-					Layout Settings
-					<span class="btn-block font-weight-400 font-12"
-						>User Interface Settings</span
-					>
-				</h3>
-				<div class="close-sidebar" data-toggle="right-sidebar-close">
-					<i class="icon-copy ion-close-round"></i>
-				</div>
-			</div>
-			<div class="right-sidebar-body customscroll">
-				<div class="right-sidebar-body-content">
-					<h4 class="weight-600 font-18 pb-10">Header Background</h4>
-					<div class="sidebar-btn-group pb-30 mb-10">
-						<a
-							href="javascript:void(0);"
-							class="btn btn-outline-primary header-white active"
-							>White</a
-						>
-						<a
-							href="javascript:void(0);"
-							class="btn btn-outline-primary header-dark"
-							>Dark</a
-						>
-					</div>
-
-					<h4 class="weight-600 font-18 pb-10">Sidebar Background</h4>
-					<div class="sidebar-btn-group pb-30 mb-10">
-						<a
-							href="javascript:void(0);"
-							class="btn btn-outline-primary sidebar-light"
-							>White</a
-						>
-						<a
-							href="javascript:void(0);"
-							class="btn btn-outline-primary sidebar-dark active"
-							>Dark</a
-						>
-					</div>
-
-					<h4 class="weight-600 font-18 pb-10">Menu Dropdown Icon</h4>
-					<div class="sidebar-radio-group pb-10 mb-10">
-						<div class="custom-control custom-radio custom-control-inline">
-							<input
-								type="radio"
-								id="sidebaricon-1"
-								name="menu-dropdown-icon"
-								class="custom-control-input"
-								value="icon-style-1"
-								checked=""
-							/>
-							<label class="custom-control-label" for="sidebaricon-1"
-								><i class="fa fa-angle-down"></i
-							></label>
-						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input
-								type="radio"
-								id="sidebaricon-2"
-								name="menu-dropdown-icon"
-								class="custom-control-input"
-								value="icon-style-2"
-							/>
-							<label class="custom-control-label" for="sidebaricon-2"
-								><i class="ion-plus-round"></i
-							></label>
-						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input
-								type="radio"
-								id="sidebaricon-3"
-								name="menu-dropdown-icon"
-								class="custom-control-input"
-								value="icon-style-3"
-							/>
-							<label class="custom-control-label" for="sidebaricon-3"
-								><i class="fa fa-angle-double-right"></i
-							></label>
-						</div>
-					</div>
-
-					<h4 class="weight-600 font-18 pb-10">Menu List Icon</h4>
-					<div class="sidebar-radio-group pb-30 mb-10">
-						<div class="custom-control custom-radio custom-control-inline">
-							<input
-								type="radio"
-								id="sidebariconlist-1"
-								name="menu-list-icon"
-								class="custom-control-input"
-								value="icon-list-style-1"
-								checked=""
-							/>
-							<label class="custom-control-label" for="sidebariconlist-1"
-								><i class="ion-minus-round"></i
-							></label>
-						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input
-								type="radio"
-								id="sidebariconlist-2"
-								name="menu-list-icon"
-								class="custom-control-input"
-								value="icon-list-style-2"
-							/>
-							<label class="custom-control-label" for="sidebariconlist-2"
-								><i class="fa fa-circle-o" aria-hidden="true"></i
-							></label>
-						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input
-								type="radio"
-								id="sidebariconlist-3"
-								name="menu-list-icon"
-								class="custom-control-input"
-								value="icon-list-style-3"
-							/>
-							<label class="custom-control-label" for="sidebariconlist-3"
-								><i class="dw dw-check"></i
-							></label>
-						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input
-								type="radio"
-								id="sidebariconlist-4"
-								name="menu-list-icon"
-								class="custom-control-input"
-								value="icon-list-style-4"
-								checked=""
-							/>
-							<label class="custom-control-label" for="sidebariconlist-4"
-								><i class="icon-copy dw dw-next-2"></i
-							></label>
-						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input
-								type="radio"
-								id="sidebariconlist-5"
-								name="menu-list-icon"
-								class="custom-control-input"
-								value="icon-list-style-5"
-							/>
-							<label class="custom-control-label" for="sidebariconlist-5"
-								><i class="dw dw-fast-forward-1"></i
-							></label>
-						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input
-								type="radio"
-								id="sidebariconlist-6"
-								name="menu-list-icon"
-								class="custom-control-input"
-								value="icon-list-style-6"
-							/>
-							<label class="custom-control-label" for="sidebariconlist-6"
-								><i class="dw dw-next"></i
-							></label>
-						</div>
-					</div>
-
-					<div class="reset-options pt-30 text-center">
-						<button class="btn btn-danger" id="reset-settings">
-							Reset Settings
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
+ 
 		<div class="left-side-bar">
 			<div class="brand-logo">
 				<a href="{{ route('index') }}">
@@ -482,7 +171,7 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 					<img src="{{ asset('vendors/images/deskapp-logo-white.svg') }}" alt="" class="light-logo" />
 				</a>
 				
-				<div class="close-sidebar" data-toggle="left-sidebar-close">
+		 <div class="close-sidebar" data-toggle="left-sidebar-close">
 					<i class="ion-close-round"></i>
 				</div>
 			</div>
@@ -556,34 +245,8 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 						<li>
 							<div class="sidebar-small-cap">Extra</div>
 						</li>
-						<li>
-							<a href="javascript:;" class="dropdown-toggle">
-								<span class="micon bi bi-file-pdf"></span
-								><span class="mtext">Documentation</span>
-							</a>
-							<ul class="submenu">
-								<li><a href="introduction.html">Introduction</a></li>
-								<li><a href="getting-started.html">Getting Started</a></li>
-								<li><a href="color-settings.html">Color Settings</a></li>
-								<li>
-									<a href="third-party-plugins.html">Third Party Plugins</a>
-								</li>
-							</ul>
-						</li>
-						<li>
-							<a
-								href="https://dropways.github.io/deskapp-free-single-page-website-template/"
-								target="_blank"
-								class="dropdown-toggle no-arrow"
-							>
-							<span class="micon bi bi-layout-text-window-reverse"></span>
-							<span class="mtext">
-								Landing Page
-								<img src="{{ asset('vendors/images/coming-soon.png') }}" alt="" width="25" />
-							</span>
-							
-							</a>
-						</li>
+						
+						
 					</ul>
 				</ul>
 
@@ -713,33 +376,6 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 <script src="{{ asset('vendors/scripts/process.js') }}"></script>
 <script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-
-
-<script src="{{ asset('src/plugins/apexcharts/apexcharts.min.js') }}"></script>
-
-<script src="{{ asset('src/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('src/plugins/datatables/js/dataTables.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('src/plugins/datatables/js/dataTables.responsive.min.js') }}"></script>
-<script src="{{ asset('src/plugins/datatables/js/responsive.bootstrap4.min.js') }}"></script>
-
-<script src="{{ asset('vendors/scripts/dashboard3.js') }}"></script>
-
-<script>
-    @if(session('success'))
-        toastr.success("{{ session('success') }}");
-    @endif
-
-    @if(session('error'))
-        toastr.error("{{ session('error') }}");
-    @endif
-
-    @if ($errors->any())
-        toastr.error("Verifique os dados inseridos nos campos do formulário.");
-    @endif
-</script>
-
 		<!-- Google Tag Manager (noscript) -->
 		<noscript
 			><iframe
@@ -750,8 +386,6 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 			></iframe
 		></noscript>
 		<!-- End Google Tag Manager (noscript) -->
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 	</body>
 </html>

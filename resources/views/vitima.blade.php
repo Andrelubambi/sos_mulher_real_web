@@ -486,6 +486,7 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 					<i class="ion-close-round"></i>
 				</div>
 			</div>
+		
 			<div class="menu-block customscroll">
 				<div class="sidebar-menu">
 					<ul id="accordion-menu">
@@ -518,7 +519,7 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 								><span class="mtext">Vítimas</span>
 							</a>
 							<ul class="submenu">
-								<li><a href="{{ route('users.vitima') }}">Vítimas</a></li>
+								<li><a href="{{ route('users.vitima') }}">Vítimas</a>								</li>
 							</ul>
 						</li>
 
@@ -528,7 +529,7 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 								><span class="mtext">Assistntes</span>
 							</a>
 							<ul class="submenu">
-								<li><a href="{{ route('users.estagiario') }}">Assistntes</a></li>
+								<li><a href="{{ route('users.estagiario') }}">Assistentes</a></li>
 							</ul>
 						</li>
 
@@ -595,615 +596,123 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 		<div class="main-container">
 			<div class="xs-pd-20-10 pd-ltr-20">
 				<div class="title pb-20">
-					<h2 class="h3 mb-0">Gerir Vítimas  </h2>
-				</div>
-				<div class="row">
-					<div class="col-lg-4 col-md-6 mb-20">
-						<div class="card-box height-100-p pd-20 min-height-200px">
-							<div class="d-flex justify-content-between pb-10">
-								<div class="h5 mb-0">Top Doctors</div>
-								<div class="dropdown">
-									<a
-										class="btn btn-link font-24 p-0 line-height-1 no-arrow dropdown-toggle"
-										data-color="#1b3133"
-										href="#"
-										role="button"
-										data-toggle="dropdown"
-									>
-										<i class="dw dw-more"></i>
-									</a>
-									<div
-										class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list"
-									>
-										<a class="dropdown-item" href="#"
-											><i class="dw dw-eye"></i> View</a
-										>
-										<a class="dropdown-item" href="#"
-											><i class="dw dw-edit2"></i> Edit</a
-										>
-										<a class="dropdown-item" href="#"
-											><i class="dw dw-delete-3"></i> Delete</a
-										>
-									</div>
-								</div>
-							</div>
-							<div class="user-list">
-								<ul>
-									<li class="d-flex align-items-center justify-content-between">
-										<div class="name-avatar d-flex align-items-center pr-2">
-											<div class="avatar mr-2 flex-shrink-0">
-												<img
-    src="{{ asset('vendors/images/photo1.jpg') }}"
-    class="border-radius-100 box-shadow"
-    width="50"
-    height="50"
-    alt=""
-/>
-
-											</div>
-											<div class="txt">
-												<span
-													class="badge badge-pill badge-sm"
-													data-bgcolor="#e7ebf5"
-													data-color="#265ed7"
-													>4.9</span
-												>
-												<div class="font-14 weight-600">Dr. Neil Wagner</div>
-												<div class="font-12 weight-500" data-color="#b2b1b6">
-													Pediatrician
-												</div>
-											</div>
-										</div>
-										<div class="cta flex-shrink-0">
-											<a href="#" class="btn btn-sm btn-outline-primary"
-												>Schedule</a
-											>
-										</div>
-									</li>
-									<li class="d-flex align-items-center justify-content-between">
-										<div class="name-avatar d-flex align-items-center pr-2">
-											<div class="avatar mr-2 flex-shrink-0">
-												<img
-    src="{{ asset('vendors/images/photo2.jpg') }}"
-    class="border-radius-100 box-shadow"
-    width="50"
-    height="50"
-    alt=""
-/>
-
-											</div>
-											<div class="txt">
-												<span
-													class="badge badge-pill badge-sm"
-													data-bgcolor="#e7ebf5"
-													data-color="#265ed7"
-													>4.9</span
-												>
-												<div class="font-14 weight-600">Dr. Ren Delan</div>
-												<div class="font-12 weight-500" data-color="#b2b1b6">
-													Pediatrician
-												</div>
-											</div>
-										</div>
-										<div class="cta flex-shrink-0">
-											<a href="#" class="btn btn-sm btn-outline-primary"
-												>Schedule</a
-											>
-										</div>
-									</li>
-									<li class="d-flex align-items-center justify-content-between">
-										<div class="name-avatar d-flex align-items-center pr-2">
-											<div class="avatar mr-2 flex-shrink-0">
-												<img
-    src="{{ asset('vendors/images/photo3.jpg') }}"
-    class="border-radius-100 box-shadow"
-    width="50"
-    height="50"
-    alt=""
-/>
-
-											</div>
-											<div class="txt">
-												<span
-													class="badge badge-pill badge-sm"
-													data-bgcolor="#e7ebf5"
-													data-color="#265ed7"
-													>4.9</span
-												>
-												<div class="font-14 weight-600">Dr. Garrett Kincy</div>
-												<div class="font-12 weight-500" data-color="#b2b1b6">
-													Pediatrician
-												</div>
-											</div>
-										</div>
-										<div class="cta flex-shrink-0">
-											<a href="#" class="btn btn-sm btn-outline-primary"
-												>Schedule</a
-											>
-										</div>
-									</li>
-									<li class="d-flex align-items-center justify-content-between">
-										<div class="name-avatar d-flex align-items-center pr-2">
-											<div class="avatar mr-2 flex-shrink-0">
-												<img
-    src="{{ asset('vendors/images/photo4.jpg') }}"
-    class="border-radius-100 box-shadow"
-    width="50"
-    height="50"
-    alt=""
-/>
-
-											</div>
-											<div class="txt">
-												<span
-													class="badge badge-pill badge-sm"
-													data-bgcolor="#e7ebf5"
-													data-color="#265ed7"
-													>4.9</span
-												>
-												<div class="font-14 weight-600">Dr. Callie Reed</div>
-												<div class="font-12 weight-500" data-color="#b2b1b6">
-													Pediatrician
-												</div>
-											</div>
-										</div>
-										<div class="cta flex-shrink-0">
-											<a href="#" class="btn btn-sm btn-outline-primary"
-												>Schedule</a
-											>
-										</div>
-									</li>
-								</ul>
-							</div>
-						</div>
-					</div>
+					<h2 class="h3 mb-0">Gerir Vítmas</h2>
 				</div>
 
 				<div class="card-box pb-10">
-					<div class="h5 pd-20 mb-0">Recent Patient</div>
-					<table class="data-table table nowrap">
+					<div class="h5 pd-20 mb-0">Vítmas Recente</div>
+				
+					<!-- Botão -->
+					<button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#modalAdicionarVitima">
+						Adicionar Vítimas
+					</button>
+				
+					<!-- Tabela de Vítimas -->
+					<table class="table">
 						<thead>
 							<tr>
-								<th class="table-plus">Name</th>
-								<th>Gender</th>
-								<th>Weight</th>
-								<th>Assigned Doctor</th>
-								<th>Admit Date</th>
-								<th>Disease</th>
-								<th class="datatable-nosort">Actions</th>
+								<th>Nome</th>
+								<th>Telefone</th>
+								<th>Ações</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td class="table-plus">
-									<div class="name-avatar d-flex align-items-center">
-										<div class="avatar mr-2 flex-shrink-0">
-											<img
-    src="{{ asset('vendors/images/photo4.jpg') }}"
-    class="border-radius-100 shadow"
-    width="40"
-    height="40"
-    alt=""
-/>
-
+							@foreach($users as $vitima)
+								<tr>
+									<td>{{ $vitima->name }}</td>
+									<td>{{ $vitima->telefone }}</td>
+									<td>
+										<div class="d-flex gap-2">
+											<button 
+												type="button" 
+												class="btn btn-primary btn-sm d-flex align-items-center gap-1" 
+												data-toggle="modal" 
+												data-target="#editModal" 
+												onclick="editVitima({{ $vitima->id }})"
+											>
+												<i class="bi bi-pencil-square"></i> Editar
+											</button>
+									
+											<form action="{{ route('users.destroy', $vitima->id) }}" method="POST">
+												@csrf
+												@method('DELETE')
+												<button 
+													type="submit" 
+													class="btn btn-danger btn-sm d-flex align-items-center gap-1"
+												>
+													<i class="bi bi-trash"></i> Excluir
+												</button>
+											</form>
 										</div>
-										<div class="txt">
-											<div class="weight-600">Jennifer O. Oster</div>
-										</div>
-									</div>
-								</td>
-								<td>Female</td>
-								<td>45 kg</td>
-								<td>Dr. Callie Reed</td>
-								<td>19 Oct 2020</td>
-								<td>
-									<span
-										class="badge badge-pill"
-										data-bgcolor="#e7ebf5"
-										data-color="#265ed7"
-										>Typhoid</span
-									>
-								</td>
-								<td>
-									<div class="table-actions">
-										<a href="#" data-color="#265ed7"
-											><i class="icon-copy dw dw-edit2"></i
-										></a>
-										<a href="#" data-color="#e95959"
-											><i class="icon-copy dw dw-delete-3"></i
-										></a>
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td class="table-plus">
-									<div class="name-avatar d-flex align-items-center">
-										<div class="avatar mr-2 flex-shrink-0">
-											<img
-    src="{{ asset('vendors/images/photo5.jpg') }}"
-    class="border-radius-100 shadow"
-    width="40"
-    height="40"
-    alt=""
-/>
-
-										</div>
-										<div class="txt">
-											<div class="weight-600">Doris L. Larson</div>
-										</div>
-									</div>
-								</td>
-								<td>Male</td>
-								<td>76 kg</td>
-								<td>Dr. Ren Delan</td>
-								<td>22 Jul 2020</td>
-								<td>
-									<span
-										class="badge badge-pill"
-										data-bgcolor="#e7ebf5"
-										data-color="#265ed7"
-										>Dengue</span
-									>
-								</td>
-								<td>
-									<div class="table-actions">
-										<a href="#" data-color="#265ed7"
-											><i class="icon-copy dw dw-edit2"></i
-										></a>
-										<a href="#" data-color="#e95959"
-											><i class="icon-copy dw dw-delete-3"></i
-										></a>
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td class="table-plus">
-									<div class="name-avatar d-flex align-items-center">
-										<div class="avatar mr-2 flex-shrink-0">
-											<img
-    src="{{ asset('vendors/images/photo6.jpg') }}"
-    class="border-radius-100 shadow"
-    width="40"
-    height="40"
-    alt=""
-/>
-
-										</div>
-										<div class="txt">
-											<div class="weight-600">Joseph Powell</div>
-										</div>
-									</div>
-								</td>
-								<td>Male</td>
-								<td>90 kg</td>
-								<td>Dr. Allen Hannagan</td>
-								<td>15 Nov 2020</td>
-								<td>
-									<span
-										class="badge badge-pill"
-										data-bgcolor="#e7ebf5"
-										data-color="#265ed7"
-										>Infection</span
-									>
-								</td>
-								<td>
-									<div class="table-actions">
-										<a href="#" data-color="#265ed7"
-											><i class="icon-copy dw dw-edit2"></i
-										></a>
-										<a href="#" data-color="#e95959"
-											><i class="icon-copy dw dw-delete-3"></i
-										></a>
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td class="table-plus">
-									<div class="name-avatar d-flex align-items-center">
-										<div class="avatar mr-2 flex-shrink-0">
-											<img
-    src="{{ asset('vendors/images/photo9.jpg') }}"
-    class="border-radius-100 shadow"
-    width="40"
-    height="40"
-    alt=""
-/>
-
-										</div>
-										<div class="txt">
-											<div class="weight-600">Jake Springer</div>
-										</div>
-									</div>
-								</td>
-								<td>Female</td>
-								<td>45 kg</td>
-								<td>Dr. Garrett Kincy</td>
-								<td>08 Oct 2020</td>
-								<td>
-									<span
-										class="badge badge-pill"
-										data-bgcolor="#e7ebf5"
-										data-color="#265ed7"
-										>Covid 19</span
-									>
-								</td>
-								<td>
-									<div class="table-actions">
-										<a href="#" data-color="#265ed7"
-											><i class="icon-copy dw dw-edit2"></i
-										></a>
-										<a href="#" data-color="#e95959"
-											><i class="icon-copy dw dw-delete-3"></i
-										></a>
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td class="table-plus">
-									<div class="name-avatar d-flex align-items-center">
-										<div class="avatar mr-2 flex-shrink-0">
-											<img
-    src="{{ asset('vendors/images/photo1.jpg') }}"
-    class="border-radius-100 shadow"
-    width="40"
-    height="40"
-    alt=""
-/>
-
-										</div>
-										<div class="txt">
-											<div class="weight-600">Paul Buckland</div>
-										</div>
-									</div>
-								</td>
-								<td>Male</td>
-								<td>76 kg</td>
-								<td>Dr. Maxwell Soltes</td>
-								<td>12 Dec 2020</td>
-								<td>
-									<span
-										class="badge badge-pill"
-										data-bgcolor="#e7ebf5"
-										data-color="#265ed7"
-										>Asthma</span
-									>
-								</td>
-								<td>
-									<div class="table-actions">
-										<a href="#" data-color="#265ed7"
-											><i class="icon-copy dw dw-edit2"></i
-										></a>
-										<a href="#" data-color="#e95959"
-											><i class="icon-copy dw dw-delete-3"></i
-										></a>
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td class="table-plus">
-									<div class="name-avatar d-flex align-items-center">
-										<div class="avatar mr-2 flex-shrink-0">
-											<img
-    src="{{ asset('vendors/images/photo2.jpg') }}"
-    class="border-radius-100 shadow"
-    width="40"
-    height="40"
-    alt=""
-/>
-
-										</div>
-										<div class="txt">
-											<div class="weight-600">Neil Arnold</div>
-										</div>
-									</div>
-								</td>
-								<td>Male</td>
-								<td>60 kg</td>
-								<td>Dr. Sebastian Tandon</td>
-								<td>30 Oct 2020</td>
-								<td>
-									<span
-										class="badge badge-pill"
-										data-bgcolor="#e7ebf5"
-										data-color="#265ed7"
-										>Diabetes</span
-									>
-								</td>
-								<td>
-									<div class="table-actions">
-										<a href="#" data-color="#265ed7"
-											><i class="icon-copy dw dw-edit2"></i
-										></a>
-										<a href="#" data-color="#e95959"
-											><i class="icon-copy dw dw-delete-3"></i
-										></a>
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td class="table-plus">
-									<div class="name-avatar d-flex align-items-center">
-										<div class="avatar mr-2 flex-shrink-0">
-											<img
-    src="{{ asset('vendors/images/photo8.jpg') }}"
-    class="border-radius-100 shadow"
-    width="40"
-    height="40"
-    alt=""
-/>
-
-										</div>
-										<div class="txt">
-											<div class="weight-600">Christian Dyer</div>
-										</div>
-									</div>
-								</td>
-								<td>Male</td>
-								<td>80 kg</td>
-								<td>Dr. Sebastian Tandon</td>
-								<td>15 Jun 2020</td>
-								<td>
-									<span
-										class="badge badge-pill"
-										data-bgcolor="#e7ebf5"
-										data-color="#265ed7"
-										>Diabetes</span
-									>
-								</td>
-								<td>
-									<div class="table-actions">
-										<a href="#" data-color="#265ed7"
-											><i class="icon-copy dw dw-edit2"></i
-										></a>
-										<a href="#" data-color="#e95959"
-											><i class="icon-copy dw dw-delete-3"></i
-										></a>
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td class="table-plus">
-									<div class="name-avatar d-flex align-items-center">
-										<div class="avatar mr-2 flex-shrink-0">
-											<img
-    src="{{ asset('vendors/images/photo1.jpg') }}"
-    class="border-radius-100 shadow"
-    width="40"
-    height="40"
-    alt=""
-/>
-
-										</div>
-										<div class="txt">
-											<div class="weight-600">Doris L. Larson</div>
-										</div>
-									</div>
-								</td>
-								<td>Male</td>
-								<td>76 kg</td>
-								<td>Dr. Ren Delan</td>
-								<td>22 Jul 2020</td>
-								<td>
-									<span
-										class="badge badge-pill"
-										data-bgcolor="#e7ebf5"
-										data-color="#265ed7"
-										>Dengue</span
-									>
-								</td>
-								<td>
-									<div class="table-actions">
-										<a href="#" data-color="#265ed7"
-											><i class="icon-copy dw dw-edit2"></i
-										></a>
-										<a href="#" data-color="#e95959"
-											><i class="icon-copy dw dw-delete-3"></i
-										></a>
-									</div>
-								</td>
-							</tr>
+									</td>
+									
+								</tr>
+							@endforeach
 						</tbody>
 					</table>
 				</div>
- 
+				
+				<!-- Modal Criar Doutor -->
+				<div class="modal fade" id="modalAdicionarVitima" tabindex="-1">
+					<div class="modal-dialog">
+						<form method="POST" action="{{ route('users.vitima.store') }}" class="modal-content">
+							@csrf
+							<div class="modal-header"><body>
+								<h5 class="modal-title">Novo Estagiário</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+							</div>
+							<div class="modal-body">
+								<input type="hidden" name="role" value="vitima">
+								<div class="mb-3"><input type="text" name="name" class="form-control" placeholder="Nome" required></div>
+								<div class="mb-3"><input type="tel" name="telefone" class="form-control" placeholder="Telefone" required></div>
+								<div class="mb-3"><input type="password" name="password" class="form-control" placeholder="Senha" required></div>
+							</div>
+							<div class="modal-footer">
+								<button type="submit" class="btn btn-primary">Criar</button>
+							</div>
+						</form>
+					</div>
+				</div>
+				
+				<!-- Modal Editar Vitima -->
+				<div class="modal fade" id="editModal" tabindex="-1">
+					<div class="modal-dialog">
+						<form id="editForm" method="POST" class="modal-content">
+							@csrf
+							@method('PUT')
+							<div class="modal-header">
+								<h5 class="modal-title">Editar Vítima</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+							</div>
+							<div class="modal-body">
+								<div class="mb-3"><input type="text" class="form-control" id="name" name="name" required></div>
+								<div class="mb-3"><input type="telefone" class="form-control" id="telefone" name="telefone" required></div>
+							</div>
+							<div class="modal-footer">
+								<button type="submit" class="btn btn-primary">Salvar</button>
+							</div>
+						</form>
+					</div>
+				</div>
+				
+				<script>
+					function editVitima(id) {
+						fetch(`/users/${id}/edit`)
+							.then(response => response.json())
+							.then(data => {
+								document.getElementById('name').value = data.name;
+								document.getElementById('telefone').value = data.telefone;
+								document.getElementById('editForm').action = `/users/${id}`;
+							});
+					}
+				</script>
+				
+</div>
 
-				 
-					 
-					 
-				</div>
-
-				 
-			</div>
-		</div>
-		<!-- welcome modal start -->
-		<div class="welcome-modal">
-			<button class="welcome-modal-close">
-				<i class="bi bi-x-lg"></i>
-			</button>
-			<iframe
-				class="w-100 border-0"
-				src="https://embed.lottiefiles.com/animation/31548"
-			></iframe>
-			<div class="text-center">
-				<h3 class="h5 weight-500 text-center mb-2">
-					Open source
-					<span role="img" aria-label="gratitude">❤️</span>
-				</h3>
-				<div class="pb-2">
-					<a
-						class="github-button"
-						href="https://github.com/dropways/deskapp"
-						data-color-scheme="no-preference: dark; light: light; dark: light;"
-						data-icon="octicon-star"
-						data-size="large"
-						data-show-count="true"
-						aria-label="Star dropways/deskapp dashboard on GitHub"
-						>Star</a
-					>
-					<a
-						class="github-button"
-						href="https://github.com/dropways/deskapp/fork"
-						data-color-scheme="no-preference: dark; light: light; dark: light;"
-						data-icon="octicon-repo-forked"
-						data-size="large"
-						data-show-count="true"
-						aria-label="Fork dropways/deskapp dashboard on GitHub"
-						>Fork</a
-					>
-				</div>
-			</div>
-			<div class="text-center mb-1">
-				<div>
-					<a
-						href="https://github.com/dropways/deskapp"
-						target="_blank"
-						class="btn btn-light btn-block btn-sm"
-					>
-						<span class="text-danger weight-600">STAR US</span>
-						<span class="weight-600">ON GITHUB</span>
-						<i class="fa fa-github"></i>
-					</a>
-				</div>
-				<script
-					async
-					defer="defer"
-					src="https://buttons.github.io/buttons.js"
-				></script>
-			</div>
-			<a
-				href="https://github.com/dropways/deskapp"
-				target="_blank"
-				class="btn btn-success btn-sm mb-0 mb-md-3 w-100"
-			>
-				DOWNLOAD
-				<i class="fa fa-download"></i>
-			</a>
-			<p class="font-14 text-center mb-1 d-none d-md-block">
-				Available in the following technologies:
-			</p>
-			<div class="d-none d-md-flex justify-content-center h1 mb-0 text-danger">
-				<i class="fa fa-html5"></i>
-			</div>
-		</div>
-		<button class="welcome-modal-btn">
-			<i class="fa fa-download"></i> Download
-		</button>
-		<!-- welcome modal end -->
-		<!-- js -->
-		<script src="{{ asset('vendors/scripts/core.js') }}"></script>
+<script src="{{ asset('vendors/scripts/core.js') }}"></script>
 <script src="{{ asset('vendors/scripts/script.min.js') }}"></script> 
 <script src="{{ asset('vendors/scripts/process.js') }}"></script>
 <script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
-
-<script src="{{ asset('src/plugins/apexcharts/apexcharts.min.js') }}"></script>
-
-<script src="{{ asset('src/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('src/plugins/datatables/js/dataTables.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('src/plugins/datatables/js/dataTables.responsive.min.js') }}"></script>
-<script src="{{ asset('src/plugins/datatables/js/responsive.bootstrap4.min.js') }}"></script>
-
-<script src="{{ asset('vendors/scripts/dashboard3.js') }}"></script>
-
 		<!-- Google Tag Manager (noscript) -->
 		<noscript
 			><iframe
@@ -1214,5 +723,8 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 			></iframe
 		></noscript>
 		<!-- End Google Tag Manager (noscript) -->
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
 	</body>
 </html>

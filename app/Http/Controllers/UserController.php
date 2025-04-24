@@ -72,7 +72,7 @@ public function storeDoutor(Request $request)
 
 
 
-// ==================  Estagiário  ============
+                                        // ==========================  Estagiário  =============================== //
 
 public function createEstagiario()
 {
@@ -109,7 +109,7 @@ public function storeEstagiario(Request $request)
 
 public function createVitima()
 {
-    $users = User::where('role', 'estagiario')->get();
+    $users = User::where('role', 'vitima')->get();
     return view('vitima', compact('users'));
 }
 

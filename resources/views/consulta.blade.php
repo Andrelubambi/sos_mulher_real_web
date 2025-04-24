@@ -518,7 +518,7 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 								><span class="mtext">Vítimas</span>
 							</a>
 							<ul class="submenu">
-								<li><a href="{{ route('vitima') }}">Vítimas</a></li>
+								<li><a href="{{ route('users.vitima') }}">Vítimas</a></li>
 							</ul>
 						</li>
 
@@ -603,7 +603,7 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 		<div class="main-container">
 			<div class="xs-pd-20-10 pd-ltr-20">
 				<div class="title pb-20">
-					<h2 class="h3 mb-0">Gerir Assistente</h2>
+					<h2 class="h3 mb-0">Marcar Consultas</h2>
 				</div>
 
 		

@@ -60,7 +60,6 @@ Route::view('/index2', 'index2')->name('index2');
 Route::view('/index3', 'index3')->name('index3');
 
 
-Route::view('/vitima', 'vitima')->name('vitima');
 Route::view('/consulta', 'consulta')->name('consulta');
 Route::view('/assistente', 'assistente')->name('assistente');
 Route::view('/introduction', 'introduction')->name('introduction');

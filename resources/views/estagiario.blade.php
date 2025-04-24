@@ -517,7 +517,9 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 								<span class="micon bi bi-house"></span
 								><span class="mtext">Vítimas</span>
 							</a>
-							 
+							<ul class="submenu">
+								<li><a href="{{ route('users.vitima') }}">Vítimas</a></li>
+							</ul>
 						</li>
 
 						<li class="dropdown">
@@ -649,7 +651,7 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 					</table>
 				</div>
 				
-				<!-- Modal Criar estagiario -->
+				<!-- Modal Criar Doutor -->
 				<div class="modal fade" id="modalAdicionarEstagiario" tabindex="-1">
 					<div class="modal-dialog">
 						<form method="POST" action="{{ route('users.estagiario.store') }}" class="modal-content">
@@ -710,34 +712,6 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 <script src="{{ asset('vendors/scripts/script.min.js') }}"></script> 
 <script src="{{ asset('vendors/scripts/process.js') }}"></script>
 <script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-
-
-<script src="{{ asset('src/plugins/apexcharts/apexcharts.min.js') }}"></script>
-
-<script src="{{ asset('src/plugins/datatables/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ asset('src/plugins/datatables/js/dataTables.bootstrap4.min.js') }}"></script>
-<script src="{{ asset('src/plugins/datatables/js/dataTables.responsive.min.js') }}"></script>
-<script src="{{ asset('src/plugins/datatables/js/responsive.bootstrap4.min.js') }}"></script>
-
-<script src="{{ asset('vendors/scripts/dashboard3.js') }}"></script>
-
-<script>
-    @if(session('success'))
-        toastr.success("{{ session('success') }}");
-    @endif
-
-    @if(session('error'))
-        toastr.error("{{ session('error') }}");
-    @endif
-
-    @if ($errors->any())
-        toastr.error("Verifique os dados inseridos nos campos do formulário.");
-    @endif
-</script>
-
 		<!-- Google Tag Manager (noscript) -->
 		<noscript
 			><iframe
