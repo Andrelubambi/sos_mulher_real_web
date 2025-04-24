@@ -8,28 +8,35 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
-    public function createAdmin()
+    // ==================  Métodos Gerais  ============
+
+    public function edit($id)
 {
-    $users = User::where('role', 'admin')->get();
-    return view('users.admin', compact('users'));
+    $user = User::findOrFail($id);
+    return response()->json($user);
 }
 
-public function createVitima()
+public function update(Request $request, $id)
 {
-    $users = User::where('role', 'vitima')->get();
-    return view('vitima', compact('users'));
+    $user = User::findOrFail($id);
+
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+       'telefone' => "required|regex:/^(\+?[1-9]{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{5,15}$/|unique:users,telefone,$id",
+    ]);
+
+    $user->update($validated);
+
+    return redirect()->back()->with('success', 'Dados atualizados com sucesso!');
 }
 
-public function createAssistente()
+public function destroy($id)
 {
-    $users = User::where('role', 'assistente')->get();
-    return view('assistente', compact('users'));
+    $user = User::findOrFail($id);
+    $user->delete();
+
+    return redirect()->back()->with('success', 'Usuário deletado com sucesso!');
 }
-
-
-
-
-
 
 
 // ==================  Doutores  ============
@@ -63,34 +70,70 @@ public function storeDoutor(Request $request)
     }
 }
 
-public function edit($id)
+
+
+// ==================  Estagiário  ============
+
+public function createEstagiario()
 {
-    $user = User::findOrFail($id);
-    return response()->json($user);
+    $users = User::where('role', 'estagiario')->get();
+    return view('estagiario', compact('users'));
 }
 
-public function update(Request $request, $id)
+public function storeEstagiario(Request $request)
 {
-    $user = User::findOrFail($id);
-
     $validated = $request->validate([
         'name' => 'required|string|max:255',
-       'telefone' => "required|regex:/^(\+?[1-9]{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{5,15}$/|unique:users,telefone,$id",
+        'telefone' => 'required|unique:users,telefone|regex:/^(\+?[1-9]{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{5,15}$/',
+        'password' => 'required|string|min:6',
     ]);
 
-    $user->update($validated);
+    try {
+        User::create([
+            'name' => $validated['name'],
+            'telefone' => $validated['telefone'],
+            'password' => Hash::make($validated['password']),
+            'role' => 'estagiario',
+        ]);
 
-    return redirect()->back()->with('success', 'Dados atualizados com sucesso!');
+        return redirect()->route('users.estagiario')->with('success', 'Estagiário adicionado com sucesso!');
+
+    } catch (\Exception $e) {
+        return redirect()->route('users.estagiario')->with('error', 'Falha ao cadastrar estagiário: ' . $e->getMessage());
+    }
 }
+  
 
-public function destroy($id)
+
+                                    // =================================  Vítima  ============================================= //
+
+public function createVitima()
 {
-    $user = User::findOrFail($id);
-    $user->delete();
-
-    return redirect()->back()->with('success', 'Usuário deletado com sucesso!');
+    $users = User::where('role', 'estagiario')->get();
+    return view('vitima', compact('users'));
 }
 
+public function storeVitima(Request $request)
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'telefone' => 'required|unique:users,telefone|regex:/^(\+?[1-9]{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{5,15}$/',
+        'password' => 'required|string|min:6',
+    ]);
 
+    try {
+        User::create([
+            'name' => $validated['name'],
+            'telefone' => $validated['telefone'],
+            'password' => Hash::make($validated['password']),
+            'role' => 'vitima',
+        ]);
+
+        return redirect()->route('users.vitima')->with('success', 'Vitima adicionada com sucesso!');
+
+    } catch (\Exception $e) {
+        return redirect()->route('users.vitima')->with('error', 'Falha ao cadastrar estagiário: ' . $e->getMessage());
+    }
+}
   
 }

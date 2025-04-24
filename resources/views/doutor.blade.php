@@ -90,8 +90,6 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 		<!-- End Google Tag Manager -->
 	</head>
 	<body>
-
-		
 		<div class="pre-loader">
 			<div class="pre-loader-box">
 				<div class="loader-logo">
@@ -520,7 +518,7 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 								><span class="mtext">Vítimas</span>
 							</a>
 							<ul class="submenu">
-								<li><a href="{{ route('vitima') }}">Vítimas</a></li>
+								<li><a href="{{ route('users.vitima') }}">Vítimas</a></li>
 							</ul>
 						</li>
 
@@ -530,7 +528,7 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 								><span class="mtext">Assistntes</span>
 							</a>
 							<ul class="submenu">
-								<li><a href="{{ route('assistente') }}">Assistntes</a></li>
+								<li><a href="{{ route('users.estagiario') }}">Assistntes</a></li>
 							</ul>
 						</li>
 

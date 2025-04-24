@@ -8,14 +8,20 @@ use App\Http\Controllers\UserController;
 Route::view('/', 'index')->name('index');
 
 
-Route::get('/vitima', [UserController::class, 'createVitima'])->name('users.vitima');
-Route::get('/estagiario', [UserController::class, 'createAssistente'])->name('users.assistente');
-
-Route::get('/doutor', [UserController::class, 'createDoutor'])->name('users.doutor');
-Route::post('/users/doutor/store', [UserController::class, 'storeDoutor'])->name('users.doutor.store');
 Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
 Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
 Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+
+Route::get('/doutor', [UserController::class, 'createDoutor'])->name('users.doutor');
+Route::post('/users/doutor/store', [UserController::class, 'storeDoutor'])->name('users.doutor.store');
+
+
+Route::get('/estagiario', [UserController::class, 'createEstagiario'])->name('users.estagiario');
+Route::post('/users/estagiario/store', [UserController::class, 'storeEstagiario'])->name('users.estagiario.store');
+
+Route::get('/vitima', [UserController::class, 'createVitima'])->name('users.vitima');
+Route::post('/users/vitima/store', [UserController::class, 'storeVitima'])->name('users.vitima.store');
+
 
 Route::view('/400', '400')->name('400');
 Route::view('/403', '403')->name('403');
