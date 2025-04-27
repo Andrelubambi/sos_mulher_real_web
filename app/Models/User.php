@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\Hash;
+
 
 class User extends Authenticatable
 {
@@ -40,6 +42,17 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function createTokenForUser(string $tokenName = 'default')
+{
+    return $this->createToken($tokenName)->plainTextToken;
+}
+
+public function isMedico()
+{
+    return $this->role === 'doutor';
+}
+
+
     // Relacionamentos
     public function consultasCriadas()
     {
@@ -54,5 +67,20 @@ class User extends Authenticatable
     public function grupos()
     {
         return $this->belongsToMany(GrupoApoio::class, 'grupo_user');
+    }
+
+    protected static function booted()
+    {
+        static::creating(function ($user) {
+            if ($user->password) {
+                $user->password = Hash::make($user->password);
+            }
+        });
+
+        static::updating(function ($user) {
+            if ($user->password) {
+                $user->password = Hash::make($user->password);
+            }
+        });
     }
 }

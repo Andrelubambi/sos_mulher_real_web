@@ -7,11 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Consulta extends Model
 {
-    protected $fillable = ['criador_id', 'medico_id', 'descricao', 'bairro', 'provincia', 'data'];
+    protected $fillable = [
+        'criada_por', 
+        'medico_id', 
+        'descricao', 
+        'bairro', 
+        'provincia', 
+        'data'];
 
 public function criador()
 {
-    return $this->belongsTo(User::class, 'criador_id');
+    return $this->belongsTo(User::class, 'criada_por');
 }
 
 public function medico()

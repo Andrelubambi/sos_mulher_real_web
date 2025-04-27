@@ -277,7 +277,12 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 							<img src="{{ asset('vendors/images/photo1.jpg') }}" alt="" />
 						</span>
 						
-							<span class="user-name">Ross C. Lopez</span>
+						@if (Auth::check()) 
+    <span class="user-name">{{ Auth::user()->name }}</span>
+@else
+    <span class="user-name">Visitante</span> 
+@endif
+
 						</a>
 						<div
 							class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list"

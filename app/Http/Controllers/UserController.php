@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\Medico; 
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -109,12 +110,16 @@ public function storeEstagiario(Request $request)
 
 public function createVitima()
 {
+
+
     $users = User::where('role', 'vitima')->get();
     return view('vitima', compact('users'));
 }
 
+
 public function storeVitima(Request $request)
 {
+ 
     $validated = $request->validate([
         'name' => 'required|string|max:255',
         'telefone' => 'required|unique:users,telefone|regex:/^(\+?[1-9]{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{5,15}$/',
@@ -122,18 +127,44 @@ public function storeVitima(Request $request)
     ]);
 
     try {
-        User::create([
+        // Criação do usuário "vitima"
+        $user = User::create([
             'name' => $validated['name'],
             'telefone' => $validated['telefone'],
             'password' => Hash::make($validated['password']),
-            'role' => 'vitima',
+            'role' => 'vitima',  // Atribuindo o papel 'vitima'
         ]);
 
-        return redirect()->route('users.vitima')->with('success', 'Vitima adicionada com sucesso!');
+        // Retorna os dados do usuário criado como resposta JSON
+        return response()->json([
+            'success' => true,
+            'message' => 'Vitima criada com sucesso!',
+            'user' => $user
+        ], 201); // Código HTTP 201 para indicar que o recurso foi criado com sucesso.
 
     } catch (\Exception $e) {
-        return redirect()->route('users.vitima')->with('error', 'Falha ao cadastrar estagiário: ' . $e->getMessage());
+        // Caso ocorra um erro, retorna uma mensagem de erro com código 500
+        return response()->json([
+            'success' => false,
+            'message' => 'Falha ao criar vitima: ' . $e->getMessage()
+        ], 500);
     }
 }
+
   
+
+// ==================  Minhas Consultas  ============
+
+public function minhasConsultas()
+{
+    $user = auth()->user();  
+    $consultas = $user->consultas;
+
+    return view('consultas.minhas', compact('consultas'));
+}
+
+
+
+// ==================  Filtrar consultas por medico  ============
+ 
 }
