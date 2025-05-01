@@ -620,16 +620,15 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
             <th>Ações</th> 
         </tr>
     </thead>
-    <tbody>
-		
-        @foreach($consultas as $consulta)
+	<tbody>
+    @forelse($consultas as $consulta)
         <tr>
             <td>{{ $consulta->descricao }}</td>
             <td>{{ $consulta->bairro }}</td>
             <td>{{ $consulta->provincia }}</td>
             <td>{{ $consulta->data }}</td>
             <td>{{ $consulta->medico->name ?? 'N/A' }}</td>
-            <td>{{ $consulta->criada_por }}</td>
+            <td>{{ $consulta->criador->name ?? 'N/A' }}</td>
             <td>
                 <div class="d-flex gap-2">
                     <button 
@@ -641,18 +640,26 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
                         <i class="bi bi-pencil-square"></i> Editar
                     </button>
                     
-                    <form action="{{ route('consultas.destroy', $consulta->id) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm">
-                            <i class="bi bi-trash"></i> Excluir
-                        </button>
-                    </form>
+                    <form action="{{ route('consulta.destroy', $consulta->id) }}" method="POST">
+												@csrf
+												@method('DELETE')
+												<button 
+													type="submit" 
+													class="btn btn-danger btn-sm d-flex align-items-center gap-1"
+												>
+													<i class="bi bi-trash"></i> Excluir
+												</button>
+											</form>
                 </div>
             </td>
         </tr>
-        @endforeach
-    </tbody>
+    @empty
+        <tr>
+            <td colspan="7" class="text-center">Nenhuma consulta encontrada.</td>
+        </tr>
+    @endforelse
+</tbody>
+
 </table>
 				</div>
 				

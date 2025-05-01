@@ -11,16 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('telefone')->unique();
-            $table->enum('role', ['admin', 'vitima', 'estagiario', 'doutor']);
-            $table->string('password');
-            $table->rememberToken();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('users')) {
+            Schema::create('users', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->string('telefone', 191)->unique();
+                $table->enum('role', ['admin', 'vitima', 'estagiario', 'doutor']);
+                $table->string('password');
+                $table->rememberToken();
+                $table->timestamps();
+            });
+        }
     }
+    
 
     /**
      * Reverse the migrations.

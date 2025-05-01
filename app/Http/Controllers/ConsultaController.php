@@ -12,7 +12,7 @@ class ConsultaController extends Controller
  
         $user = auth()->user();
     
-     
+             
         if (!$user) {
           
             return redirect()->route('login');
@@ -35,12 +35,16 @@ class ConsultaController extends Controller
                 $consultas = Consulta::where('criada_por', $user->id)->get();
                 break;
     
-            default:
-                $consultas = [];
-                break;
+                case 'vitima':
+                    $consultas = Consulta::with(['medico', 'criador'])
+                                         ->where('criada_por', $user->id)
+                                         ->get();
+                    break;
+                
         }
 
        $medicos = User::where('role', 'doutor')->get();
+
     
         return view('consulta', compact('consultas', 'medicos'));
     }
@@ -84,5 +88,33 @@ public function criarConsulta()
     return view('consultas', compact('medicos'));
 }
 
-    
+public function edit($id)
+{
+    $consulta = Consulta::findOrFail($id);
+    return response()->json($consulta);          
+}
+
+public function update(Request $request, $id)
+{
+    $user = User::findOrFail($id);
+
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+       'telefone' => "required|regex:/^(\+?[1-9]{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{5,15}$/|unique:users,telefone,$id",
+    ]);
+
+    $user->update($validated);
+
+    return redirect()->back()->with('success', 'Dados atualizados com sucesso!');
+}
+
+public function destroy($id)
+{
+    $consulta = Consulta::findOrFail($id);
+    $consulta->delete();
+
+    return redirect()->back()->with('success', 'Consulta deletado com sucesso!');
+}
+
+
 }
