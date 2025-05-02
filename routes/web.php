@@ -58,8 +58,8 @@ Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->n
     Route::get('/consultas/{id}/edit', [ConsultaController::class, 'edit'])->name('consulta.edit');
 
   // chat
-    Route::get('/chat', [ChatController::class, 'showChat'])->name('chat');
-    Route::get('/chat/{usuarioId}', [ChatController::class, 'showChat'])->name('chat.withUser');
+    Route::get('/chat', [ChatController::class, 'showChatIndex'])->name('chat');
+    Route::get('/chat/{usuarioId}', [ChatController::class, 'showChatWithUser'])->name('chat.withUser');
     Route::post('/chat/{usuarioId}/send', [ChatController::class, 'sendMessage'])->name('chat.sendMessage');
 
 

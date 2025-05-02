@@ -16,7 +16,7 @@ return new class extends Migration
     
             $table->unsignedBigInteger('de');
             $table->unsignedBigInteger('para');
-    
+           
             $table->text('conteudo');
             $table->timestamps();
     

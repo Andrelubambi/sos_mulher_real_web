@@ -79,93 +79,12 @@
 		<!-- End Google Tag Manager -->
 	</head>
 	<body>
-		<div class="pre-loader">
-			<div class="pre-loader-box">
-				<div class="loader-logo">
-					<img src="vendors/images/deskapp-logo.svg" alt="" />
-				</div>
-				<div class="loader-progress" id="progress_div">
-					<div class="bar" id="bar1"></div>
-				</div>
-				<div class="percent" id="percent1">0%</div>
-				<div class="loading-text">Loading...</div>
-			</div>
-		</div>
+		 
 
-		<div class="header">
-			<div class="header-left">
-				<div class="menu-icon bi bi-list"></div>
-				<div
-					class="search-toggle-icon bi bi-search"
-					data-toggle="header_search"
-				></div>
-				<div class="header-search">
-					<form>
-						<div class="form-group mb-0">
-							<i class="dw dw-search2 search-icon"></i>
-							<input
-								type="text"
-								class="form-control search-input"
-								placeholder="Search Here"
-							/>
-							<div class="dropdown">
-								<a
-									class="dropdown-toggle no-arrow"
-									href="#"
-									role="button"
-									data-toggle="dropdown"
-								>
-									<i class="ion-arrow-down-c"></i>
-								</a>
-							</div>
-						</div>
-					</form>
-				</div>
-			</div>
-		
-				<div class="user-info-dropdown">
-					<div class="dropdown">
-						<a
-							class="dropdown-toggle"
-							href="#"
-							role="button"
-							data-toggle="dropdown"
-						>
-							<span class="user-icon">
-								<img src="vendors/images/photo1.jpg" alt="" />
-							</span>
-							<span class="user-name">Ross C. Lopez</span>
-						</a>
-						<div
-							class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list"
-						>
-							<a class="dropdown-item" href="profile.html"
-								><i class="dw dw-user1"></i> Profile</a
-							>
-							
-							<a class="dropdown-item" href="login.html"
-								><i class="dw dw-logout"></i> Log Out</a
-							>
-						</div>
-					</div>
-				</div>
-				 
-			</div>
+		 
 
 		<div class="left-side-bar">
-			<div class="brand-logo">
-				<a href="index.html">
-					<img src="vendors/images/deskapp-logo.svg" alt="" class="dark-logo" />
-					<img
-						src="vendors/images/deskapp-logo-white.svg"
-						alt=""
-						class="light-logo"
-					/>
-				</a>
-				<div class="close-sidebar" data-toggle="left-sidebar-close">
-					<i class="ion-close-round"></i>
-				</div>
-			</div>
+			 
 			<div class="menu-block customscroll">
 				<div class="sidebar-menu">
 					<ul id="accordion-menu">
@@ -209,6 +128,7 @@
 							</div>
 						</div>
 					</div>
+
 <div class="bg-white border-radius-4 box-shadow mb-30">
     <div class="row no-gutters">
         <div class="col-lg-3 col-md-4 col-sm-12">
@@ -219,22 +139,23 @@
                 </div>
                 <div class="notification-list chat-notification-list customscroll">
                     <ul>
-                        @foreach($usuariosNaoDoutores as $usuario)
-                            <li>
+						@foreach($usuariosNaoDoutores ?? [] as $usuario)
+						<li>
 							<a href="{{ route('chat.withUser', ['usuarioId' => $usuario->id]) }}">
-                                    <img src="vendors/images/profile-photo.jpg" alt="" />
-                                    <h3 class="clearfix">{{ $usuario->name }}</h3>
-                                    <p>
-                                        <i class="fa fa-circle text-light-green"></i> {{ $usuario->role }}
-                                    </p>
-                                </a>
-                            </li>
+								<img src="vendors/images/profile-photo.jpg" alt="" />
+								<h3 class="clearfix">{{ $usuario->name }}</h3>
+								<p>
+									<i class="fa fa-circle text-light-green"></i> {{ $usuario->role }}
+								</p>
+							</a>
+						</li>
                         @endforeach
                     </ul>
                 </div>
             </div>
         </div>
         <div class="col-lg-9 col-md-8 col-sm-12">
+			@if(isset($usuario))
             <div class="chat-detail">
                 <div class="chat-profile-header clearfix">
                     <div class="left">
@@ -250,56 +171,49 @@
                         </div>
                     </div>
                 </div>
-                <div class="chat-box">
-				<div class="chat-desc customscroll">
-    @foreach($messages as $message)
-        <div class="message">
-            <strong>{{ $message->remetente->name }}:</strong> {{ $message->conteudo }}
-        </div>
-    @endforeach
-</div>
-
-                    <div class="chat-footer">
+				<div class="chat-box">
+                    <div class="chat-desc customscroll">
+                        @forelse($messages as $message)
+                            <div class="message mb-2">
+                                <strong>{{ $message->remetente->name }}:</strong>
+                                {{ $message->conteudo }}
+                            </div>
+                        @empty
+                            <div class="text-muted">Nenhuma mensagem ainda.</div>
+                        @endforelse
+                    </div>
+					<div class="chat-footer">
                         <div class="file-upload">
                             <a href="#"><i class="fa fa-paperclip"></i></a>
                         </div>
-						<form action="{{ route('chat.sendMessage', $usuario->id) }}" method="POST">
-    @csrf
-    <div class="chat_text_area">
-        <textarea name="conteudo" placeholder="Type your message…"></textarea>
-    </div>
-    <div class="chat_send">
-        <button class="btn btn-link" type="submit">
-            <i class="icon-copy ion-paper-airplane"></i>
-        </button>
-    </div>
-</form>
-
-
-
-                    </div>
+                        <form action="{{ route('chat.sendMessage', $usuario->id) }}" method="POST">
+                            @csrf
+                            <div class="chat_text_area">
+                                <textarea name="conteudo" placeholder="Type your message…" required></textarea>
+                            </div>
+                            <div class="chat_send">
+                                <button class="btn btn-link" type="submit">
+                                    <i class="icon-copy ion-paper-airplane"></i>
+                                </button>
+                            </div>
+                        </form>
                 </div>
+                @else
+                    <div class="p-4">
+                        <h4>Selecione um usuário para iniciar a conversa.</h4>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
 </div>
-
 
 				</div>
 				
 			</div>
 		</div>
 		<!-- welcome modal start -->
-		<div class="welcome-modal">
-			<button class="welcome-modal-close">
-				<i class="bi bi-x-lg"></i>
-			</button>
-			<iframe
-				class="w-100 border-0"
-				src="https://embed.lottiefiles.com/animation/31548"
-			></iframe>
- 
-		</div>
+	 
 	 
 		<!-- js -->
 		<script src="vendors/scripts/core.js"></script>

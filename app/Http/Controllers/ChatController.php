@@ -9,22 +9,24 @@ use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
-    public function showChat($usuarioId)
-{
-    $usuario = User::find($usuarioId);
-    $messages = Mensagem::where(function($query) use ($usuarioId) {
-        $query->where('de', auth()->user()->id)->where('para', $usuarioId);
-    })
-    ->orWhere(function($query) use ($usuarioId) {
-        $query->where('de', $usuarioId)->where('para', auth()->user()->id);
-    })
-    ->get();
 
-    return view('chat', compact('usuario', 'messages'));
-}
+    public function showChatIndex()
+    {
+        $usuario = auth()->user();
 
-
-
+        $messages = Mensagem::with('remetente')
+            ->where('de', $usuario->id)
+            ->orWhere('para', $usuario->id)
+            ->orderBy('created_at', 'asc')
+            ->get();
+    
+        $usuariosNaoDoutores = User::where('id', '!=', $usuario->id)
+            ->where('role', '!=', 'doutor')
+            ->get();
+    
+        return view('chat', compact('usuario', 'usuariosNaoDoutores', 'messages'));
+    }
+    
 public function showChatWithUser($usuarioId)
 {
    
@@ -71,6 +73,6 @@ public function sendMessage(Request $request, $usuarioId)
         'conteudo' => $request->conteudo,  
     ]);
  
-    return redirect()->route('chat.withUser', ['usuarioId' => $usuarioId]);
+    return redirect()->route('chat', ['usuarioId' => $usuarioId]);
 }
 }
