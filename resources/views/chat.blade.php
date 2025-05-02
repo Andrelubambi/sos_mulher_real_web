@@ -5,6 +5,9 @@
 		<meta charset="utf-8" />
 		<title>DeskApp - Bootstrap Admin Dashboard HTML Template</title>
 
+		<meta name="csrf-token" content="{{ csrf_token() }}">
+		@vite('resources/js/app.js')
+
 		<!-- Site favicon -->
 		<link
 			rel="apple-touch-icon"
@@ -186,7 +189,7 @@
                         <div class="file-upload">
                             <a href="#"><i class="fa fa-paperclip"></i></a>
                         </div>
-                        <form action="{{ route('chat.sendMessage', $usuario->id) }}" method="POST">
+                        <form action="{{ route('sendMessage', $usuario->id) }}" method="POST">
                             @csrf
                             <div class="chat_text_area">
                                 <textarea name="conteudo" placeholder="Type your message…" required></textarea>
@@ -196,7 +199,7 @@
                                     <i class="icon-copy ion-paper-airplane"></i>
                                 </button>
                             </div>
-                        </form>
+                         </form>
                 </div>
                 @else
                     <div class="p-4">
@@ -216,10 +219,30 @@
 	 
 	 
 		<!-- js -->
+
 		<script src="vendors/scripts/core.js"></script>
 		<script src="vendors/scripts/script.min.js"></script>
 		<script src="vendors/scripts/process.js"></script>
 		<script src="vendors/scripts/layout-settings.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const userId = {{ auth()->user()->id }}; // ou defina de outro jeito
+        Echo.private('chat.' + userId)
+            .listen('MessageSent', (e) => {
+                console.log('Mensagem recebida:', e);
+
+                const chatBox = document.querySelector('.chat-desc');
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', 'mb-2');
+                messageDiv.innerHTML = `<strong>${e.remetente.name}:</strong> ${e.conteudo}`;
+                chatBox.appendChild(messageDiv);
+
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+    });
+</script>
+
 		<!-- Google Tag Manager (noscript) -->
 		<noscript
 			><iframe

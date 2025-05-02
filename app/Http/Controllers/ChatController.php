@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Mensagem;
+use App\Events\MessageSent;
 
 use Illuminate\Http\Request;
 
@@ -54,24 +55,23 @@ public function showChatWithUser($usuarioId)
 
 public function sendMessage(Request $request, $usuarioId)
 {
-    // Validação da mensagem
+
     $request->validate([
-        'conteudo' => 'required|string|max:1000', // Validação do conteúdo da mensagem
+        'conteudo' => 'required|string|max:1000',
     ]);
 
-    // Encontrar o usuário destinatário
     $usuario = User::find($usuarioId);
-
-    // Verificar se o usuário existe
     if (!$usuario) {
         return redirect()->back()->withErrors('Usuário não encontrado');
     }
  
-    Mensagem::create([
+    $mensagem = Mensagem::create([
         'de' => auth()->user()->id,  
         'para' => $usuario->id,      
         'conteudo' => $request->conteudo,  
     ]);
+ 
+    event(new MessageSent($mensagem));  
  
     return redirect()->route('chat', ['usuarioId' => $usuarioId]);
 }

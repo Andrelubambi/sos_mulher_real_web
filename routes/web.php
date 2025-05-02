@@ -60,7 +60,8 @@ Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->n
   // chat
     Route::get('/chat', [ChatController::class, 'showChatIndex'])->name('chat');
     Route::get('/chat/{usuarioId}', [ChatController::class, 'showChatWithUser'])->name('chat.withUser');
-    Route::post('/chat/{usuarioId}/send', [ChatController::class, 'sendMessage'])->name('chat.sendMessage');
+    Route::post('/send-message/{usuarioId}', [ChatController::class, 'sendMessage'])
+     ->name('sendMessage');
 
 
 
