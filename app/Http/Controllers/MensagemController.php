@@ -8,36 +8,37 @@ use Illuminate\Support\Facades\Auth;
 
 class MensagemController extends Controller
 {
-    public function enviar(Request $request)
+    public function index($userId)
     {
-        $request->validate([
-            'para' => 'required|exists:users,id',
-            'conteudo' => 'required|string',
-        ]);
+        $authId = Auth::id();
 
-        $mensagem = Mensagem::create([
-            'de' => auth()->id(),
-            'para' => $request->para,
-            'conteudo' => $request->conteudo,
-        ]);
-
-        broadcast(new MensagemEnviada($mensagem))->toOthers();
-
-        return response()->json($mensagem, 201);
-    }
-
-    public function listar($userId)
-    {
-        $userId = (int) $userId;
-
-        $mensagens = Mensagem::where(function ($q) use ($userId) {
-            $q->where('de', auth()->id())
-              ->where('para', $userId);
-        })->orWhere(function ($q) use ($userId) {
-            $q->where('de', $userId)
-              ->where('para', auth()->id());
-        })->orderBy('created_at')->get();
+        $mensagens = Mensagem::where(function ($query) use ($authId, $userId) {
+            $query->where('de', $authId)->where('para', $userId);
+        })->orWhere(function ($query) use ($authId, $userId) {
+            $query->where('de', $userId)->where('para', $authId);
+        })->orderBy('created_at', 'asc')->get();
 
         return response()->json($mensagens);
     }
+
+    // Enviar nova mensagem
+    public function store(Request $request)
+    {
+        $request->validate([
+            'para' => 'required|exists:users,id',
+            'conteudo' => 'required|string'
+        ]);
+
+        $mensagem = Mensagem::create([
+            'de' => Auth::id(),
+            'para' => $request->para,
+            'conteudo' => $request->conteudo
+        ]);
+        return response()->json($mensagem, 201);
+    }
+
+
+
+
+
 }

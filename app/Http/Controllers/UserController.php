@@ -42,6 +42,17 @@ public function destroy($id)
 
 // ==================  Doutores  ============
 
+
+public function listNaoDoutores()
+{
+    $usuariosNaoDoutores = User::where('role', '!=', 'doutor')->get();
+   
+    dd($usuariosNaoDoutores);
+    return view('usuarios.nao_doutores', compact('usuariosNaoDoutores'));
+}
+
+
+
 public function createDoutor()
 {
     $users = User::where('role', 'doutor')->get();

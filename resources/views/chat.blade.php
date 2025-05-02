@@ -209,70 +209,82 @@
 							</div>
 						</div>
 					</div>
-					<div class="bg-white border-radius-4 box-shadow mb-30">
-						<div class="row no-gutters">
-							<div class="col-lg-3 col-md-4 col-sm-12">
-								<div class="chat-list bg-light-gray">
-									<div class="chat-search">
-										<span class="ti-search"></span>
-										<input type="text" placeholder="Search Contact" />
-									</div>
-									<div
-										class="notification-list chat-notification-list customscroll"
-									>
-										<ul>
-											<li>
-												<a href="#">
-													<img src="vendors/images/img.jpg" alt="" />
-													<h3 class="clearfix">John Doe</h3>
-													<p>
-														<i class="fa fa-circle text-light-green"></i> online
-													</p>
-												</a>
-											</li>
-										
-										</ul>
-									</div>
-								</div>
-							</div>
-							<div class="col-lg-9 col-md-8 col-sm-12">
-								<div class="chat-detail">
-									<div class="chat-profile-header clearfix">
-										<div class="left">
-											<div class="clearfix">
-												<div class="chat-profile-photo">
-													<img src="vendors/images/profile-photo.jpg" alt="" />
-												</div>
-												<div class="chat-profile-name">
-													<h3>Rachel Curtis</h3>
-													<span>New York, USA</span>
-												</div>
-											</div>
-										</div>
-										 
-									</div>
-									<div class="chat-box">
-										<div class="chat-desc customscroll">
-											 
-										</div>
-										<div class="chat-footer">
-											<div class="file-upload">
-												<a href="#"><i class="fa fa-paperclip"></i></a>
-											</div>
-											<div class="chat_text_area">
-												<textarea placeholder="Type your message…"></textarea>
-											</div>
-											<div class="chat_send">
-												<button class="btn btn-link" type="submit">
-													<i class="icon-copy ion-paper-airplane"></i>
-												</button>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
+<div class="bg-white border-radius-4 box-shadow mb-30">
+    <div class="row no-gutters">
+        <div class="col-lg-3 col-md-4 col-sm-12">
+            <div class="chat-list bg-light-gray">
+                <div class="chat-search">
+                    <span class="ti-search"></span>
+                    <input type="text" placeholder="Search Contact" />
+                </div>
+                <div class="notification-list chat-notification-list customscroll">
+                    <ul>
+                        @foreach($usuariosNaoDoutores as $usuario)
+                            <li>
+							<a href="{{ route('chat.withUser', ['usuarioId' => $usuario->id]) }}">
+                                    <img src="vendors/images/profile-photo.jpg" alt="" />
+                                    <h3 class="clearfix">{{ $usuario->name }}</h3>
+                                    <p>
+                                        <i class="fa fa-circle text-light-green"></i> {{ $usuario->role }}
+                                    </p>
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-9 col-md-8 col-sm-12">
+            <div class="chat-detail">
+                <div class="chat-profile-header clearfix">
+                    <div class="left">
+                        <div class="clearfix">
+                            <div class="chat-profile-photo">
+                                <img src="vendors/images/profile-photo.jpg" alt="" />
+                            </div>
+                            <div class="chat-profile-name">
+    <h3>{{ $usuario->name }}</h3>
+    <span>{{ $usuario->role }}</span>
+</div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-box">
+				<div class="chat-desc customscroll">
+    @foreach($messages as $message)
+        <div class="message">
+            <strong>{{ $message->remetente->name }}:</strong> {{ $message->conteudo }}
+        </div>
+    @endforeach
+</div>
+
+                    <div class="chat-footer">
+                        <div class="file-upload">
+                            <a href="#"><i class="fa fa-paperclip"></i></a>
+                        </div>
+						<form action="{{ route('chat.sendMessage', $usuario->id) }}" method="POST">
+    @csrf
+    <div class="chat_text_area">
+        <textarea name="conteudo" placeholder="Type your message…"></textarea>
+    </div>
+    <div class="chat_send">
+        <button class="btn btn-link" type="submit">
+            <i class="icon-copy ion-paper-airplane"></i>
+        </button>
+    </div>
+</form>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 				</div>
 				
 			</div>

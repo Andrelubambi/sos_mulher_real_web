@@ -10,15 +10,21 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up()
-{
-    Schema::create('mensagens', function (Blueprint $table) {
-        $table->id();
-        $table->foreignId('de')->constrained('users');
-        $table->foreignId('para')->constrained('users');
-        $table->text('conteudo');
-        $table->timestamps();
-    });
-}
+    {
+        Schema::create('mensagens', function (Blueprint $table) {
+            $table->id();
+    
+            $table->unsignedBigInteger('de');
+            $table->unsignedBigInteger('para');
+    
+            $table->text('conteudo');
+            $table->timestamps();
+    
+            $table->foreign('de')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('para')->references('id')->on('users')->onDelete('cascade');
+        });
+    }
+    
 
 
     /**

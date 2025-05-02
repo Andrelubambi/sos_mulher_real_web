@@ -4,8 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ConsultaController;
-
-
+use App\Http\Controllers\ChatController;
 
 Route::middleware('auth:sanctum')->get('/', function () {
     return view('index');  
@@ -37,6 +36,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+
+
+Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->name('users.nao_doutores');
+
  
     Route::get('/doutor', [UserController::class, 'createDoutor'])->name('users.doutor');
     Route::post('/users/doutor/store', [UserController::class, 'storeDoutor'])->name('users.doutor.store');
@@ -54,11 +57,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/consultas/{id}', [ConsultaController::class, 'update'])->name('consulta.update');
     Route::get('/consultas/{id}/edit', [ConsultaController::class, 'edit'])->name('consulta.edit');
 
+  // chat
+    Route::get('/chat', [ChatController::class, 'showChat'])->name('chat');
+    Route::get('/chat/{usuarioId}', [ChatController::class, 'showChat'])->name('chat.withUser');
+    Route::post('/chat/{usuarioId}/send', [ChatController::class, 'sendMessage'])->name('chat.sendMessage');
+
+
 
     // Páginas de erro ou utilitários protegidos
     Route::view('/video-player', 'video-player')->name('video-player');
     Route::view('/calendar', 'calendar')->name('calendar');
-    Route::view('/chat', 'chat')->name('chat');
+
+
+
     Route::view('/profile', 'profile')->name('profile');
 
     // Demais páginas administrativas
