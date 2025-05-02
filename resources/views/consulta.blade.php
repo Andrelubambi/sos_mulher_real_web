@@ -760,33 +760,23 @@ href="{{ asset('vendors/images/favicon-16x16.png') }}"
 
 
 	<!-- Script para Editar Consulta -->
-<script>
-    function editConsulta(id) {
-        fetch(`/consultas/${id}/edit`)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('descricao').value = data.descricao;
-                document.getElementById('bairro').value = data.bairro;
-                document.getElementById('provincia').value = data.provincia;
-                document.getElementById('data').value = data.data;
-                document.getElementById('medico_id').value = data.medico_id;
-                document.getElementById('editForm').action = `/consultas/${id}`;
-            });
-    }
-</script>
 
-				
-				<script>
-					function editConsulta(id) {
-						fetch(`/users/${id}/edit`)
-							.then(response => response.json())
-							.then(data => {
-								document.getElementById('name').value = data.name;
-								document.getElementById('telefone').value = data.telefone;
-								document.getElementById('editForm').action = `/users/${id}`;
-							});
-					}
-				</script>
+
+<script>
+   function editConsulta(id) {
+    fetch(`/consultas/${id}/edit`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('descricao').value = data.descricao;
+            document.getElementById('bairro').value = data.bairro;
+            document.getElementById('provincia').value = data.provincia;
+            document.getElementById('data').value = data.data;
+            document.getElementById('medico_id').value = data.medico_id;
+            document.getElementById('editForm').action = `/consultas/${id}`;
+        });
+}
+
+</script>
 				
 </div>
 

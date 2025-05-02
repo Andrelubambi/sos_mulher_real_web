@@ -47,10 +47,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     // Consultas
+    
     Route::get('/consultas', [ConsultaController::class, 'index'])->name('consulta');
     Route::post('/consultas', [ConsultaController::class, 'store'])->name('consulta.store');
     Route::delete('/consultas/{id}', [ConsultaController::class, 'destroy'])->name('consulta.destroy');
     Route::put('/consultas/{id}', [ConsultaController::class, 'update'])->name('consulta.update');
+    Route::get('/consultas/{id}/edit', [ConsultaController::class, 'edit'])->name('consulta.edit');
 
 
     // Páginas de erro ou utilitários protegidos

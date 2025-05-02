@@ -96,14 +96,18 @@ public function edit($id)
 
 public function update(Request $request, $id)
 {
-    $user = User::findOrFail($id);
+    $consulta = Consulta::findOrFail($id);
 
     $validated = $request->validate([
-        'name' => 'required|string|max:255',
-       'telefone' => "required|regex:/^(\+?[1-9]{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{5,15}$/|unique:users,telefone,$id",
+        'medico_id' => 'required|exists:users,id',
+        'descricao' => 'required|string',
+        'bairro' => 'required|string',
+        'provincia' => 'required|string',
+        'data' => 'required|date'
     ]);
+    
 
-    $user->update($validated);
+    $consulta->update($validated);
 
     return redirect()->back()->with('success', 'Dados atualizados com sucesso!');
 }
