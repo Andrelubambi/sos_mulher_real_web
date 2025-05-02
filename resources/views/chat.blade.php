@@ -227,20 +227,26 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const userId = {{ auth()->user()->id }}; // ou defina de outro jeito
-        Echo.private('chat.' + userId)
-            .listen('MessageSent', (e) => {
-                console.log('Mensagem recebida:', e);
+    const userId = {{ auth()->user()->id }}; // ID do usuário logado
+    const otherUserId = {{ $usuario->id }}; // ID do outro usuário com quem o usuário está conversando
 
-                const chatBox = document.querySelector('.chat-desc');
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message', 'mb-2');
-                messageDiv.innerHTML = `<strong>${e.remetente.name}:</strong> ${e.conteudo}`;
-                chatBox.appendChild(messageDiv);
+    // Canal exclusivo para a conversa entre dois usuários
+    const channelName = 'chat.' + Math.min(userId, otherUserId) + '-' + Math.max(userId, otherUserId);
 
-                chatBox.scrollTop = chatBox.scrollHeight;
-            });
-    });
+    Echo.private(channelName)
+        .listen('MessageSent', (e) => {
+            console.log('Mensagem recebida:', e);
+
+            const chatBox = document.querySelector('.chat-desc');
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', 'mb-2');
+            messageDiv.innerHTML = `<strong>${e.remetente.name}:</strong> ${e.conteudo}`;
+            chatBox.appendChild(messageDiv);
+
+            chatBox.scrollTop = chatBox.scrollHeight; // Auto rolar para a última mensagem
+        });
+});
+
 </script>
 
 		<!-- Google Tag Manager (noscript) -->

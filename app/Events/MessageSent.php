@@ -29,7 +29,7 @@ class MessageSent implements ShouldBroadcast
         Log::info('Transmissão para o canal', [
             'canal' => 'chat.' . $this->mensagem->remetente->id
         ]);
-        return new PrivateChannel('chat.' . $this->mensagem->para);
+        return new PrivateChannel('chat.' . $this->mensagem->de . '-' . $this->mensagem->para);
     }
 
     public function broadcastWith()
