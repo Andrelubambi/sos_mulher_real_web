@@ -596,9 +596,49 @@
 
 
 
+            <!-- filepath: c:\laragon\www\sos-mulher\resources\views\index.blade.php -->
+            <div class="card-box pb-10">
+                <div class="h5 pd-20 mb-0">Gerenciar Grupos</div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="mb-0">Lista de Grupos</h6>
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#createGroupModal">Criar
+                        Grupo</button>
+                </div>
+                <table class="data-table table nowrap">
+                    <thead>
+                        <tr>
+                            <th>Nome do Grupo</th>
+                            <th>Descrição</th>
+                            <th>Administrador</th>
+                            <th class="datatable-nosort">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($grupos as $grupo)
+                            <tr>
+                                <td>{{ $grupo->nome }}</td>
+                                <td>{{ $grupo->descricao }}</td>
+                                <td>{{ $grupo->admin->name }}</td>
+                                <td>
+                                    <div class="table-actions">
+                                        <form action="{{ route('grupos.destroy', $grupo->id) }}" method="POST"
+                                            style="display: inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm"
+                                                onclick="return confirm('Tem certeza que deseja excluir este grupo?')">
+                                                Excluir
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
 
 
-			
 
 
             <div class="footer-wrap pd-20 mb-20 card-box">
@@ -619,7 +659,37 @@
 
     </div>
 
-    <!-- welcome modal end -->
+    <!-- Modal para Criar Grupo -->
+    <div class="modal fade" id="createGroupModal" tabindex="-1" role="dialog"
+        aria-labelledby="createGroupModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="{{ route('grupos.store') }}" method="POST">
+                    @csrf
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createGroupModalLabel">Criar Novo Grupo</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="nome">Nome do Grupo</label>
+                            <input type="text" class="form-control" id="nome" name="nome" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="descricao">Descrição</label>
+                            <textarea class="form-control" id="descricao" name="descricao" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Criar Grupo</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <!-- js -->
     <script src="{{ asset('vendors/scripts/core.js') }}"></script>
     <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>

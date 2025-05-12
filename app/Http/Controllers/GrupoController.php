@@ -28,7 +28,7 @@ class GrupoController extends Controller
             'admin_id' => auth()->id(),
         ]);
 
-        return redirect()->route('grupos.index')->with('success', 'Grupo criado com sucesso!');
+        return redirect()->route('index')->with('success', 'Grupo criado com sucesso!');
     }
 
     public function show(Grupo $grupo)
@@ -36,6 +36,20 @@ class GrupoController extends Controller
         $mensagens = MensagemGrupo::where('grupo_id', $grupo->id)->with('user')->orderBy('created_at', 'asc')->get();
         return view('grupos.show', compact('grupo', 'mensagens'));
     }
+
+
+public function destroy(Grupo $grupo)
+{
+    if (auth()->id() !== $grupo->admin_id) {
+        return redirect()->route('index')->with('error', 'Apenas o administrador do grupo pode excluir.');
+    }
+
+    $grupo->delete();
+
+    return redirect()->route('index')->with('success', 'Grupo excluído com sucesso!');
+}
+
+
 
     public function sendMessage(Request $request, Grupo $grupo)
     {

@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\GrupoController;
+use App\Http\Controllers\DashboardController;
 
 
 Route::middleware('auth:web')->group(function () {
@@ -13,9 +14,7 @@ Route::middleware('auth:web')->group(function () {
 });
 
 
-Route::middleware('auth:sanctum')->get('/', function () {
-    return view('index');  
-})->name('index');
+Route::middleware('auth:sanctum')->get('/', [DashboardController::class, 'index'])->name('index');
 
  
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login.form');
@@ -74,6 +73,8 @@ Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->n
   Route::post('/grupos/{grupo}/entrar', [GrupoController::class, 'entrar'])->name('grupos.entrar');
   Route::post('/grupos/{grupo}/sair', [GrupoController::class, 'sair'])->name('grupos.sair');
   Route::delete('/grupos/{grupo}/remover/{user}', [GrupoController::class, 'removerUsuario'])->name('grupos.removerUsuario');
+  Route::post('/grupos', [GrupoController::class, 'store'])->name('grupos.store');
+    Route::delete('/grupos/{grupo}', [GrupoController::class, 'destroy'])->name('grupos.destroy');
 
     // Páginas de erro ou utilitários protegidos
     Route::view('/video-player', 'video-player')->name('video-player');

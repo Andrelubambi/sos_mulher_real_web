@@ -4445,7 +4445,6 @@ body.IE .register-page-wrap .container {
     background-color: #0056b3;
 }
 
-
 /* Mensagens */
 .message {
     display: flex;
@@ -4486,4 +4485,32 @@ body.IE .register-page-wrap .container {
     background-color: #f1f1f1;
     color: #333;
     border-radius: 15px 15px 15px 0;
+}
+
+/* Estilo para a tabela de grupos */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+    text-align: left;
+}
+
+.data-table th,
+.data-table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+.data-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.data-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.data-table tbody tr:hover {
+    background-color: #f1f1f1;
 }
