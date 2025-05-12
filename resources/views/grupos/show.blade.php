@@ -7,6 +7,8 @@
     <meta charset="utf-8" />
     <title>Grupo: {{ $grupo->nome }}</title>
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <!-- Site favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('vendors/images/apple-touch-icon.png') }}" />
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('vendors/images/favicon-32x32.png') }}" />
@@ -21,67 +23,11 @@
 
     <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/core.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/icon-font.min.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ asset('src/plugins/datatables/css/dataTables.bootstrap4.min.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ asset('src/plugins/datatables/css/responsive.bootstrap4.min.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}" />
 </head>
 
 <body>
-    <div class="pre-loader">
-        <div class="pre-loader-box">
-            <div class="loader-logo">
-                <img src="{{ asset('vendors/images/deskapp-logo.svg') }}" alt="" />
-            </div>
-            <div class="loader-progress" id="progress_div">
-                <div class="bar" id="bar1"></div>
-            </div>
-            <div class="percent" id="percent1">0%</div>
-            <div class="loading-text">Loading...</div>
-        </div>
-    </div>
-
-    <div class="header">
-        <div class="header-left">
-            <div class="menu-icon bi bi-list"></div>
-            <div class="search-toggle-icon bi bi-search" data-toggle="header_search"></div>
-        </div>
-        <div class="header-right">
-            <div class="dashboard-setting user-notification">
-                <div class="dropdown">
-                    <a class="dropdown-toggle no-arrow" href="javascript:;" data-toggle="right-sidebar">
-                        <i class="dw dw-settings2"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="user-notification">
-                <div class="dropdown">
-                    <a class="dropdown-toggle no-arrow" href="#" role="button" data-toggle="dropdown">
-                        <i class="icon-copy dw dw-notification"></i>
-                        <span class="badge notification-active"></span>
-                    </a>
-                </div>
-            </div>
-            <div class="user-info-dropdown">
-                <div class="dropdown">
-                    <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown">
-                        <span class="user-icon">
-                            <img src="{{ asset('vendors/images/photo1.jpg') }}" alt="" />
-                        </span>
-                        <span class="user-name">Olá, {{ Auth::user()->name }}</span>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="left-side-bar">
-        <div class="brand-logo">
-            <a href="{{ route('index') }}">
-                <img src="{{ asset('vendors/images/deskapp-logo.svg') }}" alt="" class="dark-logo" />
-                <img src="{{ asset('vendors/images/deskapp-logo-white.svg') }}" alt="" class="light-logo" />
-            </a>
-        </div>
         <div class="menu-block customscroll">
             <div class="sidebar-menu">
                 <ul id="accordion-menu">
@@ -110,45 +56,121 @@
             </div>
         </div>
     </div>
+    <div class="mobile-menu-overlay"></div>
 
     <div class="main-container">
-        <div class="xs-pd-20-10 pd-ltr-20">
-            <div class="title pb-20">
-                <h2 class="h3 mb-0">Grupo: {{ $grupo->nome }}</h2>
-            </div>
-
-            <div class="card-box pb-10">
-                <h5 class="pd-20 mb-0">Descrição</h5>
-                <p class="pd-20">{{ $grupo->descricao }}</p>
-            </div>
-
-            <div class="card-box pb-10">
-                <h5 class="pd-20 mb-0">Usuários no Grupo</h5>
-                <ul class="pd-20">
-                    @foreach ($usuarios as $usuario)
-                        <li>{{ $usuario->name }} ({{ $usuario->email }})</li>
-                    @endforeach
-                </ul>
-            </div>
-
-            <div class="card-box pb-10">
-                <h5 class="pd-20 mb-0">Mensagens</h5>
-                <div class="pd-20">
-                    @foreach ($mensagens as $mensagem)
-                        <div>
-                            <strong>{{ $mensagem->user->name }}:</strong>
-                            <p>{{ $mensagem->conteudo }}</p>
+        <div class="pd-ltr-20 xs-pd-20-10">
+            <div class="min-height-200px">
+                <div class="page-header">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12">
+                            <div class="title">
+                                <h4>Grupo: {{ $grupo->nome }}</h4>
+                            </div>
+                            <nav aria-label="breadcrumb" role="navigation">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item">
+                                        <a href="{{ route('index') }}">Home</a>
+                                    </li>
+                                    <li class="breadcrumb-item active" aria-current="page">
+                                        {{ $grupo->nome }}
+                                    </li>
+                                </ol>
+                            </nav>
                         </div>
-                    @endforeach
+                    </div>
+                </div>
+
+                <div class="bg-white border-radius-4 box-shadow mb-30">
+                    <div class="row no-gutters">
+                        <div class="chat-container">
+                            <!-- Caixa de Chat -->
+                            <div class="chat-box">
+                                <div class="chat-header">
+                                    <h4 id="chat-with">Mensagens do Grupo</h4>
+                                </div>
+                                <div id="messages" class="chat-messages">
+                                    <div class="text-muted">Nenhuma mensagem ainda.</div>
+                                </div>
+                                <form id="sendMessageForm" class="chat-input">
+                                    @csrf
+                                    <textarea name="conteudo" id="conteudo" placeholder="Digite sua mensagem..."
+                                        required></textarea>
+                                    <button type="submit" class="btn-send">Enviar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- JS -->
     <script src="{{ asset('vendors/scripts/core.js') }}"></script>
     <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>
     <script src="{{ asset('vendors/scripts/process.js') }}"></script>
     <script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const messagesDiv = document.getElementById('messages');
+            const sendMessageForm = document.getElementById('sendMessageForm');
+            const conteudoInput = document.getElementById('conteudo');
+
+            // Carregar mensagens do grupo
+            fetch(`/grupos/{{ $grupo->id }}/mensagens`)
+                .then(response => response.json())
+                .then(messages => {
+                    messagesDiv.innerHTML = '';
+                    if (messages.length === 0) {
+                        messagesDiv.innerHTML = '<div class="text-muted">Nenhuma mensagem ainda.</div>';
+                    } else {
+                        messages.forEach(message => {
+                            const messageDiv = document.createElement('div');
+                            messageDiv.classList.add('message', message.user_id === {{ auth()->id() }} ? 'sent' : 'received');
+                            messageDiv.innerHTML = `
+                                <div class="message-content">
+                                    <strong>${message.user_id === {{ auth()->id() }} ? 'Você' : message.user.name}:</strong>
+                                    ${message.conteudo}
+                                </div>
+                            `;
+                            messagesDiv.appendChild(messageDiv);
+                        });
+                    }
+                });
+
+            // Enviar nova mensagem
+            sendMessageForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const conteudo = conteudoInput.value;
+
+                fetch(`/grupos/{{ $grupo->id }}/mensagens`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        },
+                        body: JSON.stringify({
+                            conteudo
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(message => {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.classList.add('message', 'sent');
+                        messageDiv.innerHTML = `
+                            <div class="message-content">
+                                <strong>Você:</strong>
+                                ${message.conteudo}
+                            </div>
+                        `;
+                        messagesDiv.appendChild(messageDiv);
+                        conteudoInput.value = '';
+                    });
+            });
+        });
+    </script>
 </body>
 
 </html>
