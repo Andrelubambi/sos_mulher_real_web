@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Grupo;
 use App\Models\User;
 use App\Models\MensagemGrupo;
+use App\Events\GroupMessageSent;
 use Illuminate\Http\Request;
 
 class GrupoController extends Controller
@@ -56,6 +57,8 @@ class GrupoController extends Controller
         return view('grupos.show', compact('grupo','grupos', 'mensagens', 'usuarios'));
     }
 
+    
+
 
 
     public function destroy(Grupo $grupo)
@@ -74,16 +77,18 @@ class GrupoController extends Controller
     public function sendMessage(Request $request, Grupo $grupo)
     {
         $request->validate([
-            'conteudo' => 'required|string',
+            'conteudo' => 'required|string|max:1000',
         ]);
-
-        MensagemGrupo::create([
+    
+        $mensagem = MensagemGrupo::create([
             'grupo_id' => $grupo->id,
             'user_id' => auth()->id(),
             'conteudo' => $request->conteudo,
         ]);
-
-        return response()->json(['success' => true]);
+    
+        event(new GroupMessageSent($mensagem));
+    
+        return response()->json($mensagem);
     }
 
     public function entrar(Grupo $grupo)

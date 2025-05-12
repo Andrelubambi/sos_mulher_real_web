@@ -17,3 +17,11 @@ Broadcast::channel('chat.{userId}', function ($user, $userId) {
     return (int) $user->id === (int) $userId;
 });
 
+
+
+use App\Models\Grupo;
+
+Broadcast::channel('grupo.{grupoId}', function ($user, $grupoId) {
+    $grupo = Grupo::find($grupoId);
+    return $grupo && $grupo->users->contains($user->id);
+});

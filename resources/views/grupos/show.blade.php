@@ -151,7 +151,16 @@
 
                     <!-- Mensagens -->
                     <div id="messages" class="chat-messages">
-                        <div class="text-muted">Nenhuma mensagem ainda.</div>
+                        @forelse ($mensagens as $mensagem)
+                            <div class="message {{ $mensagem->user_id === auth()->id() ? 'sent' : 'received' }}">
+                                <div class="message-content">
+                                    <strong>{{ $mensagem->user_id === auth()->id() ? 'Você' : $mensagem->user->name }}:</strong>
+                                    {{ $mensagem->conteudo }}
+                                </div>
+                            </div>
+                        @empty
+                            <div class="text-muted">Nenhuma mensagem ainda.</div>
+                        @endforelse
                     </div>
 
                     <!-- Formulário de Envio -->
@@ -170,65 +179,57 @@
     <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>
     <script src="{{ asset('vendors/scripts/process.js') }}"></script>
     <script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
+    <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
     <script>
-       document.addEventListener('DOMContentLoaded', function () {
-    const messagesDiv = document.getElementById('messages');
-    const sendMessageForm = document.getElementById('sendMessageForm');
-    const conteudoInput = document.getElementById('conteudo');
+        document.addEventListener('DOMContentLoaded', function() {
+            const messagesDiv = document.getElementById('messages');
+            const sendMessageForm = document.getElementById('sendMessageForm');
+            const conteudoInput = document.getElementById('conteudo');
 
-    // Carregar mensagens do grupo
-    fetch(`/grupos/{{ $grupo->id }}/mensagens`)
-        .then(response => response.json())
-        .then(messages => {
-            messagesDiv.innerHTML = '';
-            if (messages.length === 0) {
-                messagesDiv.innerHTML = '<div class="text-muted">Nenhuma mensagem ainda.</div>';
-            } else {
-                messages.forEach(message => {
-                    const messageDiv = document.createElement('div');
-                    messageDiv.classList.add('message', message.user_id === {{ auth()->id() }} ? 'sent' : 'received');
-                    messageDiv.innerHTML = `
-                        <div class="message-content">
-                            <strong>${message.user_id === {{ auth()->id() }} ? 'Você' : message.user.name}:</strong>
-                            ${message.conteudo}
-                        </div>
-                    `;
-                    messagesDiv.appendChild(messageDiv);
-                });
-            }
-        });
+            Pusher.logToConsole = true;
 
-    // Enviar nova mensagem
-    sendMessageForm.addEventListener('submit', function (e) {
-        e.preventDefault();
+            const pusher = new Pusher('{{ env('PUSHER_APP_KEY') }}', {
+                cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
+                encrypted: true,
+                authEndpoint: '/broadcasting/auth',
+            });
 
-        const conteudo = conteudoInput.value;
+            const channel = pusher.subscribe(`private-grupo.{{ $grupo->id }}`);
 
-        fetch(`/grupos/{{ $grupo->id }}/mensagens`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            },
-            body: JSON.stringify({
-                conteudo
-            }),
-        })
-            .then(response => response.json())
-            .then(message => {
+            channel.bind('App\\Events\\GroupMessageSent', function(data) {
                 const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message', 'sent');
+                messageDiv.classList.add('message', data.user_id === {{ auth()->id() }} ? 'sent' :
+                    'received');
                 messageDiv.innerHTML = `
                     <div class="message-content">
-                        <strong>Você:</strong>
-                        ${message.conteudo}
+                        <strong>${data.user_id === {{ auth()->id() }} ? 'Você' : data.user.name}:</strong>
+                        ${data.conteudo}
                     </div>
                 `;
                 messagesDiv.appendChild(messageDiv);
-                conteudoInput.value = '';
             });
-    });
-});
+
+            sendMessageForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const conteudo = conteudoInput.value;
+
+                fetch(`/grupos/{{ $grupo->id }}/mensagens`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        },
+                        body: JSON.stringify({
+                            conteudo
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(message => {
+                        conteudoInput.value = '';
+                    });
+            });
+        });
     </script>
 </body>
 

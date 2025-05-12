@@ -44,7 +44,7 @@ class ChatController extends Controller
         ->get();
 
     return response()->json($messages);
-}
+    }
     
     public function showChatWithUser($usuarioId)
     {
@@ -94,4 +94,26 @@ class ChatController extends Controller
     //return redirect()->route('chat', ['usuarioId' => $usuarioId]);
     return response()->json($mensagem);
     }
+
+
+public function sendToInterns(Request $request)
+{
+    $request->validate([
+        'conteudo' => 'required|string|max:1000',
+    ]);
+
+    $estagiarios = User::where('role', 'estagiario')->get();
+
+    foreach ($estagiarios as $estagiario) {
+        $mensagem = Mensagem::create([
+            'de' => auth()->id(),
+            'para' => $estagiario->id,
+            'conteudo' => $request->conteudo,
+        ]);
+
+        event(new MessageSent($mensagem));
+    }
+
+    return response()->json(['success' => true, 'message' => 'Mensagem enviada para todos os estagiários.']);
+}
 }

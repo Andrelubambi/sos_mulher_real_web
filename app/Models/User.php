@@ -53,7 +53,6 @@ public function isMedico()
 }
 
 
-    // Relacionamentos
     public function consultasCriadas()
     {
         return $this->hasMany(Consulta::class, 'criador_id');
