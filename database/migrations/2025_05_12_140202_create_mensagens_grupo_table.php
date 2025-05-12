@@ -11,25 +11,23 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('mensagens', function (Blueprint $table) {
+        Schema::create('mensagens_grupo', function (Blueprint $table) {
             $table->id();
-    
-            $table->unsignedBigInteger('de');
-            $table->unsignedBigInteger('para');
+            $table->unsignedBigInteger('grupo_id');
+            $table->unsignedBigInteger('user_id');
             $table->text('conteudo');
             $table->timestamps();
-            $table->foreign('de')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('para')->references('id')->on('users')->onDelete('cascade');
+
+            $table->foreign('grupo_id')->references('id')->on('grupos')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
-    
-
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('mensagens');
+        Schema::dropIfExists('mensagens_grupo');
     }
 };
