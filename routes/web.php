@@ -6,6 +6,12 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\ChatController;
 
+
+Route::middleware('auth:web')->group(function () {
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+});
+
+
 Route::middleware('auth:sanctum')->get('/', function () {
     return view('index');  
 })->name('index');
@@ -28,9 +34,6 @@ Route::view('/blog-detail', 'blog-detail')->name('blog-detail');
 Route::view('/gallery', 'gallery')->name('gallery');
 
 Route::middleware('auth:sanctum')->group(function () {
-
- 
-    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
  
     Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
@@ -58,12 +61,9 @@ Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->n
     Route::get('/consultas/{id}/edit', [ConsultaController::class, 'edit'])->name('consulta.edit');
 
   // chat
-    Route::get('/chat', [ChatController::class, 'showChatIndex'])->name('chat');
-    Route::get('/chat/{usuarioId}', [ChatController::class, 'showChatWithUser'])->name('chat.withUser');
-    Route::post('/send-message/{usuarioId}', [ChatController::class, 'sendMessage'])
-     ->name('sendMessage');
-
-
+  Route::get('/chat', [ChatController::class, 'index'])->name('chat');
+  Route::get('/chat/messages/{usuarioId}', [ChatController::class, 'getMessages'])->name('chat.getMessages');
+  Route::post('/chat/send/{usuarioId}', [ChatController::class, 'sendMessage'])->name('chat.sendMessage');
 
     // Páginas de erro ou utilitários protegidos
     Route::view('/video-player', 'video-player')->name('video-player');
