@@ -412,12 +412,18 @@
                         </a>
 
                     </li>
-                    <li>
-                        <a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle">
                             <span class="micon bi bi-chat-right-dots"></span>
                             <span class="mtext">Grupos</span>
                         </a>
-
+                        <ul class="submenu">
+                            @foreach ($grupos as $grupo)
+                                <li>
+                                    <a href="{{ route('grupos.show', $grupo->id) }}">{{ $grupo->nome }}</a>
+                                </li>
+                            @endforeach
+                        </ul>
                     </li>
 
 
@@ -534,14 +540,6 @@
                     </div>
                 </div>
             </div>
-
-
-
-
-
-
-
-
 
 
             <div class="card-box pb-10">

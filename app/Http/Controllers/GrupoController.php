@@ -12,7 +12,7 @@ class GrupoController extends Controller
     public function index()
     {
         $grupos = Grupo::with('admin')->get();
-        return view('grupos.index', compact('grupos'));
+        return view('index', compact('grupos'));
     }
 
     public function store(Request $request)
@@ -33,13 +33,15 @@ class GrupoController extends Controller
 
     public function show(Grupo $grupo)
     {
-        $mensagens = MensagemGrupo::where('grupo_id', $grupo->id)->with('user')->orderBy('created_at', 'asc')->get();
+        $mensagens = MensagemGrupo::where('grupo_id', $grupo->id)
+        ->with('user')
+        ->orderBy('created_at', 'asc')->get();
         return view('grupos.show', compact('grupo', 'mensagens'));
     }
 
 
-public function destroy(Grupo $grupo)
-{
+    public function destroy(Grupo $grupo)
+    {
     if (auth()->id() !== $grupo->admin_id) {
         return redirect()->route('index')->with('error', 'Apenas o administrador do grupo pode excluir.');
     }
@@ -47,7 +49,7 @@ public function destroy(Grupo $grupo)
     $grupo->delete();
 
     return redirect()->route('index')->with('success', 'Grupo excluído com sucesso!');
-}
+    }
 
 
 
@@ -71,12 +73,16 @@ public function destroy(Grupo $grupo)
         $grupo->users()->attach(auth()->id());
         return redirect()->route('grupos.show', $grupo->id)->with('success', 'Você entrou no grupo!');
     }
+
+
     
     public function sair(Grupo $grupo)
     {
         $grupo->users()->detach(auth()->id());
         return redirect()->route('grupos.index')->with('success', 'Você saiu do grupo!');
     }
+
+
 
     public function removerUsuario(Grupo $grupo, User $user)
     {

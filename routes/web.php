@@ -66,15 +66,18 @@ Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->n
   Route::post('/chat/send/{usuarioId}', [ChatController::class, 'sendMessage'])->name('chat.sendMessage');
 
   // Grupos
-  Route::get('/grupos', [GrupoController::class, 'index'])->name('grupos.index');
-  Route::post('/grupos', [GrupoController::class, 'store'])->name('grupos.store');
-  Route::get('/grupos/{grupo}', [GrupoController::class, 'show'])->name('grupos.show');
-  Route::post('/grupos/{grupo}/mensagens', [GrupoController::class, 'sendMessage'])->name('grupos.mensagens.send');
-  Route::post('/grupos/{grupo}/entrar', [GrupoController::class, 'entrar'])->name('grupos.entrar');
-  Route::post('/grupos/{grupo}/sair', [GrupoController::class, 'sair'])->name('grupos.sair');
-  Route::delete('/grupos/{grupo}/remover/{user}', [GrupoController::class, 'removerUsuario'])->name('grupos.removerUsuario');
-  Route::post('/grupos', [GrupoController::class, 'store'])->name('grupos.store');
-    Route::delete('/grupos/{grupo}', [GrupoController::class, 'destroy'])->name('grupos.destroy');
+   Route::get('/grupos', [GrupoController::class, 'index'])->name('grupos.index');
+   Route::post('/grupos', [GrupoController::class, 'store'])->name('grupos.store');
+   Route::get('/grupos/{grupo}', [GrupoController::class, 'show'])->name('grupos.show');
+   Route::post('/grupos/{grupo}/mensagens', [GrupoController::class, 'sendMessage'])->name('grupos.mensagens.send');
+   Route::post('/grupos/{grupo}/entrar', [GrupoController::class, 'entrar'])->name('grupos.entrar');
+   Route::post('/grupos/{grupo}/sair', [GrupoController::class, 'sair'])->name('grupos.sair');
+   Route::delete('/grupos/{grupo}/remover/{user}', [GrupoController::class, 'removerUsuario'])->name('grupos.removerUsuario');
+   Route::post('/grupos', [GrupoController::class, 'store'])->name('grupos.store');
+   Route::delete('/grupos/{grupo}', [GrupoController::class, 'destroy'])->name('grupos.destroy');
+   Route::get('/grupos', [GrupoController::class, 'index'])->name('grupos.index');
+   Route::get('/grupos/{grupo}', [GrupoController::class, 'show'])->name('grupos.show');
+   
 
     // Páginas de erro ou utilitários protegidos
     Route::view('/video-player', 'video-player')->name('video-player');
