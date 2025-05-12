@@ -76,6 +76,7 @@ Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->n
    Route::delete('/grupos/{grupo}', [GrupoController::class, 'destroy'])->name('grupos.destroy');
    Route::get('/grupos', [GrupoController::class, 'index'])->name('grupos.index');
    Route::get('/grupos/{grupo}', [GrupoController::class, 'show'])->name('grupos.show');
+   Route::get('/grupos/{grupo}/mensagens', [GrupoController::class, 'getMensagens'])->name('grupos.mensagens');
    
 
     // Páginas de erro ou utilitários protegidos

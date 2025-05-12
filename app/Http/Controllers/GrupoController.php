@@ -31,6 +31,17 @@ class GrupoController extends Controller
         return redirect()->route('index')->with('success', 'Grupo criado com sucesso!');
     }
 
+
+    public function getMensagens(Grupo $grupo)
+{
+    $mensagens = MensagemGrupo::where('grupo_id', $grupo->id)
+        ->with('user') 
+        ->orderBy('created_at', 'asc')
+        ->get();
+
+    return response()->json($mensagens);
+}
+
     public function show(Grupo $grupo)
     {
         $grupos= Grupo::all();
