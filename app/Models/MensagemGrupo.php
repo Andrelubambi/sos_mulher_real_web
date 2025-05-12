@@ -9,7 +9,13 @@ class MensagemGrupo extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['grupo_id', 'user_id', 'conteudo'];
+    protected $table = 'mensagens_grupo';
+
+    protected $fillable = [
+        'grupo_id', 
+        'user_id', 
+        'conteudo'
+    ];
 
     public function grupo()
     {

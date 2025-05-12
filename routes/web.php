@@ -68,7 +68,6 @@ Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->n
   // Grupos
    Route::get('/grupos', [GrupoController::class, 'index'])->name('grupos.index');
    Route::post('/grupos', [GrupoController::class, 'store'])->name('grupos.store');
-   Route::get('/grupos/{grupo}', [GrupoController::class, 'show'])->name('grupos.show');
    Route::post('/grupos/{grupo}/mensagens', [GrupoController::class, 'sendMessage'])->name('grupos.mensagens.send');
    Route::post('/grupos/{grupo}/entrar', [GrupoController::class, 'entrar'])->name('grupos.entrar');
    Route::post('/grupos/{grupo}/sair', [GrupoController::class, 'sair'])->name('grupos.sair');

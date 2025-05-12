@@ -33,11 +33,18 @@ class GrupoController extends Controller
 
     public function show(Grupo $grupo)
     {
+        $grupos= Grupo::all();
+        
         $mensagens = MensagemGrupo::where('grupo_id', $grupo->id)
         ->with('user')
-        ->orderBy('created_at', 'asc')->get();
-        return view('grupos.show', compact('grupo', 'mensagens'));
+        ->orderBy('created_at', 'asc')
+        ->get();
+
+        $usuarios = $grupo->users;
+
+        return view('grupos.show', compact('grupo','grupos', 'mensagens', 'usuarios'));
     }
+
 
 
     public function destroy(Grupo $grupo)

@@ -9,7 +9,11 @@ class Grupo extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nome', 'descricao', 'admin_id'];
+    protected $fillable = [
+        'nome', 
+        'descricao', 
+        'admin_id'
+    ];
 
     public function admin()
     {
