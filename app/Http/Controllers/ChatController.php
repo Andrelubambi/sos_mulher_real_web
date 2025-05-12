@@ -21,28 +21,30 @@ class ChatController extends Controller
     }
 
     public function getMessages($usuarioId)
-    {
-        $usuario = User::find($usuarioId);
-    
-        if (!$usuario) {
-            return response()->json(['error' => 'Usuário não encontrado'], 404);
-        }
-    
-        $usuarioLogado = auth()->user();
-    
-        $messages = Mensagem::where(function ($query) use ($usuarioLogado, $usuario) {
-                $query->where('de', $usuarioLogado->id)
-                      ->where('para', $usuario->id);
-            })
-            ->orWhere(function ($query) use ($usuarioLogado, $usuario) {
-                $query->where('de', $usuario->id)
-                      ->where('para', $usuarioLogado->id);
-            })
-            ->orderBy('created_at', 'asc')
-            ->get();
-    
-        return response()->json($messages);
+{
+    $usuario = User::find($usuarioId);
+
+    if (!$usuario) {
+        return response()->json(['error' => 'Usuário não encontrado'], 404);
     }
+
+    $usuarioLogado = auth()->user();
+
+
+    $messages = Mensagem::where(function ($query) use ($usuarioLogado, $usuario) {
+            $query->where('de', $usuarioLogado->id)
+                  ->where('para', $usuario->id);
+        })
+        ->orWhere(function ($query) use ($usuarioLogado, $usuario) {
+            $query->where('de', $usuario->id)
+                  ->where('para', $usuarioLogado->id);
+        })
+        ->with('remetente') 
+        ->orderBy('created_at', 'asc')
+        ->get();
+
+    return response()->json($messages);
+}
     
     public function showChatWithUser($usuarioId)
     {

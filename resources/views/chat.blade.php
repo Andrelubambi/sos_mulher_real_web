@@ -111,52 +111,47 @@
 
                 <div class="bg-white border-radius-4 box-shadow mb-30">
                     <div class="row no-gutters">
-                        <!-- Lista de Usuários -->
-                        <div class="col-lg-3 col-md-4 col-sm-12">
-                            <div class="chat-list bg-light-gray">
-                                <div class="chat-search">
-                                    <span class="ti-search"></span>
-                                    <input type="text" placeholder="Search Contact" />
+                        <!-- filepath: c:\laragon\www\sos-mulher\resources\views\chat.blade.php -->
+                        <div class="chat-container">
+                            <!-- Lista de Usuários -->
+                            <div class="user-list">
+                                <div class="chat-header">
+                                    <h4>Usuários Disponíveis</h4>
+                                    <input type="text" class="chat-search" placeholder="Pesquisar usuário..." />
                                 </div>
-                                <div class="notification-list chat-notification-list customscroll">
-                                    <ul>
-                                        @foreach ($usuariosNaoDoutores as $usuario)
-                                            <li>
-                                                <a href="javascript:void(0);" class="user"
-                                                    data-id="{{ $usuario->id }}">
-                                                    <img src="vendors/images/profile-photo.jpg" alt="" />
-                                                    <h3 class="clearfix">{{ $usuario->name }}</h3>
-                                                    <p>
-                                                        <i class="fa fa-circle text-light-green"></i>
-                                                        {{ $usuario->role }}
-                                                    </p>
-                                                </a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </div>
+                                <ul class="user-items">
+                                    @foreach ($usuariosNaoDoutores as $usuario)
+                                        <li class="user-item" data-id="{{ $usuario->id }}">
+                                            <img src="{{ $usuario->profile_photo_url ?? 'vendors/images/default-avatar.png' }}"
+                                                alt="Foto de {{ $usuario->name }}" class="user-avatar" />
+                                            <div class="user-info">
+                                                <h5>{{ $usuario->name }}</h5>
+                                                <p>Última mensagem...</p>
+                                            </div>
+                                            <span class="message-time">13:02</span>
+                                        </li>
+                                    @endforeach
+                                </ul>
                             </div>
-                        </div>
 
-                        <div class="col-lg-9 col-md-8 col-sm-12">
+                            <!-- Caixa de Chat -->
                             <div class="chat-box">
-                                <div id="messages" class="chat-desc customscroll">
-                                    @forelse($messages ?? [] as $message)
-                                        <div class="{{ $message->de === auth()->user()->id ? 'sent' : 'received' }}">
-                                            <strong>{{ $message->de === auth()->user()->id ? 'Você' : $message->remetente->name }}:</strong>
-                                            {{ $message->conteudo }}
-                                        </div>
-                                    @empty
-                                        <div class="text-muted">Nenhuma mensagem ainda.</div>
-                                    @endforelse
+                                <div class="chat-header">
+                                    <h4 id="chat-with">Selecione um usuário para iniciar o chat</h4>
                                 </div>
-                                <form id="sendMessageForm" style="display: none;">
+                                <div id="messages" class="chat-messages">
+									<div class="text-muted">Nenhuma mensagem ainda.</div>
+								</div>
+                                <form id="sendMessageForm" class="chat-input">
                                     @csrf
                                     <textarea name="conteudo" id="conteudo" placeholder="Digite sua mensagem..." required></textarea>
-                                    <button type="submit">Enviar</button>
+                                    <button type="submit" class="btn-send">Enviar</button>
                                 </form>
                             </div>
                         </div>
+
+
+
                     </div>
                 </div>
             </div>
@@ -175,184 +170,41 @@
     <script src="vendors/scripts/script.min.js"></script>
     <script src="vendors/scripts/process.js"></script>
     <script src="vendors/scripts/layout-settings.js"></script>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const userId = {{ auth()->user()->id }};
-            const otherUserId = {{ $usuario->id }};
-
-            const channelName = 'chat.' + Math.min(userId, otherUserId) + '-' + Math.max(userId, otherUserId);
-
-            Echo.private(channelName)
-                .listen('MessageSent', (e) => {
-                    console.log('Mensagem recebida:', e);
-
-                    const chatBox = document.querySelector('.chat-desc');
-                    const messageDiv = document.createElement('div');
-                    messageDiv.classList.add('message', 'mb-2');
-                    messageDiv.innerHTML = `<strong>${e.remetente.name}:</strong> ${e.conteudo}`;
-                    chatBox.appendChild(messageDiv);
-
-                    chatBox.scrollTop = chatBox.scrollHeight;
-                });
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const userList = document.querySelectorAll('.user');
+            const userList = document.querySelectorAll('.user-item');
             const messagesDiv = document.getElementById('messages');
             const sendMessageForm = document.getElementById('sendMessageForm');
             const conteudoInput = document.getElementById('conteudo');
-            let selectedUserId = null;
-
-            userList.forEach(user => {
-                user.addEventListener('click', function() {
-                    selectedUserId = this.dataset.id;
-
-                    fetch(`/chat/messages/${selectedUserId}`)
-                        .then(response => response.json())
-                        .then(messages => {
-                            messagesDiv.innerHTML = '';
-                            messages.forEach(message => {
-                                const messageDiv = document.createElement('div');
-                                messageDiv.classList.add(
-                                    message.de === {{ auth()->user()->id }} ?
-                                    'sent' : 'received'
-                                );
-                                messageDiv.textContent = message.conteudo;
-                                messagesDiv.appendChild(messageDiv);
-                            });
-                        });
-                });
-            });
-
-
-            sendMessageForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                if (!selectedUserId) {
-                    alert('Selecione um usuário para enviar a mensagem.');
-                    return;
-                }
-
-                const conteudo = conteudoInput.value;
-
-                fetch(`/chat/send/${selectedUserId}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        },
-                        body: JSON.stringify({
-                            conteudo
-                        }),
-                    })
-                    .then(response => response.json())
-                    .then(message => {
-                        const messageDiv = document.createElement('div');
-                        messageDiv.classList.add('sent');
-                        messageDiv.textContent = message.conteudo;
-                        messagesDiv.appendChild(messageDiv);
-                        conteudoInput.value = '';
-                    });
-            });
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const userList = document.querySelectorAll('.user');
-            const messagesDiv = document.getElementById('messages');
-            const sendMessageForm = document.getElementById('sendMessageForm');
-            const conteudoInput = document.getElementById('conteudo');
+            const chatWithHeader = document.getElementById('chat-with');
             let selectedUserId = null;
 
             // Carregar mensagens ao clicar em um usuário
             userList.forEach(user => {
                 user.addEventListener('click', function() {
                     selectedUserId = this.dataset.id;
+                    const userName = this.querySelector('.user-info h5').textContent;
 
+                    chatWithHeader.textContent = `Chat com ${userName}`;
                     fetch(`/chat/messages/${selectedUserId}`)
                         .then(response => response.json())
                         .then(messages => {
                             messagesDiv.innerHTML = '';
                             messages.forEach(message => {
                                 const messageDiv = document.createElement('div');
-                                messageDiv.classList.add(
-                                    message.de === {{ auth()->user()->id }} ?
-                                    'sent' : 'received'
-                                );
-                                messageDiv.textContent = message.conteudo;
+                                messageDiv.classList.add('message', message.de ===
+                                    {{ auth()->user()->id }} ? 'sent' : 'received');
+                                messageDiv.innerHTML = `
+									<img src="${message.remetente.profile_photo_url ?? 'vendors/images/default-avatar.png'}" alt="${message.remetente.name}" class="message-avatar">
+									<div class="message-content">
+										<strong>${message.de === {{ auth()->user()->id }} ? 'Você' : message.remetente.name}:</strong>
+										${message.conteudo}
+									</div>
+								`;
                                 messagesDiv.appendChild(messageDiv);
                             });
 
-                            // Exibir o formulário de envio de mensagens
-                            sendMessageForm.style.display = 'block';
-                        });
-                });
-            });
-
-            sendMessageForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                if (!selectedUserId) {
-                    alert('Selecione um usuário para enviar a mensagem.');
-                    return;
-                }
-
-                const conteudo = conteudoInput.value;
-
-                fetch(`/chat/send/${selectedUserId}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        },
-                        body: JSON.stringify({
-                            conteudo
-                        }),
-                    })
-                    .then(response => response.json())
-                    .then(message => {
-                        const messageDiv = document.createElement('div');
-                        messageDiv.classList.add('sent');
-                        messageDiv.textContent = message.conteudo;
-                        messagesDiv.appendChild(messageDiv);
-                        conteudoInput.value = '';
-                    });
-            });
-        });
-    </script>
-
-    <script class="">
-        document.addEventListener('DOMContentLoaded', function() {
-            const userList = document.querySelectorAll('.user');
-            const messagesDiv = document.getElementById('messages');
-            const sendMessageForm = document.getElementById('sendMessageForm');
-            const conteudoInput = document.getElementById('conteudo');
-            let selectedUserId = null;
-
-            // Carregar mensagens ao clicar em um usuário
-            userList.forEach(user => {
-                user.addEventListener('click', function() {
-                    selectedUserId = this.dataset.id;
-
-                    fetch(`/chat/messages/${selectedUserId}`)
-                        .then(response => response.json())
-                        .then(messages => {
-                            messagesDiv.innerHTML = '';
-                            messages.forEach(message => {
-                                const messageDiv = document.createElement('div');
-                                messageDiv.classList.add(
-                                    message.de === {{ auth()->user()->id }} ?
-                                    'sent' : 'received'
-                                );
-                                messageDiv.innerHTML =
-                                    `<strong>${message.de === {{ auth()->user()->id }} ? 'Você' : message.remetente.name}:</strong> ${message.conteudo}`;
-                                messagesDiv.appendChild(messageDiv);
-                            });
-
-                            // Exibir o formulário de envio de mensagens
-                            sendMessageForm.style.display = 'block';
+                            sendMessageForm.style.display = 'flex';
                         });
                 });
             });
@@ -381,8 +233,14 @@
                     .then(response => response.json())
                     .then(message => {
                         const messageDiv = document.createElement('div');
-                        messageDiv.classList.add('sent');
-                        messageDiv.innerHTML = `<strong>Você:</strong> ${message.conteudo}`;
+                        messageDiv.classList.add('message', 'sent');
+                        messageDiv.innerHTML = `
+							<img src="{{ auth()->user()->profile_photo_url ?? 'vendors/images/default-avatar.png' }}" alt="Você" class="message-avatar">
+							<div class="message-content">
+								<strong>Você:</strong>
+								${message.conteudo}
+							</div>
+						`;
                         messagesDiv.appendChild(messageDiv);
                         conteudoInput.value = '';
                     });
