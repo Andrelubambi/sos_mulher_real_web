@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Grupo: {{ $grupo->nome }}</title>
+    <title>Grupo: {{ $grupo->nome ?? '' }}</title>
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -102,7 +102,7 @@
                 <div class="chat-container">
                     <!-- Cabeçalho do Chat -->
                     <div class="chat-header">
-                        Grupo: {{ $grupo->nome }}
+                        Grupo: {{ $grupo->nome ?? ''}}
                     </div>
 
                     <!-- Mensagens -->
@@ -128,7 +128,8 @@
             const sendMessageForm = document.getElementById('sendMessageForm');
             const conteudoInput = document.getElementById('conteudo');
 
-            // Carregar mensagens do grupo
+            @if($grupo ?? null)
+                // Carregar mensagens do grupo
             fetch(`/grupos/{{ $grupo->id }}/mensagens`)
                 .then(response => response.json())
                 .then(messages => {
@@ -149,6 +150,7 @@
                         });
                     }
                 });
+            @endif
 
             // Enviar nova mensagem
             sendMessageForm.addEventListener('submit', function (e) {
@@ -156,6 +158,7 @@
 
                 const conteudo = conteudoInput.value;
 
+                @if ($grupo ?? null)
                 fetch(`/grupos/{{ $grupo->id }}/mensagens`, {
                     method: 'POST',
                     headers: {
@@ -166,6 +169,8 @@
                         conteudo
                     }),
                 })
+                @endif
+               
                     .then(response => response.json())
                     .then(message => {
                         const messageDiv = document.createElement('div');
