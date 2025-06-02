@@ -56,18 +56,6 @@
         </div>
     </div>
 
-    <!-- Socket.IO Client -->
-    <script src="http://{{ request()->getHost() }}:6001/socket.io/socket.io.js"></script>
-
-    <!-- Echo Configuration -->
-    <script>
-        window.Echo = new Echo({
-            broadcaster: 'socket.io',
-            host: window.location.hostname + ':6001'
-        });
-    </script>
-
-    <!-- Lógica de Chat -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const messagesDiv = document.getElementById('messages');
