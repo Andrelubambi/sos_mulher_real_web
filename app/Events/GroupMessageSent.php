@@ -8,6 +8,7 @@ use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class GroupMessageSent implements ShouldBroadcast
 {
@@ -20,6 +21,7 @@ class GroupMessageSent implements ShouldBroadcast
      */
     public function __construct(MensagemGrupo $mensagem)
     {
+        Log::info('Recebendo evento GroupMessageSent');
         $this->mensagem = $mensagem;
     }
 
@@ -28,24 +30,30 @@ class GroupMessageSent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('grupo.' . $this->mensagem->grupo_id);
+        return new Channel('grupo.' . $this->mensagem->grupo_id);
     }
 
     /**
      * The data to broadcast.
      */
     public function broadcastWith()
+{
+    return [
+        'id' => $this->mensagem->id,
+        'grupo_id' => $this->mensagem->grupo_id,
+        'user_id' => $this->mensagem->user_id,
+        'conteudo' => $this->mensagem->conteudo,
+        'created_at' => $this->mensagem->created_at->toDateTimeString(),
+        'user' => [
+            'id' => $this->mensagem->user->id,
+            'name' => $this->mensagem->user->name,
+        ],
+    ];
+}
+
+ public function broadcastAs()
     {
-        return [
-            'id' => $this->mensagem->id,
-            'grupo_id' => $this->mensagem->grupo_id,
-            'user_id' => $this->mensagem->user_id,
-            'conteudo' => $this->mensagem->conteudo,
-            'created_at' => $this->mensagem->created_at->toDateTimeString(),
-            'user' => [
-                'id' => $this->mensagem->user->id,
-                'name' => $this->mensagem->user->name,
-            ],
-        ];
+        return 'GroupMessageSent';
     }
+
 }

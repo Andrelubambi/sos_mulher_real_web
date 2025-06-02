@@ -1,16 +1,17 @@
-<!-- filepath: c:\laragon\www\sos-mulher\resources\views\grupos\show.blade.php -->
 <!DOCTYPE html>
-<html>
-
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="utf-8" />
-    <title>Grupo: {{ $grupo->nome ?? '' }}</title>
-
+    <title>Grupo: {{ $grupo->nome ?? 'Grupo' }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- CSS -->
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/core.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}" />
+    {{-- CSS --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.css" />
+    <link rel="stylesheet" href="{{ asset('vendors/styles/core.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendors/styles/style.css') }}" />
+
+    {{-- Vite Assets --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
         .chat-container {
@@ -102,7 +103,7 @@
                 <div class="chat-container">
                     <!-- Cabeçalho do Chat -->
                     <div class="chat-header">
-                        Grupo: {{ $grupo->nome ?? ''}}
+                        Grupo: {{ $grupo->nome ?? 'Grupo' }}
                     </div>
 
                     <!-- Mensagens -->
@@ -114,79 +115,93 @@
                     <form id="sendMessageForm" class="chat-input">
                         @csrf
                         <textarea name="conteudo" id="conteudo" placeholder="Digite sua mensagem..." required></textarea>
-                        <button type="submit">Enviar</button>
+                        <button type="submit">Enviarr</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- JS -->
+    {{-- Porta do Laravel Echo --}}
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const messagesDiv = document.getElementById('messages');
-            const sendMessageForm = document.getElementById('sendMessageForm');
-            const conteudoInput = document.getElementById('conteudo');
+        window.laravel_echo_port = '{{ env("LARAVEL_ECHO_PORT", 6001) }}';
+        window.userId = {{ auth()->id() }};
+    </script>
 
-            @if($grupo ?? null)
-                // Carregar mensagens do grupo
-            fetch(`/grupos/{{ $grupo->id }}/mensagens`)
-                .then(response => response.json())
-                .then(messages => {
-                    messagesDiv.innerHTML = '';
-                    if (messages.length === 0) {
-                        messagesDiv.innerHTML = '<div class="text-muted">Nenhuma mensagem ainda.</div>';
-                    } else {
-                        messages.forEach(message => {
-                            const messageDiv = document.createElement('div');
-                            messageDiv.classList.add('message', message.user_id === {{ auth()->id() }} ? 'sent' : 'received');
-                            messageDiv.innerHTML = `
-                                <div class="message-content">
-                                    <strong>${message.user_id === {{ auth()->id() }} ? 'Você' : message.user.name}:</strong>
-                                    ${message.conteudo}
-                                </div>
-                            `;
-                            messagesDiv.appendChild(messageDiv);
-                        });
-                    }
-                });
-            @endif
+    {{-- Socket.io --}}
+    <script src="//{{ Request::getHost() }}:{{ env('LARAVEL_ECHO_PORT', 6001) }}/socket.io/socket.io.js"></script>
 
-            // Enviar nova mensagem
-            sendMessageForm.addEventListener('submit', function (e) {
-                e.preventDefault();
+    {{-- jQuery --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-                const conteudo = conteudoInput.value;
+    {{-- Laravel Echo --}}
+    <script src="https://cdn.jsdelivr.net/npm/laravel-echo/dist/echo.iife.js"></script>
 
-                @if ($grupo ?? null)
-                fetch(`/grupos/{{ $grupo->id }}/mensagens`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    },
-                    body: JSON.stringify({
-                        conteudo
-                    }),
-                })
-                @endif
-               
-                    .then(response => response.json())
-                    .then(message => {
-                        const messageDiv = document.createElement('div');
-                        messageDiv.classList.add('message', 'sent');
-                        messageDiv.innerHTML = `
-                            <div class="message-content">
-                                <strong>Você:</strong>
-                                ${message.conteudo}
-                            </div>
-                        `;
-                        messagesDiv.appendChild(messageDiv);
-                        conteudoInput.value = '';
-                    });
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const messagesDiv = document.getElementById('messages');
+        const sendMessageForm = document.getElementById('sendMessageForm');
+        const conteudoInput = document.getElementById('conteudo');
+
+        function renderMessage(message) {
+            alert('jvngvdfvfjdvndjvldflfdvdflvmdflvf');
+            const messageDiv = document.createElement('div');
+            const isMine = message.user_id === window.userId;
+            messageDiv.classList.add('message', isMine ? 'sent' : 'received');
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <strong>${isMine ? 'Você' : message.user.name}:</strong>
+                    ${message.conteudo}
+                </div>
+            `;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // Carrega mensagens do grupo
+        fetch(`/grupos/{{ $grupo->id }}/mensagens`)
+            .then(response => response.json())
+            .then(messages => {
+                messagesDiv.innerHTML = '';
+                if (messages.length === 0) {
+                    messagesDiv.innerHTML = '<div class="text-muted">Nenhuma mensagem ainda.</div>';
+                } else {
+                    messages.forEach(message => renderMessage(message));
+                }
+            });
+
+        // Enviar nova mensagem
+        sendMessageForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const conteudo = conteudoInput.value;
+            if (!conteudo.trim()) return;
+
+            fetch(`/grupos/{{ $grupo->id }}/mensagens`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                },
+                body: JSON.stringify({ conteudo }),
+            })
+            .then(response => response.json())
+            .then(() => {
+                conteudoInput.value = '';
+            });
+        });
+
+
+
+        Echo.channel('grupo.{{ $grupo->id }}')
+            console.log('ponto 0');
+            .listen('.GroupMessageSent', (e) => {
+                console.log('Ponto 1');
+                renderMessage(e);
             });
         });
     </script>
-</body>
 
+
+</body>
 </html>
