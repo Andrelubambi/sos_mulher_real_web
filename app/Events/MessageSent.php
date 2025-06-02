@@ -25,11 +25,10 @@ class MessageSent implements ShouldBroadcast
  
     public function broadcastOn()
     {
-        Log::info('Canal de Broadcast:', ['canal' => 'chat.' . $this->mensagem->para]);
-        Log::info('Transmissão para o canal', [
-            'canal' => 'chat.' . $this->mensagem->remetente->id
-        ]);
-        return new PrivateChannel('chat.' . $this->mensagem->de . '-' . $this->mensagem->para);
+        $minId = min($this->mensagem->de, $this->mensagem->para);
+        $maxId = max($this->mensagem->de, $this->mensagem->para);
+
+        return new PrivateChannel("chat.{$minId}-{$maxId}");
     }
 
     public function broadcastWith()

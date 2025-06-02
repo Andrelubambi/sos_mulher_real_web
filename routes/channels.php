@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel('chat.{userId}', function ($user, $userId) {
-    return (int) $user->id === (int) $userId;
+Broadcast::channel('chat.{min}-{max}', function ($user, $min, $max) {
+    return $user->id == $min || $user->id == $max;
 });
 
 

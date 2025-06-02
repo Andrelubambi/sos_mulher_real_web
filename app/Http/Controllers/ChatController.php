@@ -72,17 +72,16 @@ class ChatController extends Controller
 
 
     public function sendMessage(Request $request, $usuarioId)   
-    {
-
+{
     $request->validate([
         'conteudo' => 'required|string|max:1000',
     ]);
 
     $usuario = User::find($usuarioId);
     if (!$usuario) {
-        return redirect()->back()->withErrors('Usuário não encontrado');
+        return response()->json(['error' => 'Usuário não encontrado'], 404);
     }
- 
+
     $mensagem = Mensagem::create([
         'de' => auth()->user()->id,  
         'para' => $usuario->id,      
@@ -91,9 +90,9 @@ class ChatController extends Controller
  
     event(new MessageSent($mensagem));  
  
-    //return redirect()->route('chat', ['usuarioId' => $usuarioId]);
     return response()->json($mensagem);
-    }
+}
+
 
 
 public function sendToInterns(Request $request)

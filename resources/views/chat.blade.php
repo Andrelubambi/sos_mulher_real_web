@@ -1,167 +1,251 @@
-<!doctype html>
-<html lang="{{ app()->getLocale() }}">
+<!DOCTYPE html>
+<html>
+
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <title>Chat</title>
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Laravel Broadcast Redis Socket io - Messages</title>
 
-    {{-- Bootstrap CSS --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.css" />
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/core.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}" />
 
-    {{-- jQuery --}}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.11.3/dist/echo.iife.js"></script>
 
-    {{-- Vite Assets --}}
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    background: #f4f6f8;
-    display: flex;
-    justify-content: center;
-    padding: 40px;
-  }
+        .chat-layout {
+            display: flex;
+            height: 90vh;
+        }
 
-  .chat-container {
-    width: 100%;
-    max-width: 600px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
-    padding: 20px;
-  }
+        .sidebar {
+            width: 250px;
+            border-right: 1px solid #ddd;
+            overflow-y: auto;
+        }
 
-  h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-  }
+        .chat-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
 
-  #chat-box {
-    max-height: 400px;
-    overflow-y: auto;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 10px;
-    margin-bottom: 15px;
-    background-color: #fafafa;
-  }
+        .user-item {
+            padding: 10px;
+            cursor: pointer;
+        }
 
-  .message {
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    max-width: 80%;
-    line-height: 1.4;
-  }
+        .user-item:hover {
+            background: #f0f0f0;
+        }
 
-  .message.user {
-    background-color: #d1e7dd;
-    align-self: flex-end;
-    text-align: right;
-    margin-left: auto;
-  }
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
 
-  .message.other {
-    background-color: #e2e3e5;
-    align-self: flex-start;
-    text-align: left;
-    margin-right: auto;
-  }
+        .chat-input {
+            display: flex;
+            padding: 10px;
+        }
 
-  #chat-form {
-    display: flex;
-    gap: 10px;
-  }
+        .chat-input textarea {
+            flex-grow: 1;
+            resize: none;
+        }
 
-  #message-input {
-    flex: 1;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 1rem;
-  }
+        .chat-input button {
+            margin-left: 10px;
+        }
 
-  #chat-form button {
-    padding: 10px 20px;
-    background-color: #0d6efd;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-  }
+        .message {
+            margin: 5px 0;
+        }
 
-  #chat-form button:hover {
-    background-color: #0b5ed7;
-  }
-</style>
+        .sent {
+            text-align: right;
+        }
 
+        .received {
+            text-align: left;
+        }
+    </style>
 </head>
+
 <body>
-    <div class="chat-container">
-  <h1>Mensagens em Grupo</h1>
+    <div class="chat-layout">
+        <div class="sidebar">
+            <h5 style="padding:10px;">Usuários</h5>
+            @foreach ($usuariosNaoDoutores as $user)
+                <div class="user-item" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}">
+                    {{ $user->name }}
+                </div>
+            @endforeach
+        </div>
 
-  <div id="chat-box">
-    <!-- As mensagens serão inseridas aqui via JS ou blade -->
-  </div>
+        <div class="chat-area">
+            <div id="chatHeader" class="chat-header">Selecione um usuário</div>
+            <div id="messages" class="chat-messages"></div>
 
-  <form id="chat-form">
-    <input type="text" id="message-input" placeholder="Digite sua mensagem..." required />
-    <button type="submit">Enviar</button>
-  </form>
-</div>
+            <form id="sendMessageForm" class="chat-input" style="display: none;">
+                @csrf
+                <textarea name="conteudo" id="conteudo" placeholder="Digite sua mensagem..." required></textarea>
+                <button type="submit">Enviar</button>
+            </form>
+        </div>
+    </div>
 
+    <!-- Laravel Echo -->
+    <script src="//{{ request()->getHost() }}:6001/socket.io/socket.io.js"></script>
+    <script src="{{ asset('js/echo.js') }}"></script>
 
-    {{-- Porta definida para o Laravel Echo (opcional, pode ser usado direto no JS) --}}
     <script>
-        window.laravel_echo_port = '{{ env("LARAVEL_ECHO_PORT", 6001) }}';
-    </script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const messagesDiv = document.getElementById('messages');
+            const sendMessageForm = document.getElementById('sendMessageForm');
+            const conteudoInput = document.getElementById('conteudo');
+            const chatHeader = document.getElementById('chatHeader');
 
-    {{-- Socket.io (importado via CDN baseado no host + porta) --}}
-    <script src="//{{ Request::getHost() }}:{{ env('LARAVEL_ECHO_PORT', 6001) }}/socket.io/socket.io.js"></script>
+            const usuarioLogadoId = {{ auth()->id() }};
+            let usuarioAtualId = null;
+            let currentChannel = null;
 
-    {{-- laravel-echo-setup.js deve ser incluído via Vite também (veja nota abaixo) --}}
+            function appendMessage(message, sentByMe = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', sentByMe ? 'sent' : 'received');
+                messageDiv.innerHTML = `
+                    <div class="message-content">
+                        <strong>${sentByMe ? 'Você' : message.remetente.name}:</strong>
+                        ${message.conteudo.replace(/\n/g, '<br>')}
+                    </div>
+                `;
+                messagesDiv.appendChild(messageDiv);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
 
-<script>
-    
-  const messages = [
-    { user_id: 1, name: 'João', conteudo: 'Olá, pessoal!' },
-    { user_id: 2, name: 'Maria', conteudo: 'Oi João!' },
-    { user_id: 1, name: 'João', conteudo: 'Tudo bem com vocês?' },
-  ];
+            function escutarMensagens(usuarioId) {
+    const minId = Math.min(usuarioLogadoId, usuarioId);
+    const maxId = Math.max(usuarioLogadoId, usuarioId);
+    const canal = `chat.${minId}-${maxId}`;
 
-  const currentUserId = 1; // ID do usuário logado
-  const chatBox = document.getElementById('chat-box');
+    if (currentChannel) Echo.leave(currentChannel);
+    currentChannel = `private-${canal}`;
 
-  function renderMessages() {
-    chatBox.innerHTML = '';
-    messages.forEach(msg => {
-      const div = document.createElement('div');
-      div.classList.add('message');
-      div.classList.add(msg.user_id === currentUserId ? 'user' : 'other');
-      div.innerHTML = `<strong>${msg.name}</strong><br>${msg.conteudo}`;
-      chatBox.appendChild(div);
+    Echo.private(canal)
+        .listen('MessageSent', (e) => {
+            if (e.para === usuarioLogadoId) {
+                appendMessage(e, false);
+            }
+        });
+}
+
+document.querySelectorAll('.user-item').forEach(item => {
+    item.addEventListener('click', () => {
+        usuarioAtualId = item.dataset.userId;
+        chatHeader.textContent = 'Chat com: ' + item.dataset.userName;
+        messagesDiv.innerHTML = '';
+        sendMessageForm.style.display = 'flex';
+
+        fetch(`/chat/messages/${usuarioAtualId}`)
+            .then(res => {
+                if (!res.ok) throw new Error('Erro ao buscar mensagens');
+                return res.json();
+            })
+            .then(messages => {
+                messages.forEach(msg => {
+                    appendMessage(msg, msg.de == usuarioLogadoId);
+                });
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Erro ao buscar mensagens');
+            });
+
+        escutarMensagens(usuarioAtualId);
     });
-    chatBox.scrollTop = chatBox.scrollHeight;
-  }
+});
 
-  renderMessages();
-
-  // Enviar nova mensagem
-  document.getElementById('chat-form').addEventListener('submit', function (e) {
+sendMessageForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    const input = document.getElementById('message-input');
-    if (input.value.trim() !== '') {
-      messages.push({ user_id: currentUserId, name: 'Você', conteudo: input.value });
-      renderMessages();
-      input.value = '';
-    }
-  });
-</script>
 
+    const conteudo = conteudoInput.value.trim();
+    if (!conteudo || !usuarioAtualId) return;
+
+    fetch(`/chat/send/${usuarioAtualId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+        },
+        body: JSON.stringify({ conteudo }),
+    })
+    .then(res => {
+        if (!res.ok) throw new Error('Erro ao enviar mensagem');
+        return res.json();
+    })
+    .then(data => {
+        appendMessage(data, true);
+        conteudoInput.value = '';
+    })
+    .catch(err => {
+        console.error('Erro ao enviar mensagem:', err);
+        alert('Erro ao enviar mensagem.');
+    });
+});
+
+
+            document.querySelectorAll('.user-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    usuarioAtualId = item.dataset.userId;
+                    chatHeader.textContent = 'Chat com: ' + item.dataset.userName;
+                    messagesDiv.innerHTML = '';
+                    sendMessageForm.style.display = 'flex';
+
+                    fetch(`/chat/messages/${usuarioAtualId}`)
+                        .then(res => res.json())
+                        .then(messages => {
+                            messages.forEach(message => {
+                                appendMessage(message, message.de == usuarioLogadoId);
+                            });
+                            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                        });
+
+                    escutarMensagens(usuarioAtualId);
+                });
+            });
+
+            sendMessageForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const conteudo = conteudoInput.value.trim();
+                if (!conteudo || !usuarioAtualId) return;
+
+                fetch(`/chat/send/${usuarioAtualId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                    body: JSON.stringify({ conteudo }),
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        appendMessage(data, true);
+                        conteudoInput.value = '';
+                    })
+                    .catch(err => {
+    console.error('Erro ao enviar mensagem:', err);
+    alert('Erro ao enviar mensagem.');
+});
+
+            });
+        });
+    </script>
 </body>
+
 </html>
