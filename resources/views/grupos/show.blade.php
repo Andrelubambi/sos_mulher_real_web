@@ -233,15 +233,11 @@
     });
 </script>
 
-    {{-- Porta definida para o Laravel Echo (opcional, pode ser usado direto no JS) --}}
     <script>
         window.laravel_echo_port = '{{ env("LARAVEL_ECHO_PORT", 6001) }}';
     </script>
-
-    {{-- Socket.io (importado via CDN baseado no host + porta) --}}
     <script src="//{{ Request::getHost() }}:{{ env('LARAVEL_ECHO_PORT', 6001) }}/socket.io/socket.io.js"></script>
 
-    {{-- laravel-echo-setup.js deve ser incluído via Vite também (veja nota abaixo) --}}
 </body>
 
 </html>
