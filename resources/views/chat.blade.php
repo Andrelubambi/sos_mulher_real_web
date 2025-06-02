@@ -1,187 +1,143 @@
-<!-- filepath: c:\laragon\www\sos-mulher\resources\views\grupos\show.blade.php -->
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="utf-8" />
-    <title>Grupo: {{ $grupo->nome }}</title>
+    <title>Chat</title>
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- CSS -->
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/core.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}" />
+    <link rel="stylesheet" href="{{ asset('vendors/styles/core.css') }}">
+    <link rel="stylesheet" href="{{ asset('vendors/styles/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.css" />
+
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!-- Vite -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-        .chat-container {
-            display: flex;
-            flex-direction: column;
-            height: calc(100vh - 100px);
-            background-color: #f4f4f4;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        .chat-header {
-            background-color: #007bff;
-            color: #fff;
-            padding: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px;
-            background-color: #fff;
-        }
-
-        .chat-input {
-            display: flex;
-            gap: 10px;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-top: 1px solid #ddd;
-        }
-
-        .chat-input textarea {
-            flex: 1;
-            resize: none;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
-
-        .chat-input button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .chat-input button:hover {
-            background-color: #0056b3;
-        }
-
-        .message {
-            margin-bottom: 15px;
-        }
-
-        .message.sent {
-            text-align: right;
-        }
-
-        .message.received {
-            text-align: left;
-        }
-
-        .message-content {
-            display: inline-block;
-            padding: 10px 15px;
-            border-radius: 15px;
-            background-color: #e9ecef;
-            max-width: 70%;
-        }
-
-        .message.sent .message-content {
-            background-color: #007bff;
-            color: #fff;
-        }
+        .chat-layout { display: flex; height: 90vh; }
+        .sidebar { width: 250px; border-right: 1px solid #ddd; overflow-y: auto; }
+        .chat-area { flex-grow: 1; display: flex; flex-direction: column; }
+        .user-item { padding: 10px; cursor: pointer; }
+        .user-item:hover { background: #f0f0f0; }
+        .chat-messages { flex-grow: 1; overflow-y: auto; padding: 10px; border-bottom: 1px solid #ddd; }
+        .chat-input { display: flex; padding: 10px; }
+        .chat-input textarea { flex-grow: 1; resize: none; }
+        .chat-input button { margin-left: 10px; }
+        .message { margin: 5px 0; }
+        .sent { text-align: right; }
+        .received { text-align: left; }
     </style>
 </head>
 
 <body>
-    <div class="main-container">
-        <div class="pd-ltr-20 xs-pd-20-10">
-            <div class="min-height-200px">
-                <div class="chat-container">
-                    <!-- Cabeçalho do Chat -->
-                    <div class="chat-header">
-                        Grupo: {{ $grupo->nome }}
-                    </div>
-
-                    <!-- Mensagens -->
-                    <div id="messages" class="chat-messages">
-                        <div class="text-muted">Carregando mensagens...</div>
-                    </div>
-
-                    <!-- Formulário de Envio -->
-                    <form id="sendMessageForm" class="chat-input">
-                        @csrf
-                        <textarea name="conteudo" id="conteudo" placeholder="Digite sua mensagem..." required></textarea>
-                        <button type="submit">Enviar</button>
-                    </form>
+    <div class="chat-layout">
+        <div class="sidebar">
+            <h5 style="padding:10px;">Usuários</h5>
+            @foreach ($usuariosNaoDoutores as $user)
+                <div class="user-item" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}">
+                    {{ $user->name }}
                 </div>
-            </div>
+            @endforeach
+        </div>
+
+        <div class="chat-area">
+            <div id="chatHeader" class="chat-header">Selecione um usuário</div>
+            <div id="messages" class="chat-messages"></div>
+
+            <form id="sendMessageForm" class="chat-input" style="display: none;">
+                @csrf
+                <textarea name="conteudo" id="conteudo" placeholder="Digite sua mensagem..." required></textarea>
+                <button type="submit">Enviar</button>
+            </form>
         </div>
     </div>
 
-    <!-- JS -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const messagesDiv = document.getElementById('messages');
             const sendMessageForm = document.getElementById('sendMessageForm');
             const conteudoInput = document.getElementById('conteudo');
+            const chatHeader = document.getElementById('chatHeader');
+            const usuarioLogadoId = {{ auth()->id() }};
+            let usuarioAtualId = null;
+            let currentChannel = null;
 
-            // Carregar mensagens do grupo
-            fetch(`/grupos/{{ $grupo->id }}/mensagens`)
-                .then(response => response.json())
-                .then(messages => {
+            function appendMessage(message, sentByMe = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', sentByMe ? 'sent' : 'received');
+                messageDiv.innerHTML = `<div class="message-content">
+                    <strong>${sentByMe ? 'Você' : message.remetente.name}:</strong>
+                    ${message.conteudo.replace(/\n/g, '<br>')}
+                </div>`;
+                messagesDiv.appendChild(messageDiv);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+
+            function escutarMensagens(usuarioId) {
+                const minId = Math.min(usuarioLogadoId, usuarioId);
+                const maxId = Math.max(usuarioLogadoId, usuarioId);
+                const canal = `chat.${minId}-${maxId}`;
+
+                if (currentChannel) Echo.leave(currentChannel);
+                currentChannel = `private-${canal}`;
+
+                Echo.private(canal)
+                    .listen('MessageSent', (e) => {
+                        if (e.de !== usuarioLogadoId) {
+                            appendMessage(e, false);
+                        }
+                    });
+            }
+
+            document.querySelectorAll('.user-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    usuarioAtualId = item.dataset.userId;
+                    chatHeader.textContent = 'Chat com: ' + item.dataset.userName;
                     messagesDiv.innerHTML = '';
-                    if (messages.length === 0) {
-                        messagesDiv.innerHTML = '<div class="text-muted">Nenhuma mensagem ainda.</div>';
-                    } else {
-                        messages.forEach(message => {
-                            const messageDiv = document.createElement('div');
-                            messageDiv.classList.add('message', message.user_id === {{ auth()->id() }} ? 'sent' : 'received');
-                            messageDiv.innerHTML = `
-                                <div class="message-content">
-                                    <strong>${message.user_id === {{ auth()->id() }} ? 'Você' : message.user.name}:</strong>
-                                    ${message.conteudo}
-                                </div>
-                            `;
-                            messagesDiv.appendChild(messageDiv);
-                        });
-                    }
-                });
+                    sendMessageForm.style.display = 'flex';
 
-            // Enviar nova mensagem
+                    fetch(`/chat/messages/${usuarioAtualId}`)
+                        .then(res => res.json())
+                        .then(messages => {
+                            messages.forEach(msg => {
+                                appendMessage(msg, msg.de == usuarioLogadoId);
+                            });
+                            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                        });
+
+                    escutarMensagens(usuarioAtualId);
+                });
+            });
+
             sendMessageForm.addEventListener('submit', function (e) {
                 e.preventDefault();
 
-                const conteudo = conteudoInput.value;
+                const conteudo = conteudoInput.value.trim();
+                if (!conteudo || !usuarioAtualId) return;
 
-                fetch(`/grupos/{{ $grupo->id }}/mensagens`, {
+                fetch(`/chat/send/${usuarioAtualId}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                     },
-                    body: JSON.stringify({
-                        conteudo
-                    }),
+                    body: JSON.stringify({ conteudo }),
                 })
-                    .then(response => response.json())
-                    .then(message => {
-                        const messageDiv = document.createElement('div');
-                        messageDiv.classList.add('message', 'sent');
-                        messageDiv.innerHTML = `
-                            <div class="message-content">
-                                <strong>Você:</strong>
-                                ${message.conteudo}
-                            </div>
-                        `;
-                        messagesDiv.appendChild(messageDiv);
+                    .then(res => res.json())
+                    .then(data => {
+                        appendMessage(data, true);
                         conteudoInput.value = '';
+                    })
+                    .catch(err => {
+                        console.error('Erro ao enviar mensagem:', err);
+                        alert('Erro ao enviar mensagem.');
                     });
             });
         });
     </script>
 </body>
-
 </html>

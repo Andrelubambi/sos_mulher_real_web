@@ -76,6 +76,7 @@ class GrupoController extends Controller
 
     public function sendMessage(Request $request, Grupo $grupo)
     {
+
         $request->validate([
             'conteudo' => 'required|string|max:1000',
         ]);

@@ -13,15 +13,18 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel('chat.{userId}', function ($user, $userId) {
-    return (int) $user->id === (int) $userId;
+Broadcast::channel('chat.{min}-{max}', function ($user, $min, $max) {
+    return $user->id == $min || $user->id == $max;
 });
 
 
 
 use App\Models\Grupo;
 
-Broadcast::channel('grupo.{grupoId}', function ($user, $grupoId) {
+Broadcast::channel('grupo.{grupoId}', function ($user, $grupoId){
     $grupo = Grupo::find($grupoId);
-    return $grupo && $grupo->users->contains($user->id);
+    //return $grupo && $grupo->users->contains($user->id);
+    
+    
+    return true;
 });

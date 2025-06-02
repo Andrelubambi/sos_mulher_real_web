@@ -25,6 +25,15 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/core.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}" />
 
+    {{-- Bootstrap CSS --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.css" />
+
+    {{-- jQuery --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    {{-- Vite Assets --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
     <style>
         .chat-container {
             display: flex;
@@ -181,56 +190,54 @@
     <script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
     <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const messagesDiv = document.getElementById('messages');
-            const sendMessageForm = document.getElementById('sendMessageForm');
-            const conteudoInput = document.getElementById('conteudo');
+    document.addEventListener('DOMContentLoaded', function () {
+        const messagesDiv = document.getElementById('messages');
+        const sendMessageForm = document.getElementById('sendMessageForm');
+        const conteudoInput = document.getElementById('conteudo');
 
-            Pusher.logToConsole = true;
-
-            const pusher = new Pusher('{{ env('PUSHER_APP_KEY') }}', {
-                cluster: '{{ env('PUSHER_APP_CLUSTER') }}',
-                encrypted: true,
-                authEndpoint: '/broadcasting/auth',
-            });
-
-            const channel = pusher.subscribe(`private-grupo.{{ $grupo->id }}`);
-
-            channel.bind('App\\Events\\GroupMessageSent', function(data) {
+        //Escutar o canal
+        window.Echo.private('grupo.{{ $grupo->id }}')
+            .listen('.GroupMessageSent', function (data) {
+                const isCurrentUser = data.user_id === {{ auth()->id() }};
                 const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message', data.user_id === {{ auth()->id() }} ? 'sent' :
-                    'received');
+                messageDiv.classList.add('message', isCurrentUser ? 'sent' : 'received');
+
                 messageDiv.innerHTML = `
                     <div class="message-content">
-                        <strong>${data.user_id === {{ auth()->id() }} ? 'Você' : data.user.name}:</strong>
+                        <strong>${isCurrentUser ? 'Você' : data.user.name}:</strong>
                         ${data.conteudo}
                     </div>
                 `;
                 messagesDiv.appendChild(messageDiv);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
             });
 
-            sendMessageForm.addEventListener('submit', function(e) {
-                e.preventDefault();
+        // Enviar mensagem
+        sendMessageForm.addEventListener('submit', function (e) {
+            e.preventDefault();
 
-                const conteudo = conteudoInput.value;
+            const conteudo = conteudoInput.value;
 
-                fetch(`/grupos/{{ $grupo->id }}/mensagens`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        },
-                        body: JSON.stringify({
-                            conteudo
-                        }),
-                    })
-                    .then(response => response.json())
-                    .then(message => {
-                        conteudoInput.value = '';
-                    });
-            });
+            fetch(`/grupos/{{ $grupo->id }}/mensagens`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                },
+                body: JSON.stringify({ conteudo }),
+            }).then(response => response.json())
+              .then(message => {
+                  conteudoInput.value = '';
+              });
         });
+    });
+</script>
+
+    <script>
+        window.laravel_echo_port = '{{ env("LARAVEL_ECHO_PORT", 6001) }}';
     </script>
+    <script src="//{{ Request::getHost() }}:{{ env('LARAVEL_ECHO_PORT', 6001) }}/socket.io/socket.io.js"></script>
+
 </body>
 
 </html>

@@ -98,3 +98,19 @@ Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->n
     Route::view('/500', '500')->name('500');
     Route::view('/503', '503')->name('503');
 });
+
+
+Route::get('/teste',function(){
+    return view('teste-websocket');
+});
+
+Route::get('/fire',function(){
+    event(new App\Events\TestEvent());
+    return 'okkkkkk';
+});
+
+Route::get('/send', function () {
+    event(new \App\Events\SendMessage());
+    dd('Event Run Successfully.');
+});
+
