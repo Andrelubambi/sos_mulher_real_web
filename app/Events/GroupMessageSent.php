@@ -21,7 +21,6 @@ class GroupMessageSent implements ShouldBroadcast
      */
     public function __construct(MensagemGrupo $mensagem)
     {
-        Log::info('Recebendo evento GroupMessageSent');
         $this->mensagem = $mensagem;
     }
 
@@ -30,7 +29,7 @@ class GroupMessageSent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('grupo.' . $this->mensagem->grupo_id);
+        return new PrivateChannel('grupo.' . $this->mensagem->grupo_id);
     }
 
     /**

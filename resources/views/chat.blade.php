@@ -1,207 +1,167 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="{{ app()->getLocale() }}">
 <head>
-    <meta charset="utf-8" />
-    <title>Grupo: {{ $grupo->nome ?? 'Grupo' }}</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Laravel Broadcast Redis Socket io - Messages</title>
 
-    {{-- CSS --}}
+    {{-- Bootstrap CSS --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.css" />
-    <link rel="stylesheet" href="{{ asset('vendors/styles/core.css') }}" />
-    <link rel="stylesheet" href="{{ asset('vendors/styles/style.css') }}" />
+
+    {{-- jQuery --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
     {{-- Vite Assets --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-        .chat-container {
-            display: flex;
-            flex-direction: column;
-            height: calc(100vh - 100px);
-            background-color: #f4f4f4;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #f4f6f8;
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+  }
 
-        .chat-header {
-            background-color: #007bff;
-            color: #fff;
-            padding: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-        }
+  .chat-container {
+    width: 100%;
+    max-width: 600px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+  }
 
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px;
-            background-color: #fff;
-        }
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+  }
 
-        .chat-input {
-            display: flex;
-            gap: 10px;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-top: 1px solid #ddd;
-        }
+  #chat-box {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 15px;
+    background-color: #fafafa;
+  }
 
-        .chat-input textarea {
-            flex: 1;
-            resize: none;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
+  .message {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    max-width: 80%;
+    line-height: 1.4;
+  }
 
-        .chat-input button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
+  .message.user {
+    background-color: #d1e7dd;
+    align-self: flex-end;
+    text-align: right;
+    margin-left: auto;
+  }
 
-        .chat-input button:hover {
-            background-color: #0056b3;
-        }
+  .message.other {
+    background-color: #e2e3e5;
+    align-self: flex-start;
+    text-align: left;
+    margin-right: auto;
+  }
 
-        .message {
-            margin-bottom: 15px;
-        }
+  #chat-form {
+    display: flex;
+    gap: 10px;
+  }
 
-        .message.sent {
-            text-align: right;
-        }
+  #message-input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+  }
 
-        .message.received {
-            text-align: left;
-        }
+  #chat-form button {
+    padding: 10px 20px;
+    background-color: #0d6efd;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+  }
 
-        .message-content {
-            display: inline-block;
-            padding: 10px 15px;
-            border-radius: 15px;
-            background-color: #e9ecef;
-            max-width: 70%;
-        }
+  #chat-form button:hover {
+    background-color: #0b5ed7;
+  }
+</style>
 
-        .message.sent .message-content {
-            background-color: #007bff;
-            color: #fff;
-        }
-    </style>
 </head>
-
 <body>
-    <div class="main-container">
-        <div class="pd-ltr-20 xs-pd-20-10">
-            <div class="min-height-200px">
-                <div class="chat-container">
-                    <!-- Cabeçalho do Chat -->
-                    <div class="chat-header">
-                        Grupo: {{ $grupo->nome ?? 'Grupo' }}
-                    </div>
+    <div class="chat-container">
+  <h1>Mensagens em Grupo</h1>
 
-                    <!-- Mensagens -->
-                    <div id="messages" class="chat-messages">
-                        <div class="text-muted">Carregando mensagens...</div>
-                    </div>
+  <div id="chat-box">
+    <!-- As mensagens serão inseridas aqui via JS ou blade -->
+  </div>
 
-                    <!-- Formulário de Envio -->
-                    <form id="sendMessageForm" class="chat-input">
-                        @csrf
-                        <textarea name="conteudo" id="conteudo" placeholder="Digite sua mensagem..." required></textarea>
-                        <button type="submit">Enviarr</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+  <form id="chat-form">
+    <input type="text" id="message-input" placeholder="Digite sua mensagem..." required />
+    <button type="submit">Enviar</button>
+  </form>
+</div>
 
-    {{-- Porta do Laravel Echo --}}
+
+    {{-- Porta definida para o Laravel Echo (opcional, pode ser usado direto no JS) --}}
     <script>
         window.laravel_echo_port = '{{ env("LARAVEL_ECHO_PORT", 6001) }}';
-        window.userId = {{ auth()->id() }};
     </script>
 
-    {{-- Socket.io --}}
+    {{-- Socket.io (importado via CDN baseado no host + porta) --}}
     <script src="//{{ Request::getHost() }}:{{ env('LARAVEL_ECHO_PORT', 6001) }}/socket.io/socket.io.js"></script>
 
-    {{-- jQuery --}}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    {{-- laravel-echo-setup.js deve ser incluído via Vite também (veja nota abaixo) --}}
 
-    {{-- Laravel Echo --}}
-    <script src="https://cdn.jsdelivr.net/npm/laravel-echo/dist/echo.iife.js"></script>
+<script>
+    
+  const messages = [
+    { user_id: 1, name: 'João', conteudo: 'Olá, pessoal!' },
+    { user_id: 2, name: 'Maria', conteudo: 'Oi João!' },
+    { user_id: 1, name: 'João', conteudo: 'Tudo bem com vocês?' },
+  ];
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const messagesDiv = document.getElementById('messages');
-        const sendMessageForm = document.getElementById('sendMessageForm');
-        const conteudoInput = document.getElementById('conteudo');
+  const currentUserId = 1; // ID do usuário logado
+  const chatBox = document.getElementById('chat-box');
 
-        function renderMessage(message) {
-            alert('jvngvdfvfjdvndjvldflfdvdflvmdflvf');
-            const messageDiv = document.createElement('div');
-            const isMine = message.user_id === window.userId;
-            messageDiv.classList.add('message', isMine ? 'sent' : 'received');
-            messageDiv.innerHTML = `
-                <div class="message-content">
-                    <strong>${isMine ? 'Você' : message.user.name}:</strong>
-                    ${message.conteudo}
-                </div>
-            `;
-            messagesDiv.appendChild(messageDiv);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
+  function renderMessages() {
+    chatBox.innerHTML = '';
+    messages.forEach(msg => {
+      const div = document.createElement('div');
+      div.classList.add('message');
+      div.classList.add(msg.user_id === currentUserId ? 'user' : 'other');
+      div.innerHTML = `<strong>${msg.name}</strong><br>${msg.conteudo}`;
+      chatBox.appendChild(div);
+    });
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
 
-        // Carrega mensagens do grupo
-        fetch(`/grupos/{{ $grupo->id }}/mensagens`)
-            .then(response => response.json())
-            .then(messages => {
-                messagesDiv.innerHTML = '';
-                if (messages.length === 0) {
-                    messagesDiv.innerHTML = '<div class="text-muted">Nenhuma mensagem ainda.</div>';
-                } else {
-                    messages.forEach(message => renderMessage(message));
-                }
-            });
+  renderMessages();
 
-        // Enviar nova mensagem
-        sendMessageForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const conteudo = conteudoInput.value;
-            if (!conteudo.trim()) return;
-
-            fetch(`/grupos/{{ $grupo->id }}/mensagens`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                },
-                body: JSON.stringify({ conteudo }),
-            })
-            .then(response => response.json())
-            .then(() => {
-                conteudoInput.value = '';
-            });
-        });
-
-
-
-        Echo.channel('grupo.{{ $grupo->id }}')
-            console.log('ponto 0');
-            .listen('.GroupMessageSent', (e) => {
-                console.log('Ponto 1');
-                renderMessage(e);
-            });
-        });
-    </script>
-
+  // Enviar nova mensagem
+  document.getElementById('chat-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const input = document.getElementById('message-input');
+    if (input.value.trim() !== '') {
+      messages.push({ user_id: currentUserId, name: 'Você', conteudo: input.value });
+      renderMessages();
+      input.value = '';
+    }
+  });
+</script>
 
 </body>
 </html>
