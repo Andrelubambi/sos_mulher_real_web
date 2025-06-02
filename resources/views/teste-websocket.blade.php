@@ -1,34 +1,35 @@
-<!DOCTYPE html> 
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"> 
-    <head> 
-        <meta charset="utf-8"> 
-        <meta name="viewport" content="width=device-width, initial-scale=1"> 
-        <title>Laravel</title> 
-    </head> 
-    <body> 
+<!doctype html>
+<html lang="{{ app()->getLocale() }}">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>Laravel Broadcast Redis Socket io - Messages</title>
 
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    {{-- Bootstrap CSS --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.css" />
 
-        <script>
-            function waitForEcho(callback) {
-                if (typeof Echo !== 'undefined') {
-                    callback();
-                } else {
-                    setTimeout(() => waitForEcho(callback), 50);
-                }
-            }
+    {{-- jQuery --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-            console.log('ponto 1');
+    {{-- Vite Assets --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body>
+    <div class="container">
+        <h1>Laravel Broadcast Redis Socket io - Messages</h1>
+        <div id="notification"></div>
+    </div>
 
-            waitForEcho(() => {
-                console.log('ponto 2');
-                Echo.channel('test2')
-                    .listen('App\\Events\\TestEvent', e => {
-                        console.log('Ponto 3');
-                        console.log(e); // Verifica se a mensagem chegou corretamente
-                    });
-            });
-        </script>
+    {{-- Porta definida para o Laravel Echo (opcional, pode ser usado direto no JS) --}}
+    <script>
+        window.laravel_echo_port = '{{ env("LARAVEL_ECHO_PORT", 6001) }}';
+    </script>
 
-    </body> 
+    {{-- Socket.io (importado via CDN baseado no host + porta) --}}
+    <script src="//{{ Request::getHost() }}:{{ env('LARAVEL_ECHO_PORT', 6001) }}/socket.io/socket.io.js"></script>
+
+    {{-- laravel-echo-setup.js deve ser incluído via Vite também (veja nota abaixo) --}}
+</body>
 </html>

@@ -109,3 +109,8 @@ Route::get('/fire',function(){
     return 'okkkkkk';
 });
 
+Route::get('/send', function () {
+    event(new \App\Events\SendMessage());
+    dd('Event Run Successfully.');
+});
+
