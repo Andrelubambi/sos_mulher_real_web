@@ -7,6 +7,7 @@ use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MensagemSosController;
 
 
 Route::middleware('auth:web')->group(function () {
@@ -87,6 +88,11 @@ Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->n
 
     Route::view('/profile', 'profile')->name('profile');
 
+
+    Route::post('/mensagem_sos',[MensagemSosController::class,'enviarMensagemSos'])->name('mensagem_sos');
+    Route::post('/mensagem_lida',[MensagemSosController::class,'deletarMensagemLida'])->name('mensagem_lida');
+    Route::get('/mensagens_nao_lidas',[MensagemSosController::class,'pegarMensagensNaoLidas'])->name('mensagens_nao_lidas');
+
     // Demais páginas administrativas
     Route::view('/index2', 'index2')->name('index2');
     Route::view('/index3', 'index3')->name('index3');
@@ -97,6 +103,7 @@ Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->n
     Route::view('/404', '404')->name('404');
     Route::view('/500', '500')->name('500');
     Route::view('/503', '503')->name('503');
+
 });
 
 

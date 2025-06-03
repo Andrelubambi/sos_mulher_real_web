@@ -2,6 +2,11 @@
 <html>
 
 <head>
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="user-id" content="{{ auth()->user()->id }}">
+
+
     <!-- Basic Page Info -->
     <meta charset="utf-8" />
     <title>DeskApp - Bootstrap Admin Dashboard HTML Template</title>
@@ -16,6 +21,10 @@
 
     <!-- Mobile Specific Metas -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+    <!-- Link Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
@@ -60,9 +69,76 @@
         })(window, document, "script", "dataLayer", "GTM-NXZMQSS");
     </script>
     <!-- End Google Tag Manager -->
+
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<style>
+    .mensagem-alerta {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #e0ffe0;
+        color: #055;
+        padding: 10px 15px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px #ccc;
+        font-weight: bold;
+        z-index: 9999;
+    }
+
+    .mensagem-contador {
+        margin-left: 8px;
+        background: green;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+    }
+
+    .mensagem-modal {
+        position: fixed;
+        top: 30%;
+        left: 50%;
+        transform: translate(-50%, -30%);
+        background: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 30px rgba(0,0,0,0.3);
+        z-index: 10000;
+    }
+
+    .hidden {
+        display: none;
+    }
+    #btn-enviar-sos {
+        display: block;
+        width: 100%;
+        padding: 12px 0;
+        background-color: #d93025; 
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(217, 48, 37, 0.4);
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        margin-top: 15px;
+    }
+
+    #btn-enviar-sos:hover {
+        background-color: #b1261d;
+        box-shadow: 0 6px 8px rgba(177, 38, 29, 0.6);
+    }
+
+</style>
+
+<!-- Vite -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
 </head>
 
 <body>
+
     <div class="pre-loader">
         <div class="pre-loader-box">
             <div class="loader-logo">
@@ -76,7 +152,6 @@
             <div class="loading-text">Loading...</div>
         </div>
     </div>
-
     <div class="header">
         <div class="header-left">
             <div class="menu-icon bi bi-list"></div>
@@ -118,7 +193,9 @@
                 </form>
             </div>
         </div>
+
         <div class="header-right">
+            <!-- Settings Icon -->
             <div class="dashboard-setting user-notification">
                 <div class="dropdown">
                     <a class="dropdown-toggle no-arrow" href="javascript:;" data-toggle="right-sidebar">
@@ -126,127 +203,88 @@
                     </a>
                 </div>
             </div>
+
+            <!-- Notification Icon -->
             <div class="user-notification">
                 <div class="dropdown">
                     <a class="dropdown-toggle no-arrow" href="#" role="button" data-toggle="dropdown">
                         <i class="icon-copy dw dw-notification"></i>
-                        <span class="badge notification-active"></span>
+                        <span class="badge notification-active" id="notificationBadge"></span>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
                         <div class="notification-list mx-h-350 customscroll">
                             <ul>
                                 <li>
-                                    <a href="#">
-                                        <img src="{{ asset('vendors/images/img.jpg') }}" alt="" />
+                                    <a href="#"><img src="{{ asset('vendors/images/img.jpg') }}" alt="" />
                                         <h3>John Doe</h3>
-                                        <p>
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing
-                                            elit, sed...
-                                        </p>
-                                    </a>
-
+                                        <p>Lorem ipsum dolor sit amet...</p></a>
                                 </li>
-                                <li>
-                                    <a href="#">
-                                        <img src="{{ asset('vendors/images/photo1.jpg') }}" alt="" />
-                                        <h3>Lea R. Frith</h3>
-                                        <p>
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing
-                                            elit, sed...
-                                        </p>
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="#">
-                                        <img src="{{ asset('vendors/images/photo2.jpg') }}" alt="" />
-                                        <h3>Erik L. Richards</h3>
-                                        <p>
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing
-                                            elit, sed...
-                                        </p>
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="#">
-                                        <img src="{{ asset('vendors/images/photo3.jpg') }}" alt="" />
-                                        <h3>John Doe</h3>
-                                        <p>
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing
-                                            elit, sed...
-                                        </p>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <img src="{{ asset('vendors/images/photo4.jpg') }}" alt="" />
-                                        <h3>Renee I. Hansen</h3>
-                                        <p>
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing
-                                            elit, sed...
-                                        </p>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <img src="{{ asset('vendors/images/img.jpg') }}" alt="" />
-                                        <h3>Vicki M. Coleman</h3>
-                                        <p>
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing
-                                            elit, sed...
-                                        </p>
-                                    </a>
-                                </li>
-
                             </ul>
                         </div>
                     </div>
                 </div>
             </div>
+
+        @if (auth()->user()->role == 'admin')
+            <!-- SOS Button -->
+            <div class="user-notification">
+                <form action="{{ route('mensagem_sos') }}" method="POST" style="display:inline-block; margin-left: 10px;">
+                    @csrf
+                    <input type="hidden" name="mensagem" value="conteudo da mensagem sos">
+                    <button type="submit" title="Enviar SOS" style="background:none; border:none; cursor:pointer;">
+                        <i class="fa fa-exclamation-triangle" style="color:red; font-size: 20px;"></i>
+                    </button>
+                </form>
+            </div>
+
+        @endif
+            
+            <div id="mensagemAlerta" class="mensagem-alerta hidden" style="cursor:pointer;">
+                <span class="mensagem-icone"><i class="fa fa-envelope"></i></span>
+                <span id="mensagemTextoCompleto" class="mensagem-texto"></span>
+            </div>
+
+            <div id="mensagemModal" class="mensagem-modal hidden">
+                <div class="mensagem-modal-conteudo">
+                    <h4>Mensagem Recebida</h4>
+                    <p id="mensagemConteudo"></p>
+                    <small id="mensagemData" style="display:block;margin-top:10px;color:#666;"></small>
+                    <button id="fecharModal">OK</button>
+                </div>
+            </div>
+
+            <!-- User Info -->
             <div class="user-info-dropdown">
                 <div class="dropdown">
                     <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown">
                         <span class="user-icon">
                             <img src="{{ asset('vendors/images/photo1.jpg') }}" alt="" />
                         </span>
-
                         @guest
                             <p>Olá, seja bem-vindo visitante! Faça login para acessar suas informações.</p>
                         @else
                             <span class="user-name">Olá, seja bem-vindo {{ Auth::user()->name }}!</span>
                         @endguest
-
                     </a>
                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                        <a class="dropdown-item" href="profile.html">
-                            <i class="dw dw-user1"></i> Profile
-                        </a>
-                        <a class="dropdown-item" href="profile.html">
-                            <i class="dw dw-settings2"></i> Setting
-                        </a>
-                        <a class="dropdown-item" href="faq.html">
-                            <i class="dw dw-help"></i> Help
-                        </a>
-
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                            style="display: none;">
-                            @csrf
-                        </form>
-                        <a class="dropdown-item" href="#"
-                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            <i class="dw dw-logout"></i> Log Out
-                        </a>
+                        <a class="dropdown-item" href="profile.html"><i class="dw dw-user1"></i> Profile</a>
+                        <a class="dropdown-item" href="profile.html"><i class="dw dw-settings2"></i> Setting</a>
+                        <a class="dropdown-item" href="faq.html"><i class="dw dw-help"></i> Help</a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
+                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="dw dw-logout"></i> Log Out</a>
                     </div>
-
                 </div>
             </div>
+
+            <!-- GitHub Link -->
             <div class="github-link">
-                <a href="https://github.com/dropways/deskapp" target="_blank"><img src="vendors/images/github.svg"
-                        alt="" /></a>
+                <a href="https://github.com/dropways/deskapp" target="_blank">
+                    <img src="vendors/images/github.svg" alt="" />
+                </a>
             </div>
         </div>
     </div>
+
 
     <div class="right-sidebar">
         <div class="sidebar-title">
@@ -707,6 +745,107 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NXZMQSS" height="0" width="0"
             style="display: none; visibility: hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
+   <script>
+    let mensagensPendentes = [];
+    let carregamentoConcluido = false;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const userIdLogado = document.querySelector('meta[name="user-id"]').getAttribute('content');
+
+        fetch('/mensagens_nao_lidas')
+            .then(res => res.json())
+            .then(dados => {
+                if (dados && dados.length > 0) {
+                    mensagensPendentes = dados;
+                    atualizarAlerta();
+                }
+                carregamentoConcluido = true;
+            });
+
+        if (!window.echoRegistered) {
+            Echo.channel('mensagem_sos')
+                .listen('.NovaMensagemSosEvent', (e) => {
+                    if (String(e.user_id) !== userIdLogado) {
+                        return; 
+                    }
+
+                    const mensagem = {
+                        id: e.id,
+                        conteudo: e.conteudo,
+                        data: e.data
+                    };
+
+                    mensagensPendentes.unshift(mensagem);
+                    atualizarAlerta();
+                });
+            window.echoRegistered = true;
+        }
+
+        // Ao clicar no alerta, mostra a próxima mensagem
+        document.getElementById('mensagemAlerta').addEventListener('click', () => {
+            mostrarProximaMensagem();
+        });
+
+        // Botão OK do modal
+        document.getElementById('fecharModal').addEventListener('click', () => {
+            const mensagemAtual = mensagensPendentes.shift();
+            document.getElementById('mensagemModal').classList.add('hidden');
+
+            fetch('/mensagem_lida', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ id: mensagemAtual.id })
+            });
+
+            if (mensagensPendentes.length > 0) {
+                setTimeout(() => mostrarProximaMensagem(), 300);
+            } else {
+                document.getElementById('mensagemAlerta').classList.add('hidden');
+            }
+
+            atualizarAlerta();
+        });
+
+        // Atualiza o alerta no topo com a quantidade de mensagens
+        function atualizarAlerta() {
+            const alerta = document.getElementById('mensagemAlerta');
+            const texto = document.getElementById('mensagemTextoCompleto');
+
+            if (mensagensPendentes.length > 0) {
+                alerta.classList.remove('hidden');
+                texto.textContent = `Nova mensagem (${mensagensPendentes.length})`;
+            } else {
+                alerta.classList.add('hidden');
+                texto.textContent = '';
+            }
+        }
+
+        // Exibe o modal com o conteúdo da mensagem e data formatada
+        function mostrarProximaMensagem() {
+            const mensagem = mensagensPendentes[0];
+            if (!mensagem) return;
+
+            document.getElementById('mensagemConteudo').textContent = mensagem.conteudo;
+            document.getElementById('mensagemData').textContent = formatarData(mensagem.data);
+            document.getElementById('mensagemModal').classList.remove('hidden');
+        }
+
+        function formatarData(dataString) {
+            const data = new Date(dataString);
+            return data.toLocaleString('pt-PT', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+    });
+</script>
+
 </body>
 
 </html>
