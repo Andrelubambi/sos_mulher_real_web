@@ -90,10 +90,8 @@ Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->n
 
 
     Route::post('/mensagem_sos',[MensagemSosController::class,'enviarMensagemSos'])->name('mensagem_sos');
-    Route::post('/mensagem_lida', function (\Illuminate\Http\Request $request) {
-        
-    });
-
+    Route::post('/mensagem_lida',[MensagemSosController::class,'deletarMensagemLida'])->name('mensagem_lida');
+    Route::get('/mensagens_nao_lidas',[MensagemSosController::class,'pegarMensagensNaoLidas'])->name('mensagens_nao_lidas');
 
     // Demais páginas administrativas
     Route::view('/index2', 'index2')->name('index2');

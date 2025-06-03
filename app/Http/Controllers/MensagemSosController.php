@@ -23,7 +23,21 @@ class MensagemSosController extends Controller
 
 
     //Remove a notificação. Esta acção é invocada quando o user recebe e lê a notificacao ou a mensagem
-    public function deletarMensagemSos(){
-        
+    public function deletarMensagemLida(Request $request)
+    {
+        MensagemSos::destroy($request->id);
+
+        return response()->json('Deletado com sucesso', 200);
     }
+
+    public function pegarMensagensNaoLidas(){
+        $MensagemSos = MensagemSos::where('user_id', auth()->id())
+                ->orderBy('created_at', 'desc')
+                ->get(['id', 'conteudo', 'created_at as data']);
+        return $MensagemSos;
+    }
+
+
+
+
 }
