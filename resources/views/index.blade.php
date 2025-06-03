@@ -2,6 +2,9 @@
 <html>
 
 <head>
+
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <!-- Basic Page Info -->
     <meta charset="utf-8" />
     <title>DeskApp - Bootstrap Admin Dashboard HTML Template</title>
@@ -60,6 +63,80 @@
         })(window, document, "script", "dataLayer", "GTM-NXZMQSS");
     </script>
     <!-- End Google Tag Manager -->
+
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<style>
+/* Alerta no canto superior direito */
+.mensagem-alerta {
+    position: fixed;
+    top: 20px;
+    right: 25px;
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    cursor: pointer;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Ícone da mensagem */
+.mensagem-icone {
+    font-size: 22px;
+}
+
+/* Modal */
+.mensagem-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.mensagem-modal-conteudo {
+    background: #fff;
+    padding: 25px 30px;
+    border-radius: 10px;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+
+.mensagem-modal-conteudo h4 {
+    margin-bottom: 15px;
+}
+
+.mensagem-modal-conteudo button {
+    margin-top: 15px;
+    padding: 8px 16px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* Esconder por padrão */
+.hidden {
+    display: none;
+}
+</style>
+
+<!-- Vite -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
 </head>
 
 <body>
@@ -128,10 +205,34 @@
             </div>
             <div class="user-notification">
                 <div class="dropdown">
-                    <a class="dropdown-toggle no-arrow" href="#" role="button" data-toggle="dropdown">
+                    
+                    
+                    <a class="dropdown-toggle no-arrow" href="#" role="button" data-toggle="dropdown" id="notificationIcon">
                         <i class="icon-copy dw dw-notification"></i>
-                        <span class="badge notification-active"></span>
+                        <span class="badge notification-active" id="notificationBadge"></span>
                     </a>
+
+                    <div id="mensagemAlerta" class="mensagem-alerta hidden">
+                        <span class="mensagem-icone">📩</span>
+                        <span class="mensagem-texto">Nova mensagem</span>
+                    </div>
+
+                    <div id="mensagemModal" class="mensagem-modal hidden">
+                        <div class="mensagem-modal-conteudo">
+                            <h4>Mensagem Recebida</h4>
+                            <p id="mensagemConteudo"></p>
+                            <small id="mensagemData" style="display:block;margin-top:10px;color:#666;"></small>
+                            <button id="fecharModal">OK</button>
+                        </div>
+                    </div>
+
+
+                   <form action="{{ route('mensagem_sos') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="mensagem" value="conteudo da mensagem sos">
+                        <button type="submit">Envia sos m</button>
+                    </form>
+
                     <div class="dropdown-menu dropdown-menu-right">
                         <div class="notification-list mx-h-350 customscroll">
                             <ul>
@@ -707,6 +808,73 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NXZMQSS" height="0" width="0"
             style="display: none; visibility: hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
+<script>
+    let mensagemAtual = {
+        id: null,
+        conteudo: '',
+        data: ''
+    };
+
+    document.addEventListener('DOMContentLoaded', function () {
+        Echo.channel('mensagem_sos')
+            .listen('.NovaMensagemSosEvent', (e) => {
+                mensagemAtual = {
+                    id: e.id,
+                    conteudo: e.conteudo,
+                    data: e.data
+                };
+
+                // Mostra o alerta
+                document.getElementById('mensagemAlerta').classList.remove('hidden');
+            });
+
+        // Ao clicar no alerta
+        document.getElementById('mensagemAlerta').addEventListener('click', () => {
+            if (!mensagemAtual.conteudo) {
+                console.warn('Mensagem vazia ou não carregada.');
+                return;
+            }
+
+            document.getElementById('mensagemConteudo').textContent = mensagemAtual.conteudo;
+            document.getElementById('mensagemData').textContent = formatarData(mensagemAtual.data);
+            document.getElementById('mensagemModal').classList.remove('hidden');
+        });
+
+        // Botão OK
+        document.getElementById('fecharModal').addEventListener('click', () => {
+            document.getElementById('mensagemModal').classList.add('hidden');
+            document.getElementById('mensagemAlerta').classList.add('hidden');
+
+            // Envia requisição AJAX
+            fetch('/mensagem_lida', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ id: mensagemAtual.id })
+            }).then(response => {
+                if (!response.ok) {
+                    console.error('Erro ao marcar mensagem como lida.');
+                }
+            }).catch(err => console.error('Erro na requisição:', err));
+        });
+
+        function formatarData(dataString) {
+            const data = new Date(dataString);
+            return data.toLocaleString('pt-PT', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+    });
+</script>
+
+
+
 </body>
 
 </html>
