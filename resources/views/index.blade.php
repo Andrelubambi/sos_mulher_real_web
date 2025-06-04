@@ -244,14 +244,19 @@
                 <span id="mensagemTextoCompleto" class="mensagem-texto"></span>
             </div>
 
-            <div id="mensagemModal" class="mensagem-modal hidden">
+            <div id="mensagemModal" class="mensagem-modal hidden" data-mensagem-id="">
                 <div class="mensagem-modal-conteudo">
                     <h4>Mensagem Recebida</h4>
                     <p id="mensagemConteudo"></p>
                     <small id="mensagemData" style="display:block;margin-top:10px;color:#666;"></small>
-                    <button id="fecharModal">OK</button>
+
+                    <div style="margin-top: 10px; text-align: right;">
+                        <button id="enviarResposta" style="margin-right: 10px;">Responder</button>
+                        <button id="fecharModal">OK</button>
+                    </div>
                 </div>
             </div>
+
 
             <!-- User Info -->
             <div class="user-info-dropdown">
@@ -842,6 +847,34 @@
             });
         }
     });
+
+    // Suponha que esta função é chamada quando você clica para abrir o modal
+    function abrirModalMensagem(mensagem) {
+        const modal = document.getElementById('mensagemModal');
+        const conteudo = document.getElementById('mensagemConteudo');
+        const data = document.getElementById('mensagemData');
+
+        conteudo.textContent = mensagem.conteudo;
+        data.textContent = mensagem.data;
+
+        // Define o ID da mensagem para uso posterior
+        modal.dataset.mensagemId = mensagem.id;
+
+        // Exibe o modal
+        modal.classList.remove('hidden');
+    }
+
+    document.getElementById('enviarResposta').addEventListener('click', () => {
+    const mensagemAtual = mensagensPendentes[0]; // ainda não foi removida
+
+    if (mensagemAtual && mensagemAtual.id) {
+        window.location.href = `/responder_mensagem_sos/${mensagemAtual.id}`;
+    } else {
+        alert('Mensagem inválida para responder.');
+    }
+});
+
+
 </script>
 
 </body>

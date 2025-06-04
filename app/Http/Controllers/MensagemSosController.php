@@ -37,6 +37,12 @@ class MensagemSosController extends Controller
         return $MensagemSos;
     }
 
+    public function responder($id)
+    {
+        $mensagem = MensagemSos::findOrFail($id);
+        return view('chat_2', compact('mensagem'));
+    }
+
 
 
 
