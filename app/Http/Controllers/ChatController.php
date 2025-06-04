@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Mensagem;
 use App\Events\MessageSent;
+use Illuminate\Support\Facades\DB;
 
 use Illuminate\Http\Request;
 
@@ -12,13 +13,52 @@ class ChatController extends Controller
 {
 
     public function index()
-    {
-        $usuariosNaoDoutores = User::where('role', '!=', 'doutor')->
-        where('id', '!=', auth()->user()->id)
+{
+    $userId = auth()->id();
+
+    // Usuários que não são doutores e não é o usuário logado
+    $usuariosNaoDoutores = User::where('role', '!=', 'doutor')
+        ->where('id', '!=', $userId)
         ->get();
 
-        return view('chat', compact('usuariosNaoDoutores'));
+    $conversas = DB::table('mensagens')
+        ->selectRaw('
+            CASE 
+                WHEN de = ? THEN para 
+                ELSE de 
+            END as user_id,
+            MAX(created_at) as ultima_data,
+            MAX(conteudo) as ultima_mensagem
+        ', [$userId]) // <-- aqui o parâmetro é passado corretamente
+        ->where('de', $userId)
+        ->orWhere('para', $userId)
+        ->groupBy('user_id')
+        ->orderByDesc('ultima_data')
+        ->get();
+
+    // Obter os dados do usuário com quem ele conversou
+    $chatsRecentes = [];
+    foreach ($conversas as $conversa) {
+        $ultimoMsg = \App\Models\Mensagem::where(function ($query) use ($userId, $conversa) {
+                $query->where('de', $userId)->where('para', $conversa->user_id)
+                      ->orWhere('de', $conversa->user_id)->where('para', $userId);
+            })
+            ->orderByDesc('created_at')
+            ->first();
+
+        $user = \App\Models\User::find($conversa->user_id);
+        if ($user && $ultimoMsg) {
+            $chatsRecentes[] = [
+                'user' => $user,
+                'mensagem' => $ultimoMsg
+            ];
+        }
     }
+
+    return view('chat', compact('usuariosNaoDoutores', 'chatsRecentes'))->with('mensagens', $chatsRecentes);
+
+}
+
 
     public function getMessages($usuarioId)
 {

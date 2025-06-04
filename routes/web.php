@@ -89,6 +89,10 @@ Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->n
     Route::view('/profile', 'profile')->name('profile');
 
 
+    Route::get('/mensagem_sos',function(){
+        return redirect()->back();
+    })->name('mensagem_sos');
+
     Route::post('/mensagem_sos',[MensagemSosController::class,'enviarMensagemSos'])->name('mensagem_sos');
     Route::post('/mensagem_lida',[MensagemSosController::class,'deletarMensagemLida'])->name('mensagem_lida');
     Route::get('/mensagens_nao_lidas',[MensagemSosController::class,'pegarMensagensNaoLidas'])->name('mensagens_nao_lidas');

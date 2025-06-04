@@ -19,31 +19,172 @@
 
     <style>
         .chat-layout { display: flex; height: 90vh; }
-        .sidebar { width: 250px; border-right: 1px solid #ddd; overflow-y: auto; }
-        .chat-area { flex-grow: 1; display: flex; flex-direction: column; }
-        .user-item { padding: 10px; cursor: pointer; }
-        .user-item:hover { background: #f0f0f0; }
-        .chat-messages { flex-grow: 1; overflow-y: auto; padding: 10px; border-bottom: 1px solid #ddd; }
-        .chat-input { display: flex; padding: 10px; }
-        .chat-input textarea { flex-grow: 1; resize: none; }
-        .chat-input button { margin-left: 10px; }
-        .message { margin: 5px 0; }
-        .sent { text-align: right; }
-        .received { text-align: left; }
+
+        .sidebar {
+            width: 250px;
+            border-right: 1px solid #ddd;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar h5 {
+            font-weight: bold;
+            padding: 10px;
+            background-color: #eee;
+            margin: 0;
+        }
+
+        .user-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+
+        .user-item:hover {
+            background: #f0f0f0;
+        }
+
+        .chat-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 10px;
+        }
+
+        .chat-input textarea {
+            flex-grow: 1;
+            resize: none;
+        }
+
+        .chat-input button {
+            margin-left: 10px;
+        }
+
+        .message {
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 8px;
+            background: #f1f1f1;
+            max-width: 70%;
+        }
+
+        .sent {
+            text-align: right;
+            align-self: flex-end;
+            background-color: #d1e7dd;
+        }
+
+        .received {
+            text-align: left;
+            align-self: flex-start;
+            background-color: #f8d7da;
+        }
+
+        /* Botões de aba */
+        .tab-buttons {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .tab-buttons button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .tab-buttons button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Menu hambúrguer */
+        .hamburger {
+            display: none;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            width: 100%;
+        }
+
+        .hamburger-menu {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: absolute;
+                z-index: 10;
+                height: 100%;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .hamburger {
+                display: block;
+            }
+        }
     </style>
 </head>
 
 <body>
+    <button class="hamburger" onclick="toggleSidebar()">☰ Menu</button>
+
     <div class="chat-layout">
-        <div class="sidebar">
-            <h5 style="padding:10px;">Usuários</h5>
-            @foreach ($usuariosNaoDoutores as $user)
-                <div class="user-item" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}">
-                    {{ $user->name }}
-                </div>
-            @endforeach
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="tab-buttons">
+                <button onclick="mostrarMensagens()">Mensagens</button>
+                <button onclick="mostrarUsuarios()">Usuários</button>
+            </div>
+
+            <!-- Mensagens Recentes -->
+            <div id="mensagensRecentes" style="display: none;">
+                <h5>Mensagens Recentes</h5>
+                @forelse ($chatsRecentes as $chat)
+                    <div class="user-item" data-user-id="{{ $chat['user']->id }}" data-user-name="{{ $chat['user']->name }}">
+                        <strong>{{ $chat['user']->name }}</strong><br>
+                        <small>{{ \Carbon\Carbon::parse($chat['mensagem']->created_at)->format('d/m/Y H:i') }}</small><br>
+                        <div>{{ \Illuminate\Support\Str::limit($chat['mensagem']->conteudo, 40) }}</div>
+                    </div>
+                @empty
+                    <p style="padding: 10px;">Nenhuma conversa recente.</p>
+                @endforelse
+            </div>
+
+            <!-- Lista de Usuários -->
+            <div id="listaUsuarios" style="display: block;">
+                <h5>Usuários</h5>
+                @forelse ($usuariosNaoDoutores as $user)
+                    <div class="user-item" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}">
+                        {{ $user->name }}
+                    </div>
+                @empty
+                    <p style="padding: 10px;">Nenhum usuário encontrado.</p>
+                @endforelse
+            </div>
         </div>
 
+        <!-- Área de Chat -->
         <div class="chat-area">
             <div id="chatHeader" class="chat-header">Selecione um usuário</div>
             <div id="messages" class="chat-messages"></div>
@@ -56,7 +197,22 @@
         </div>
     </div>
 
+    <!-- Scripts -->
     <script>
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        function mostrarMensagens() {
+            document.getElementById('mensagensRecentes').style.display = 'block';
+            document.getElementById('listaUsuarios').style.display = 'none';
+        }
+
+        function mostrarUsuarios() {
+            document.getElementById('mensagensRecentes').style.display = 'none';
+            document.getElementById('listaUsuarios').style.display = 'block';
+        }
+
         document.addEventListener('DOMContentLoaded', function () {
             const messagesDiv = document.getElementById('messages');
             const sendMessageForm = document.getElementById('sendMessageForm');
@@ -70,7 +226,8 @@
                 const messageDiv = document.createElement('div');
                 messageDiv.classList.add('message', sentByMe ? 'sent' : 'received');
                 messageDiv.innerHTML = `<div class="message-content">
-                    <strong>${sentByMe ? 'Você' : message.remetente.name}:</strong>
+                    <strong>${sentByMe ? 'Você' : message.remetente.name}:</strong><br>
+                    <small>${new Date(message.created_at).toLocaleString()}</small><br>
                     ${message.conteudo.replace(/\n/g, '<br>')}
                 </div>`;
                 messagesDiv.appendChild(messageDiv);
@@ -110,6 +267,8 @@
                         });
 
                     escutarMensagens(usuarioAtualId);
+                    // Fechar sidebar no mobile
+                    document.getElementById('sidebar').classList.remove('active');
                 });
             });
 

@@ -448,7 +448,6 @@
                             <span class="micon bi bi-chat-right-dots"></span>
                             <span class="mtext">Chat</span>
                         </a>
-
                     </li>
                     <li class="dropdown">
                         <a href="javascript:;" class="dropdown-toggle">
@@ -464,6 +463,12 @@
                         </ul>
                     </li>
 
+                    <li class="">
+                        <a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
+                            <span class="micon bi bi-chat-right-dots"></span>
+                            <span class="mtext">Mensagens sos</span>
+                        </a>
+                    </li>
 
                     <li>
                         <div class="dropdown-divider"></div>
