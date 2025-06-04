@@ -267,12 +267,19 @@
         function mostrarMensagens() {
             document.getElementById('mensagensRecentes').style.display = 'block';
             document.getElementById('listaUsuarios').style.display = 'none';
+            const buttons = document.querySelectorAll('.tab-buttons button');
+            buttons[0].classList.add('active');
+            buttons[1].classList.remove('active');
         }
 
         function mostrarUsuarios() {
             document.getElementById('mensagensRecentes').style.display = 'none';
             document.getElementById('listaUsuarios').style.display = 'block';
+            const buttons = document.querySelectorAll('.tab-buttons button');
+            buttons[0].classList.remove('active');
+            buttons[1].classList.add('active');
         }
+
 
         document.addEventListener('DOMContentLoaded', function () {
             const messagesDiv = document.getElementById('messages');
