@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
     <meta charset="utf-8" />
     <title>Chat</title>
@@ -18,107 +18,209 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
+        /* Reset básico */
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .chat-area {
-            height: 90vh;
-            margin: 20px auto;
-            max-width: 800px;
             display: flex;
             flex-direction: column;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            height: 90vh;
+            max-width: 700px;
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             overflow: hidden;
-            border: 1px solid #ccc;
+            border: 1px solid #ddd;
         }
 
         .chat-header {
-            padding: 16px;
-            font-weight: bold;
-            font-size: 17px;
-            border-bottom: 1px solid #ddd;
-            background-color: #f8f9fa;
+            padding: 18px 24px;
+            background-color: #007bff;
+            color: #fff;
+            font-weight: 700;
+            font-size: 20px;
+            border-bottom: 1px solid #0056b3;
+            user-select: none;
         }
 
         .chat-messages {
             flex-grow: 1;
+            padding: 20px 24px;
             overflow-y: auto;
-            padding: 20px;
-            background-color: #fdfdfd;
+            background-color: #f9fbff;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
+        }
+
+        /* Barra de rolagem estilizada */
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+            background-color: rgba(0,123,255,0.3);
+            border-radius: 4px;
+        }
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
         }
 
         .message {
             max-width: 70%;
-            padding: 12px 16px;
-            border-radius: 10px;
-            line-height: 1.5;
+            padding: 14px 18px;
+            border-radius: 16px;
+            line-height: 1.4;
             word-wrap: break-word;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-            color: white;
             font-size: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
+        /* Mensagens enviadas */
         .sent {
-            background-color: #007bff;
             align-self: flex-end;
-            border-bottom-right-radius: 0;
-            text-align: right;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+            animation: slideInRight 0.3s ease forwards;
         }
 
+        /* Mensagens recebidas */
         .received {
-            background-color: #6c757d;
             align-self: flex-start;
-            border-bottom-left-radius: 0;
-            text-align: left;
+            background-color: #e2e3e5;
+            color: #333;
+            border-bottom-left-radius: 4px;
+            animation: slideInLeft 0.3s ease forwards;
         }
 
+        /* Nome remetente */
+        .message strong {
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        /* Conteúdo da mensagem */
+        .message .content {
+            white-space: pre-wrap;
+        }
+
+        /* Data/hora da mensagem */
+        .message .timestamp {
+            font-size: 11px;
+            margin-top: 8px;
+            opacity: 0.6;
+            align-self: flex-end;
+            user-select: none;
+        }
+
+        /* Formulário de envio */
         .chat-input {
             display: flex;
-            padding: 12px 16px;
+            padding: 16px 20px;
             border-top: 1px solid #ddd;
-            background-color: #f9f9f9;
+            background-color: #fff;
         }
 
         .chat-input textarea {
             flex-grow: 1;
             resize: none;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            padding: 10px;
-            font-size: 14px;
-            height: 60px;
-            background-color: #fff;
+            border: 1.5px solid #ccc;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+            min-height: 60px;
+            max-height: 120px;
+        }
+
+        .chat-input textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 6px rgba(0, 123, 255, 0.5);
         }
 
         .chat-input button {
-            margin-left: 12px;
-            padding: 10px 20px;
+            margin-left: 14px;
+            padding: 0 28px;
             background-color: #007bff;
             border: none;
-            color: white;
-            border-radius: 6px;
-            font-weight: 500;
-            transition: background-color 0.2s;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
         }
 
-        .chat-input button:hover {
+        .chat-input button:hover:not(:disabled) {
             background-color: #0056b3;
         }
 
+        .chat-input button:disabled {
+            background-color: #a1c4fd;
+            cursor: not-allowed;
+        }
+
+        /* Responsividade */
         @media (max-width: 768px) {
             .chat-area {
-                width: 100%;
-                margin: 0;
                 height: 100vh;
                 border-radius: 0;
+                max-width: 100%;
+            }
+
+            .chat-header {
+                font-size: 18px;
+                padding: 14px 18px;
+            }
+
+            .chat-messages {
+                padding: 16px 18px;
+                gap: 12px;
+            }
+
+            .chat-input {
+                padding: 12px 16px;
+            }
+        }
+
+        /* Animações */
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
             }
         }
     </style>
@@ -126,24 +228,25 @@
 
 <body>
 
-<div class="chat-area">
-    <div id="chatHeader" class="chat-header">
+<div class="chat-area" role="main" aria-label="Área de chat">
+    <div id="chatHeader" class="chat-header" aria-live="polite" aria-atomic="true">
         Chat com: {{ $remetente->name }}
     </div>
-    <div id="messages" class="chat-messages">
+
+    <div id="messages" class="chat-messages" aria-live="polite" aria-relevant="additions" tabindex="0">
         @foreach ($mensagens as $msg)
             <div class="message {{ $msg->de == auth()->id() ? 'sent' : 'received' }}">
-                <div><strong>{{ $msg->de == auth()->id() ? 'Você' : $remetente->name }}</strong></div>
-                <div style="font-size: 13px; margin-top: 4px;">{!! nl2br(e($msg->conteudo)) !!}</div>
-                <div style="font-size: 11px; margin-top: 6px;">{{ \Carbon\Carbon::parse($msg->created_at)->format('d/m/Y H:i') }}</div>
+                <strong>{{ $msg->de == auth()->id() ? 'Você' : $remetente->name }}</strong>
+                <div class="content">{!! nl2br(e($msg->conteudo)) !!}</div>
+                <div class="timestamp">{{ \Carbon\Carbon::parse($msg->created_at)->format('d/m/Y H:i') }}</div>
             </div>
         @endforeach
     </div>
 
-    <form id="sendMessageForm" class="chat-input">
+    <form id="sendMessageForm" class="chat-input" aria-label="Formulário para enviar mensagem">
         @csrf
-        <textarea name="conteudo" id="conteudo" placeholder="Digite sua mensagem..." required></textarea>
-        <button type="submit">Enviar</button>
+        <textarea name="conteudo" id="conteudo" placeholder="Digite sua mensagem..." aria-required="true" required></textarea>
+        <button type="submit" aria-label="Enviar mensagem">Enviar</button>
     </form>
 </div>
 
@@ -162,10 +265,17 @@
             messageDiv.classList.add('message');
             messageDiv.classList.add(sentByMe ? 'sent' : 'received');
 
+            // Formata a data para pt-BR usando Intl.DateTimeFormat
+            const dateObj = new Date(message.created_at);
+            const formattedDate = new Intl.DateTimeFormat('pt-BR', {
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            }).format(dateObj);
+
             messageDiv.innerHTML = `
-                <div><strong>${sentByMe ? 'Você' : message.remetente.name}</strong></div>
-                <div style="font-size: 13px; margin-top: 4px;">${message.conteudo.replace(/\n/g, '<br>')}</div>
-                <div style="font-size: 11px; margin-top: 6px;">${new Date(message.created_at).toLocaleString()}</div>
+                <strong>${sentByMe ? 'Você' : message.remetente.name}</strong>
+                <div class="content">${message.conteudo.replace(/\n/g, '<br>')}</div>
+                <div class="timestamp">${formattedDate}</div>
             `;
 
             messagesDiv.appendChild(messageDiv);
@@ -195,6 +305,10 @@
             const conteudo = conteudoInput.value.trim();
             if (!conteudo) return;
 
+            // Desabilita botão enquanto envia
+            const button = sendMessageForm.querySelector('button[type="submit"]');
+            button.disabled = true;
+
             fetch(`/chat/send/${usuarioAtualId}`, {
                 method: 'POST',
                 headers: {
@@ -203,12 +317,24 @@
                 },
                 body: JSON.stringify({ conteudo })
             })
-            .then(res => res.json())
+            .then(res => {
+                button.disabled = false;
+                if (!res.ok) throw new Error('Erro ao enviar mensagem');
+                return res.json();
+            })
             .then(data => {
                 appendMessage(data, true);
                 conteudoInput.value = '';
+                conteudoInput.focus();
+            })
+            .catch(err => {
+                alert(err.message);
+                button.disabled = false;
             });
         });
+
+        // Scroll inicial para o fim da conversa
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
     });
 </script>
 

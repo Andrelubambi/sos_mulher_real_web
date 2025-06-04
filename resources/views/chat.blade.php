@@ -85,7 +85,6 @@
         flex-grow: 1;
         overflow-y: auto;
         padding: 20px;
-        background-color: #fdfdfd;
         display: flex;
         flex-direction: column;
         gap: 12px;
@@ -96,14 +95,10 @@
         max-width: 100%;
         padding: 12px 16px;
         border-radius: 10px;
-        background-color: #eaeaea;
         line-height: 1.5;
         word-wrap: break-word;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
         position: relative;
     }
-
-   
 
 
     /* CHAT INPUT */
@@ -295,12 +290,13 @@
                 messageDiv.classList.add('message', sentByMe ? 'sent' : 'received');
                 messageDiv.innerHTML = `<div class="message-content">
                     <strong>${sentByMe ? 'Você' : message.remetente.name}:</strong><br>
-                    <small>${new Date(message.created_at).toLocaleString()}</small><br>
-                    ${message.conteudo.replace(/\n/g, '<br>')}
+                    ${message.conteudo.replace(/\n/g, '<br>')}<br>
+                    <small style="font-size: 0.75em; color: #666;">${new Date(message.created_at).toLocaleString()}</small>
                 </div>`;
                 messagesDiv.appendChild(messageDiv);
                 messagesDiv.scrollTop = messagesDiv.scrollHeight;
             }
+
 
             function escutarMensagens(usuarioId) {
                 const minId = Math.min(usuarioLogadoId, usuarioId);
