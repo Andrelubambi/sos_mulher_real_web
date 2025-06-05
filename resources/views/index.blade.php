@@ -130,6 +130,8 @@
         box-shadow: 0 6px 8px rgba(177, 38, 29, 0.6);
     }
 
+    
+
 </style>
 
 <!-- Vite -->

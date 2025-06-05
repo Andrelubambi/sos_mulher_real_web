@@ -61,61 +61,60 @@ class ChatController extends Controller
     }
 
     public function responderMensagemSos($id)
-{
-    $userId = auth()->id();
-    $mensagemSos = MensagemSos::findOrFail($id);
+    {
+        $userId = auth()->id();
+        $mensagemSos = MensagemSos::findOrFail($id);
 
-    $remetenteId = $mensagemSos->remetente_id ?? 1; // Ajuste conforme seu banco
-
-    // Registra uma nova mensagem como resposta ao SOS
-    $mensagem = Mensagem::create([
-        'de' => $remetenteId,
-        'para' => $userId,
-        'conteudo' => $mensagemSos->conteudo,
-    ]);
-
-    // Busca o histórico de mensagens entre os dois usuários
-    $mensagens = Mensagem::where(function ($query) use ($userId, $remetenteId) {
-        $query->where('de', $userId)->where('para', $remetenteId);
-    })->orWhere(function ($query) use ($userId, $remetenteId) {
-        $query->where('de', $remetenteId)->where('para', $userId);
-    })->with('remetente')->orderBy('created_at')->get();
+        $remetenteId = $mensagemSos->enviado_por; 
 
 
-    // Passa os dados para a view
-    return view('chat_2', [
-        'mensagens' => $mensagens,
-        'remetente' => User::find($remetenteId),
-    ]);
-}
+        $mensagem = Mensagem::create([
+            'de' => $remetenteId,
+            'para' => $userId,
+            'conteudo' => $mensagemSos->conteudo,
+        ]);
 
+        // Busca o histórico de mensagens entre os dois usuários
+        $mensagens = Mensagem::where(function ($query) use ($userId, $remetenteId) {
+            $query->where('de', $userId)->where('para', $remetenteId);
+        })->orWhere(function ($query) use ($userId, $remetenteId) {
+            $query->where('de', $remetenteId)->where('para', $userId);
+        })->with('remetente')->orderBy('created_at')->get();
 
+        $mensagemSos->status = 'lido';
+        $mensagemSos->save();
 
-
-    public function getMessages($usuarioId)
-{
-    $usuario = User::find($usuarioId);
-
-    if (!$usuario) {
-        return response()->json(['error' => 'Usuário não encontrado'], 404);
+        // Passa os dados para a view
+        return view('chat_2', [
+            'mensagens' => $mensagens,
+            'remetente' => User::find($mensagemSos->enviado_por),
+        ]);
     }
 
-    $usuarioLogado = auth()->user();
+    public function getMessages($usuarioId)
+    {
+        $usuario = User::find($usuarioId);
+
+        if (!$usuario) {
+            return response()->json(['error' => 'Usuário não encontrado'], 404);
+        }
+
+        $usuarioLogado = auth()->user();
 
 
-    $messages = Mensagem::where(function ($query) use ($usuarioLogado, $usuario) {
-            $query->where('de', $usuarioLogado->id)
-                  ->where('para', $usuario->id);
-        })
-        ->orWhere(function ($query) use ($usuarioLogado, $usuario) {
-            $query->where('de', $usuario->id)
-                  ->where('para', $usuarioLogado->id);
-        })
-        ->with('remetente') 
-        ->orderBy('created_at', 'asc')
-        ->get();
+        $messages = Mensagem::where(function ($query) use ($usuarioLogado, $usuario) {
+                $query->where('de', $usuarioLogado->id)
+                    ->where('para', $usuario->id);
+            })
+            ->orWhere(function ($query) use ($usuarioLogado, $usuario) {
+                $query->where('de', $usuario->id)
+                    ->where('para', $usuarioLogado->id);
+            })
+            ->with('remetente') 
+            ->orderBy('created_at', 'asc')
+            ->get();
 
-    return response()->json($messages);
+        return response()->json($messages);
     }
     
     public function showChatWithUser($usuarioId)

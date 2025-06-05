@@ -94,7 +94,7 @@ Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->n
     })->name('mensagem_sos');
 
     Route::post('/mensagem_sos',[MensagemSosController::class,'enviarMensagemSos'])->name('mensagem_sos');
-    Route::post('/mensagem_lida',[MensagemSosController::class,'deletarMensagemLida'])->name('mensagem_lida');
+    Route::post('/mensagem_lida',[MensagemSosController::class,'mensagemLida'])->name('mensagem_lida');
     Route::get('/mensagens_nao_lidas',[MensagemSosController::class,'pegarMensagensNaoLidas'])->name('mensagens_nao_lidas');
     Route::get('/responder_mensagem_sos/{id}', [ChatController::class, 'responderMensagemSos'])->name('responder_mensagem_sos');
 
