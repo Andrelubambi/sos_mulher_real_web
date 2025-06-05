@@ -77,13 +77,14 @@
         position: fixed;
         top: 20px;
         right: 20px;
-        background: #e0ffe0;
-        color: #055;
-        padding: 10px 15px;
+        background: #caa606;
+        color: white;
+        padding: 25px;
         border-radius: 8px;
         box-shadow: 0 0 10px #ccc;
         font-weight: bold;
         z-index: 9999;
+        min-height: 40px;
     }
 
     .mensagem-contador {
@@ -881,7 +882,6 @@
         }
     });
 
-    // Suponha que esta função é chamada quando você clica para abrir o modal
     function abrirModalMensagem(mensagem) {
         const modal = document.getElementById('mensagemModal');
         const conteudo = document.getElementById('mensagemConteudo');
@@ -890,7 +890,6 @@
         conteudo.textContent = mensagem.conteudo;
         data.textContent = mensagem.data;
 
-        // Define o ID da mensagem para uso posterior
         modal.dataset.mensagemId = mensagem.id;
 
         // Exibe o modal
