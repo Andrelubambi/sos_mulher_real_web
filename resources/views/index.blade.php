@@ -130,6 +130,37 @@
         box-shadow: 0 6px 8px rgba(177, 38, 29, 0.6);
     }
 
+    #enviarResposta {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#enviarResposta:hover {
+    background-color: #0056b3;
+}
+
+#fecharModal {
+    background-color: #6c757d;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#fecharModal:hover {
+    background-color: #5a6268;
+}
+
+
     
 
 </style>
