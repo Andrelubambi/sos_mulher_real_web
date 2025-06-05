@@ -77,13 +77,14 @@
         position: fixed;
         top: 20px;
         right: 20px;
-        background: #e0ffe0;
-        color: #055;
-        padding: 10px 15px;
+        background: #caa606;
+        color: white;
+        padding: 25px;
         border-radius: 8px;
         box-shadow: 0 0 10px #ccc;
         font-weight: bold;
         z-index: 9999;
+        min-height: 40px;
     }
 
     .mensagem-contador {
@@ -129,6 +130,39 @@
         background-color: #b1261d;
         box-shadow: 0 6px 8px rgba(177, 38, 29, 0.6);
     }
+
+    #enviarResposta {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#enviarResposta:hover {
+    background-color: #0056b3;
+}
+
+#fecharModal {
+    background-color: #6c757d;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#fecharModal:hover {
+    background-color: #5a6268;
+}
+
+
+    
 
 </style>
 
@@ -244,14 +278,19 @@
                 <span id="mensagemTextoCompleto" class="mensagem-texto"></span>
             </div>
 
-            <div id="mensagemModal" class="mensagem-modal hidden">
+            <div id="mensagemModal" class="mensagem-modal hidden" data-mensagem-id="">
                 <div class="mensagem-modal-conteudo">
                     <h4>Mensagem Recebida</h4>
                     <p id="mensagemConteudo"></p>
                     <small id="mensagemData" style="display:block;margin-top:10px;color:#666;"></small>
-                    <button id="fecharModal">OK</button>
+
+                    <div style="margin-top: 10px; text-align: right;">
+                        <button id="enviarResposta" style="margin-right: 10px;">Responder</button>
+                        <button id="fecharModal">OK</button>
+                    </div>
                 </div>
             </div>
+
 
             <!-- User Info -->
             <div class="user-info-dropdown">
@@ -448,7 +487,6 @@
                             <span class="micon bi bi-chat-right-dots"></span>
                             <span class="mtext">Chat</span>
                         </a>
-
                     </li>
                     <li class="dropdown">
                         <a href="javascript:;" class="dropdown-toggle">
@@ -463,7 +501,6 @@
                             @endforeach
                         </ul>
                     </li>
-
 
                     <li>
                         <div class="dropdown-divider"></div>
@@ -844,6 +881,32 @@
             });
         }
     });
+
+    function abrirModalMensagem(mensagem) {
+        const modal = document.getElementById('mensagemModal');
+        const conteudo = document.getElementById('mensagemConteudo');
+        const data = document.getElementById('mensagemData');
+
+        conteudo.textContent = mensagem.conteudo;
+        data.textContent = mensagem.data;
+
+        modal.dataset.mensagemId = mensagem.id;
+
+        // Exibe o modal
+        modal.classList.remove('hidden');
+    }
+
+    document.getElementById('enviarResposta').addEventListener('click', () => {
+    const mensagemAtual = mensagensPendentes[0]; // ainda não foi removida
+
+    if (mensagemAtual && mensagemAtual.id) {
+        window.location.href = `/responder_mensagem_sos/${mensagemAtual.id}`;
+    } else {
+        alert('Mensagem inválida para responder.');
+    }
+});
+
+
 </script>
 
 </body>

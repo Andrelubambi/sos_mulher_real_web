@@ -11,5 +11,5 @@ class MensagemSos extends Model
 
 
     protected $table = 'mensagem_sos';
-    protected $fillable = ['conteudo','user_id'];
+    protected $fillable = ['conteudo','user_id','enviado_por','status'];
 }
