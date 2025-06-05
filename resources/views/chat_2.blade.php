@@ -229,8 +229,11 @@
 <body>
 
 <div class="chat-area" role="main" aria-label="Área de chat">
-    <div id="chatHeader" class="chat-header" aria-live="polite" aria-atomic="true">
-        Chat com: {{ $remetente->name }}
+    <div id="chatHeader" class="chat-header" aria-live="polite" aria-atomic="true" style="display: flex; justify-content: space-between; align-items: center;">
+        <span>Chat com: {{ $remetente->name }}</span>
+        <button onclick="window.location.href='{{ route('index') }}'" style="background-color: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
+            Fechar
+        </button>
     </div>
 
     <div id="messages" class="chat-messages" aria-live="polite" aria-relevant="additions" tabindex="0">
@@ -249,6 +252,7 @@
         <button type="submit" aria-label="Enviar mensagem">Enviar</button>
     </form>
 </div>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
