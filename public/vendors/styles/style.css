@@ -2,6 +2,95 @@
 Version: 3.0.0
 Author: Ankit Hingarajiya - DeskApp
 */
+
+.register-box {
+    width: 100%;
+    max-width: 500px;
+    padding: 40px;
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+.input-group.custom {
+    position: relative;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group.custom label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.input-group.custom .form-control {
+    padding-right: 45px;
+    height: 45px;
+    font-size: 16px;
+}
+
+.input-group-append.custom {
+    position: absolute;
+    top: 37px;
+    right: 10px;
+    transform: translateY(0%);
+    z-index: 2;
+    color: #888;
+    pointer-events: none;
+}
+
+.login-box {
+    width: 100%;
+    max-width: 500px; /* aumenta o tamanho do formulário */
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+}
+
+.input-group.custom {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.input-group.custom label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #444;
+}
+
+.input-group.custom .form-control {
+    width: 100%;
+    padding-right: 45px;
+    height: 45px;
+    font-size: 16px;
+}
+
+.input-group.custom .input-group-append {
+    position: absolute;
+    right: 15px;
+    top: 38px;
+}
+
+body.custom-background {
+    background-image: url("../images/logo.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    margin: 0;
+}
+.login-wrap {
+    height: 100vh;
+}
+.login-box {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 10px;
+}
+
 body,
 html {
     -webkit-font-smoothing: antialiased;
@@ -29,7 +118,7 @@ body {
     padding: 0;
     font-family: "Inter", sans-serif;
     font-weight: 400;
-    min-height: 100%;
+    min-height: 100vh;
     color: #031e23;
     background: #ecf0f4;
 }
