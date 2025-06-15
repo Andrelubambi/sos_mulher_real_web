@@ -1,735 +1,447 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<!-- Basic Page Info -->
-		<meta charset="utf-8" />
-		<title>DeskApp - Bootstrap Admin Dashboard HTML Template</title>
 
-		<!-- Site favicon -->
-		<link
-	rel="apple-touch-icon"
-	sizes="180x180"
-	href="{{ asset('vendors/images/apple-touch-icon.png') }}"
-/>
+<head>
 
-<link
-rel="icon"
-type="image/png"
-sizes="32x32"
-href="{{ asset('vendors/images/favicon-32x32.png') }}"
-/>
-
-<link
-rel="icon"
-type="image/png"
-sizes="16x16"
-href="{{ asset('vendors/images/favicon-16x16.png') }}"
-/>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="user-id" content="{{ auth()->user()->id }}">
 
 
-		<!-- Mobile Specific Metas -->
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1, maximum-scale=1"
-		/>
+    <!-- Basic Page Info -->
+    <meta charset="utf-8" />
+    <title> Dashboard | SOS-MULHER</title>
 
-		<!-- Google Font -->
-		<link
-			href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-			rel="stylesheet"
-		/>
-		<!-- CSS -->
-		<link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/core.css') }}" />
-<link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/icon-font.min.css') }}" />
+    <!-- Site favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('vendors/images/apple-touch-icon.png') }}" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('vendors/images/favicon-32x32.png') }}" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('vendors/images/favicon-16x16.png') }}" />
+    <!-- Mobile Specific Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <!-- Link Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/core.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/icon-font.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/dataTables.bootstrap4.min.css" />
+    <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/responsive.bootstrap4.min.css" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GBZ3SGGX85"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2973766580778258"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <style>
 
-		<link
-			rel="stylesheet"
-			type="text/css"
-			href="src/plugins/datatables/css/dataTables.bootstrap4.min.css"
-		/>
-		<link
-			rel="stylesheet"
-			type="text/css"
-			href="src/plugins/datatables/css/responsive.bootstrap4.min.css"
-		/>
-		<link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}" />
+    </style>
+    <!-- Vite -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
 
+<body>
+    <div class="pre-loader">
+        <div class="pre-loader-box">
+            <div class="loader-logo">
+                <img src="{{ asset('vendors/images/sos-progress.jpg') }}" alt=""
+                    style="width: 120px; height: auto;" />
+            </div>
+            <div class="loader-progress" id="progress_div">
+                <div class="bar" id="bar1"></div>
+            </div>
+            <div class="percent" id="percent1">0%</div>
+            <div class="loading-text">Por favor, aguarde ...</div>
+        </div>
+    </div>
+    <div class="header">
+        <div class="header-left">
+            <div class="menu-icon bi bi-list"></div>
+            <div class="search-toggle-icon bi bi-search" data-toggle="header_search"></div>
+            <div class="header-search">
 
-		<!-- Global site tag (gtag.js) - Google Analytics -->
-		<script
-			async
-			src="https://www.googletagmanager.com/gtag/js?id=G-GBZ3SGGX85"
-		></script>
-		<script
-			async
-			src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2973766580778258"
-			crossorigin="anonymous"
-		></script>
-		<script>
-			window.dataLayer = window.dataLayer || [];
-			function gtag() {
-				dataLayer.push(arguments);
-			}
-			gtag("js", new Date());
+            </div>
+        </div>
 
-			gtag("config", "G-GBZ3SGGX85");
-		</script>
-		<!-- Google Tag Manager -->
-		<script>
-			(function (w, d, s, l, i) {
-				w[l] = w[l] || [];
-				w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
-				var f = d.getElementsByTagName(s)[0],
-					j = d.createElement(s),
-					dl = l != "dataLayer" ? "&l=" + l : "";
-				j.async = true;
-				j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
-				f.parentNode.insertBefore(j, f);
-			})(window, document, "script", "dataLayer", "GTM-NXZMQSS");
-		</script>
-		<!-- End Google Tag Manager -->
-	</head>
-	<body>
-		<div class="pre-loader">
-			<div class="pre-loader-box">
-				<div class="loader-logo">
-					<img src="{{ asset('vendors/images/deskapp-logo.svg') }}" alt="" />
+        <div class="header-right">
+            <!-- Settings Icon -->
 
-				</div>
-				<div class="loader-progress" id="progress_div">
-					<div class="bar" id="bar1"></div>
-				</div>
-				<div class="percent" id="percent1">0%</div>
-				<div class="loading-text">Loading...</div>
-			</div>
-		</div>
+            @if (auth()->user()->role == 'vitima')
+                <!-- SOS Button -->
+                <div class="user-notification">
+                    <form action="{{ route('mensagem_sos') }}" method="POST"
+                        style="display:inline-block; margin-left: 10px;">
+                        @csrf
+                        <input type="hidden" name="mensagem" value="conteudo da mensagem sos">
+                        <button type="submit" title="Enviar SOS" style="background:none; border:none; cursor:pointer;">
+                            <i class="fa fa-exclamation-triangle" style="color:red; font-size: 20px;"></i>
+                        </button>
+                    </form>
+                </div>
+            @endif
 
-		<div class="header">
-			<div class="header-left">
-				<div class="menu-icon bi bi-list"></div>
-				<div
-					class="search-toggle-icon bi bi-search"
-					data-toggle="header_search"
-				></div>
-				<div class="header-search">
-					<form>
-						<div class="form-group mb-0">
-							<i class="dw dw-search2 search-icon"></i>
-							<input
-								type="text"
-								class="form-control search-input"
-								placeholder="Search Here"
-							/>
-							<div class="dropdown">
-								<a
-									class="dropdown-toggle no-arrow"
-									href="#"
-									role="button"
-									data-toggle="dropdown"
-								>
-									<i class="ion-arrow-down-c"></i>
-								</a>
-								<div class="dropdown-menu dropdown-menu-right">
-									<div class="form-group row">
-										<label class="col-sm-12 col-md-2 col-form-label"
-											>From</label
-										>
-										<div class="col-sm-12 col-md-10">
-											<input
-												class="form-control form-control-sm form-control-line"
-												type="text"
-											/>
-										</div>
-									</div>
-									<div class="form-group row">
-										<label class="col-sm-12 col-md-2 col-form-label">To</label>
-										<div class="col-sm-12 col-md-10">
-											<input
-												class="form-control form-control-sm form-control-line"
-												type="text"
-											/>
-										</div>
-									</div>
-									<div class="form-group row">
-										<label class="col-sm-12 col-md-2 col-form-label"
-											>Subject</label
-										>
-										<div class="col-sm-12 col-md-10">
-											<input
-												class="form-control form-control-sm form-control-line"
-												type="text"
-											/>
-										</div>
-									</div>
-									<div class="text-right">
-										<button class="btn btn-primary">Search</button>
-									</div>
-								</div>
-							</div>
-						</div>
-					</form>
-				</div>
-			</div>
-			<div class="header-right">
-				<div class="dashboard-setting user-notification">
-					<div class="dropdown">
-						<a
-							class="dropdown-toggle no-arrow"
-							href="javascript:;"
-							data-toggle="right-sidebar"
-						>
-							<i class="dw dw-settings2"></i>
-						</a>
-					</div>
-				</div>
-				<div class="user-notification">
-					<div class="dropdown">
-						<a
-							class="dropdown-toggle no-arrow"
-							href="#"
-							role="button"
-							data-toggle="dropdown"
-						>
-							<i class="icon-copy dw dw-notification"></i>
-							<span class="badge notification-active"></span>
-						</a>
-						<div class="dropdown-menu dropdown-menu-right">
-							<div class="notification-list mx-h-350 customscroll">
-								<ul>
-									<li>
-										<a href="#">
-											<img src="{{ asset('vendors/images/img.jpg') }}" alt="" />
-											<h3>John Doe</h3>
-											<p>
-												Lorem ipsum dolor sit amet, consectetur adipisicing
-												elit, sed...
-											</p>
-										</a>
-										
-									</li>
-									<li>
-										<a href="#">
-											<img src="{{ asset('vendors/images/photo1.jpg') }}" alt="" />
-											<h3>Lea R. Frith</h3>
-											<p>
-												Lorem ipsum dolor sit amet, consectetur adipisicing
-												elit, sed...
-											</p>
-										</a>
-									</li>
-									
-									<li>
-										<a href="#">
-											<img src="{{ asset('vendors/images/photo2.jpg') }}" alt="" />
-											<h3>Erik L. Richards</h3>
-											<p>
-												Lorem ipsum dolor sit amet, consectetur adipisicing
-												elit, sed...
-											</p>
-										</a>
-									</li>
-									
-									<li>
-										<a href="#">
-											<img src="{{ asset('vendors/images/photo3.jpg') }}" alt="" />
-											<h3>John Doe</h3>
-											<p>
-												Lorem ipsum dolor sit amet, consectetur adipisicing
-												elit, sed...
-											</p>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<img src="{{ asset('vendors/images/photo4.jpg') }}" alt="" />
-											<h3>Renee I. Hansen</h3>
-											<p>
-												Lorem ipsum dolor sit amet, consectetur adipisicing
-												elit, sed...
-											</p>
-										</a>
-									</li>
-									<li>
-										<a href="#">
-											<img src="{{ asset('vendors/images/img.jpg') }}" alt="" />
-											<h3>Vicki M. Coleman</h3>
-											<p>
-												Lorem ipsum dolor sit amet, consectetur adipisicing
-												elit, sed...
-											</p>
-										</a>
-									</li>
-									
-								</ul>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="user-info-dropdown">
-					<div class="dropdown">
-						<a
-							class="dropdown-toggle"
-							href="#"
-							role="button"
-							data-toggle="dropdown"
-						>
-						<span class="user-icon">
-							<img src="{{ asset('vendors/images/photo1.jpg') }}" alt="" />
-						</span>
-						
-						@if (Auth::check()) 
-    <span class="user-name">{{ Auth::user()->name }}</span>
-@else
-    <span class="user-name">Visitante</span> 
-@endif
+            <div id="mensagemAlerta" class="mensagem-alerta hidden" style="cursor:pointer;">
+                <span class="mensagem-icone"><i class="fa fa-envelope"></i></span>
+                <span id="mensagemTextoCompleto" class="mensagem-texto"></span>
+            </div>
 
-						</a>
-						<div
-							class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list"
-						>
-							<a class="dropdown-item" href="profile.html"
-								><i class="dw dw-user1"></i> Profile</a
-							>
-							<a class="dropdown-item" href="profile.html"
-								><i class="dw dw-settings2"></i> Setting</a
-							>
-							<a class="dropdown-item" href="faq.html"
-								><i class="dw dw-help"></i> Help</a
-							>
-							<a class="dropdown-item" href="login.html"
-								><i class="dw dw-logout"></i> Log Out</a
-							>
-						</div>
-					</div>
-				</div>
-				<div class="github-link">
-					<a href="https://github.com/dropways/deskapp" target="_blank"
-						><img src="vendors/images/github.svg" alt=""
-					/></a>
-				</div>
-			</div>
-		</div>
+            <div id="mensagemModal" class="mensagem-modal hidden" data-mensagem-id="">
+                <div class="mensagem-modal-conteudo">
+                    <h4>Mensagem Recebida</h4>
+                    <p id="mensagemConteudo"></p>
+                    <small id="mensagemData" style="display:block;margin-top:10px;color:#666;"></small>
 
-		<div class="right-sidebar">
-			<div class="sidebar-title">
-				<h3 class="weight-600 font-16 text-blue">
-					Layout Settings
-					<span class="btn-block font-weight-400 font-12"
-						>User Interface Settings</span
-					>
-				</h3>
-				<div class="close-sidebar" data-toggle="right-sidebar-close">
-					<i class="icon-copy ion-close-round"></i>
-				</div>
-			</div>
-			<div class="right-sidebar-body customscroll">
-				<div class="right-sidebar-body-content">
-					<h4 class="weight-600 font-18 pb-10">Header Background</h4>
-					<div class="sidebar-btn-group pb-30 mb-10">
-						<a
-							href="javascript:void(0);"
-							class="btn btn-outline-primary header-white active"
-							>White</a
-						>
-						<a
-							href="javascript:void(0);"
-							class="btn btn-outline-primary header-dark"
-							>Dark</a
-						>
-					</div>
-
-					<h4 class="weight-600 font-18 pb-10">Sidebar Background</h4>
-					<div class="sidebar-btn-group pb-30 mb-10">
-						<a
-							href="javascript:void(0);"
-							class="btn btn-outline-primary sidebar-light"
-							>White</a
-						>
-						<a
-							href="javascript:void(0);"
-							class="btn btn-outline-primary sidebar-dark active"
-							>Dark</a
-						>
-					</div>
-
-					<h4 class="weight-600 font-18 pb-10">Menu Dropdown Icon</h4>
-					<div class="sidebar-radio-group pb-10 mb-10">
-						<div class="custom-control custom-radio custom-control-inline">
-							<input
-								type="radio"
-								id="sidebaricon-1"
-								name="menu-dropdown-icon"
-								class="custom-control-input"
-								value="icon-style-1"
-								checked=""
-							/>
-							<label class="custom-control-label" for="sidebaricon-1"
-								><i class="fa fa-angle-down"></i
-							></label>
-						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input
-								type="radio"
-								id="sidebaricon-2"
-								name="menu-dropdown-icon"
-								class="custom-control-input"
-								value="icon-style-2"
-							/>
-							<label class="custom-control-label" for="sidebaricon-2"
-								><i class="ion-plus-round"></i
-							></label>
-						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input
-								type="radio"
-								id="sidebaricon-3"
-								name="menu-dropdown-icon"
-								class="custom-control-input"
-								value="icon-style-3"
-							/>
-							<label class="custom-control-label" for="sidebaricon-3"
-								><i class="fa fa-angle-double-right"></i
-							></label>
-						</div>
-					</div>
-
-					<h4 class="weight-600 font-18 pb-10">Menu List Icon</h4>
-					<div class="sidebar-radio-group pb-30 mb-10">
-						<div class="custom-control custom-radio custom-control-inline">
-							<input
-								type="radio"
-								id="sidebariconlist-1"
-								name="menu-list-icon"
-								class="custom-control-input"
-								value="icon-list-style-1"
-								checked=""
-							/>
-							<label class="custom-control-label" for="sidebariconlist-1"
-								><i class="ion-minus-round"></i
-							></label>
-						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input
-								type="radio"
-								id="sidebariconlist-2"
-								name="menu-list-icon"
-								class="custom-control-input"
-								value="icon-list-style-2"
-							/>
-							<label class="custom-control-label" for="sidebariconlist-2"
-								><i class="fa fa-circle-o" aria-hidden="true"></i
-							></label>
-						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input
-								type="radio"
-								id="sidebariconlist-3"
-								name="menu-list-icon"
-								class="custom-control-input"
-								value="icon-list-style-3"
-							/>
-							<label class="custom-control-label" for="sidebariconlist-3"
-								><i class="dw dw-check"></i
-							></label>
-						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input
-								type="radio"
-								id="sidebariconlist-4"
-								name="menu-list-icon"
-								class="custom-control-input"
-								value="icon-list-style-4"
-								checked=""
-							/>
-							<label class="custom-control-label" for="sidebariconlist-4"
-								><i class="icon-copy dw dw-next-2"></i
-							></label>
-						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input
-								type="radio"
-								id="sidebariconlist-5"
-								name="menu-list-icon"
-								class="custom-control-input"
-								value="icon-list-style-5"
-							/>
-							<label class="custom-control-label" for="sidebariconlist-5"
-								><i class="dw dw-fast-forward-1"></i
-							></label>
-						</div>
-						<div class="custom-control custom-radio custom-control-inline">
-							<input
-								type="radio"
-								id="sidebariconlist-6"
-								name="menu-list-icon"
-								class="custom-control-input"
-								value="icon-list-style-6"
-							/>
-							<label class="custom-control-label" for="sidebariconlist-6"
-								><i class="dw dw-next"></i
-							></label>
-						</div>
-					</div>
-
-					<div class="reset-options pt-30 text-center">
-						<button class="btn btn-danger" id="reset-settings">
-							Reset Settings
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="left-side-bar">
-			<div class="brand-logo">
-				<a href="{{ route('index') }}">
-					<img src="{{ asset('vendors/images/deskapp-logo.svg') }}" alt="" class="dark-logo" />
-					<img src="{{ asset('vendors/images/deskapp-logo-white.svg') }}" alt="" class="light-logo" />
-				</a>
-				
-				<div class="close-sidebar" data-toggle="left-sidebar-close">
-					<i class="ion-close-round"></i>
-				</div>
-			</div>
-		
-			<div class="menu-block customscroll">
-				<div class="sidebar-menu">
-					<ul id="accordion-menu">
-						<li class="dropdown">
-							<a href="javascript:;" class="dropdown-toggle">
-								<span class="micon bi bi-house"></span
-								><span class="mtext">Home</span>
-							</a>
-							<ul class="submenu">
-								<li><a href="{{ route('index') }}">Dashboard Médico</a></li>
-								<li><a href="{{ route('index3') }}">Dashboard Administrador</a></li>
-
-							</ul>
-						</li>
+                    <div style="margin-top: 10px; text-align: right;">
+                        <button id="enviarResposta" style="margin-right: 10px;">Responder</button>
+                        <button id="fecharModal">OK</button>
+                    </div>
+                </div>
+            </div>
 
 
-						<li class="dropdown">
-							<a href="javascript:;" class="dropdown-toggle">
-								<span class="micon bi bi-house"></span
-								><span class="mtext">Médico</span>
-							</a>
-							<ul class="submenu">
-								<li><a href="{{ route('users.doutor') }}">Médico</a></li>
-							</ul>
-						</li>
+            <!-- User Info -->
+            <div class="user-info-dropdown">
+                <div class="dropdown">
+                    <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown">
+                        <span class="user-icon">
+                            <i class="fa fa-user-circle" style="font-size: 35px; color: #555;"></i>
+                        </span>
+                        @guest
+                            <p>Olá, seja bem-vindo visitante! Faça login para acessar suas informações.</p>
+                        @else
+                            <span class="user-name">Olá, seja bem-vindo {{ Auth::user()->name }}!</span>
+                        @endguest
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf</form>
+                        <a class="dropdown-item" href="#"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i
+                                class="dw dw-logout"></i>Sair</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-						<li class="dropdown">
-							<a href="javascript:;" class="dropdown-toggle">
-								<span class="micon bi bi-house"></span
-								><span class="mtext">Vítimas</span>
-							</a>
-							<ul class="submenu">
-								<li><a href="{{ route('users.vitima') }}">Vítimas</a>								</li>
-							</ul>
-						</li>
+    <div class="left-side-bar">
+        <div class="brand-logo">
+            <a href="{{ route('admin.dashboard') }}">
+                <img src="{{ asset('vendors/images/android-chrome-192x192.png') }}" alt="Logo"
+                    style="height: 60px;" />
+            </a>
+        </div>
 
-						<li class="dropdown">
-							<a href="javascript:;" class="dropdown-toggle">
-								<span class="micon bi bi-house"></span
-								><span class="mtext">Assistntes</span>
-							</a>
-							<ul class="submenu">
-								<li><a href="{{ route('users.estagiario') }}">Assistentes</a></li>
-							</ul>
-						</li>
+        <div class="menu-block customscroll">
+            <div class="sidebar-menu">
+                <ul id="accordion-menu">
 
-						<li class="dropdown">
-							<a href="javascript:;" class="dropdown-toggle">
-								<span class="micon bi bi-house"></span
-								><span class="mtext">Consultas</span>
-							</a>
-							<ul class="submenu">
-								<li><a href="{{ route('consulta') }}">Consultas</a></li>
-							</ul>
-						</li>
-						
-						<li>
-							<a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
-								<span class="micon bi bi-chat-right-dots"></span>
-								<span class="mtext">Chat</span>
-							</a>
-							
-						</li>
-						
-						<li>
-							<div class="dropdown-divider"></div>
-						</li>
-						<li>
-							<div class="sidebar-small-cap">Extra</div>
-						</li>
-						<li>
-							<a href="javascript:;" class="dropdown-toggle">
-								<span class="micon bi bi-file-pdf"></span
-								><span class="mtext">Documentation</span>
-							</a>
-							<ul class="submenu">
-								<li><a href="introduction.html">Introduction</a></li>
-								<li><a href="getting-started.html">Getting Started</a></li>
-								<li><a href="color-settings.html">Color Settings</a></li>
-								<li>
-									<a href="third-party-plugins.html">Third Party Plugins</a>
-								</li>
-							</ul>
-						</li>
-						<li>
-							<a
-								href="https://dropways.github.io/deskapp-free-single-page-website-template/"
-								target="_blank"
-								class="dropdown-toggle no-arrow"
-							>
-							<span class="micon bi bi-layout-text-window-reverse"></span>
-							<span class="mtext">
-								Landing Page
-								<img src="{{ asset('vendors/images/coming-soon.png') }}" alt="" width="25" />
-							</span>
-							
-							</a>
-						</li>
-					</ul>
-				</ul>
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <span class="micon bi bi-speedometer2"></span>
+                            <span class="mtext">Dashboard</span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="{{ route('admin.dashboard') }}">Dashboard Admin</a></li>
+                        </ul>
+                    </li>
 
-				</div>
-			</div>
-		</div>
-		<div class="mobile-menu-overlay"></div>
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <span class="micon bi bi-calendar-check"></span>
+                            </span><span class="mtext">Consultas</span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="{{ route('consulta') }}">Todas as Consultas</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <span class="micon bi bi-person-badge"></span>
+                            </span><span class="mtext">Médico</span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="{{ route('users.doutor') }}">Lista de Médicos</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <span class="micon bi bi-person-workspace"></span>
+                            <span class="mtext">Lista de Assistentes</span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="{{ route('users.estagiario') }}">Assistntes</a></li>
+                        </ul>
+                    </li>
 
-		<div class="main-container">
-			<div class="xs-pd-20-10 pd-ltr-20">
-				<div class="title pb-20">
-					<h2 class="h3 mb-0">Gerir Vítmas</h2>
-				</div>
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <span class="micon bi bi-people"></span>
+                            </span><span class="mtext">Vítimas</span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="{{ route('users.vitima') }}">>Lista de Vítimas</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <span class="micon bi bi-collection"></span>
+                            <span class="mtext">Grupos</span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="#" data-toggle="modal" data-target="#createGroupModal">Criar Grupo</a>
+                            </li>
+                            @foreach ($grupos as $grupo)
+                                <li>
+                                    <a href="{{ route('grupos.show', $grupo->id) }}">{{ $grupo->nome }}</a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
+                            <span class="micon bi bi-chat-right-dots"></span>
+                            <span class="mtext">Chat</span>
+                        </a>
+                    </li>
 
-				<div class="card-box pb-10">
-					<div class="h5 pd-20 mb-0">Vítmas Recente</div>
-				
-					<!-- Botão -->
-					<button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#modalAdicionarVitima">
-						Adicionar Vítimas
-					</button>
-				
-					<!-- Tabela de Vítimas -->
-					<table class="table">
-						<thead>
-							<tr>
-								<th>Nome</th>
-								<th>Telefone</th>
-								<th>Ações</th>
-							</tr>
-						</thead>
-						<tbody>
-							@foreach($users as $vitima)
-								<tr>
-									<td>{{ $vitima->name }}</td>
-									<td>{{ $vitima->telefone }}</td>
-									<td>
-										<div class="d-flex gap-2">
-											<button 
-												type="button" 
-												class="btn btn-primary btn-sm d-flex align-items-center gap-1" 
-												data-toggle="modal" 
-												data-target="#editModal" 
-												onclick="editVitima({{ $vitima->id }})"
-											>
-												<i class="bi bi-pencil-square"></i> Editar
-											</button>
-									
-											<form action="{{ route('users.destroy', $vitima->id) }}" method="POST">
-												@csrf
-												@method('DELETE')
-												<button 
-													type="submit" 
-													class="btn btn-danger btn-sm d-flex align-items-center gap-1"
-												>
-													<i class="bi bi-trash"></i> Excluir
-												</button>
-											</form>
-										</div>
-									</td>
-									
-								</tr>
-							@endforeach
-						</tbody>
-					</table>
-				</div>
-				
-				<!-- Modal Criar Doutor -->
-				<div class="modal fade" id="modalAdicionarVitima" tabindex="-1">
-					<div class="modal-dialog">
-						<form method="POST" action="{{ route('users.vitima.store') }}" class="modal-content">
-							@csrf
-							<div class="modal-header"><body>
-								<h5 class="modal-title">Novo Estagiário</h5>
-								<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-							</div>
-							<div class="modal-body">
-								<input type="hidden" name="role" value="vitima">
-								<div class="mb-3"><input type="text" name="name" class="form-control" placeholder="Nome" required></div>
-								<div class="mb-3"><input type="tel" name="telefone" class="form-control" placeholder="Telefone" required></div>
-								<div class="mb-3"><input type="password" name="password" class="form-control" placeholder="Senha" required></div>
-							</div>
-							<div class="modal-footer">
-								<button type="submit" class="btn btn-primary">Criar</button>
-							</div>
-						</form>
-					</div>
-				</div>
-				
-				<!-- Modal Editar Vitima -->
-				<div class="modal fade" id="editModal" tabindex="-1">
-					<div class="modal-dialog">
-						<form id="editForm" method="POST" class="modal-content">
-							@csrf
-							@method('PUT')
-							<div class="modal-header">
-								<h5 class="modal-title">Editar Vítima</h5>
-								<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-							</div>
-							<div class="modal-body">
-								<div class="mb-3"><input type="text" class="form-control" id="name" name="name" required></div>
-								<div class="mb-3"><input type="telefone" class="form-control" id="telefone" name="telefone" required></div>
-							</div>
-							<div class="modal-footer">
-								<button type="submit" class="btn btn-primary">Salvar</button>
-							</div>
-						</form>
-					</div>
-				</div>
-				
-				<script>
-					function editVitima(id) {
-						fetch(`/users/${id}/edit`)
-							.then(response => response.json())
-							.then(data => {
-								document.getElementById('name').value = data.name;
-								document.getElementById('telefone').value = data.telefone;
-								document.getElementById('editForm').action = `/users/${id}`;
-							});
-					}
-				</script>
-				
-</div>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="mobile-menu-overlay"></div>
 
-<script src="{{ asset('vendors/scripts/core.js') }}"></script>
-<script src="{{ asset('vendors/scripts/script.min.js') }}"></script> 
-<script src="{{ asset('vendors/scripts/process.js') }}"></script>
-<script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
-		<!-- Google Tag Manager (noscript) -->
-		<noscript
-			><iframe
-				src="https://www.googletagmanager.com/ns.html?id=GTM-NXZMQSS"
-				height="0"
-				width="0"
-				style="display: none; visibility: hidden"
-			></iframe
-		></noscript>
-		<!-- End Google Tag Manager (noscript) -->
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet"/>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <div class="main-container">
+        <div class="xs-pd-20-10 pd-ltr-20">
+            <div class="title pb-20">
+                <h2 class="h3 mb-0">Gerir Vítmas</h2>
+            </div>
 
-	</body>
+            <div class="card-box pb-10">
+                <div class="h5 pd-20 mb-0">Vítmas Recente</div>
+
+                <!-- Botão -->
+                <button type="button" class="btn btn-primary mb-3" data-toggle="modal"
+                    data-target="#modalAdicionarVitima">
+                    Adicionar Vítimas
+                </button>
+
+                <!-- Tabela de Vítimas -->
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Telefone</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($users as $vitima)
+                            <tr>
+                                <td>{{ $vitima->name }}</td>
+                                <td>{{ $vitima->telefone }}</td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <button type="button"
+                                            class="btn btn-primary btn-sm d-flex align-items-center gap-1"
+                                            data-toggle="modal" data-target="#editModal"
+                                            onclick="editVitima({{ $vitima->id }})">
+                                            <i class="bi bi-pencil-square"></i> Editar
+                                        </button>
+
+                                        <form action="{{ route('users.destroy', $vitima->id) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="btn btn-danger btn-sm d-flex align-items-center gap-1">
+                                                <i class="bi bi-trash"></i> Excluir
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Modal Criar Doutor -->
+            <div class="modal fade" id="modalAdicionarVitima" tabindex="-1">
+                <div class="modal-dialog">
+                    <form method="POST" action="{{ route('users.vitima.store') }}" class="modal-content">
+                        @csrf
+                        <div class="modal-header">
+
+                            <body>
+                                <h5 class="modal-title">Novo Estagiário</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" name="role" value="vitima">
+                            <div class="mb-3"><input type="text" name="name" class="form-control"
+                                    placeholder="Nome" required></div>
+                            <div class="mb-3"><input type="tel" name="telefone" class="form-control"
+                                    placeholder="Telefone" required></div>
+                            <div class="mb-3"><input type="password" name="password" class="form-control"
+                                    placeholder="Senha" required></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Criar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Modal Editar Vitima -->
+            <div class="modal fade" id="editModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <form id="editForm" method="POST" class="modal-content">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-header">
+                            <h5 class="modal-title">Editar Vítima</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3"><input type="text" class="form-control" id="name"
+                                    name="name" required></div>
+                            <div class="mb-3"><input type="telefone" class="form-control" id="telefone"
+                                    name="telefone" required></div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Salvar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <script>
+                function editVitima(id) {
+                    fetch(`/users/${id}/edit`)
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('name').value = data.name;
+                            document.getElementById('telefone').value = data.telefone;
+                            document.getElementById('editForm').action = `/users/${id}`;
+                        });
+                }
+            </script>
+
+        </div>
+
+        <script src="{{ asset('vendors/scripts/core.js') }}"></script>
+        <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>
+        <script src="{{ asset('vendors/scripts/process.js') }}"></script>
+        <script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
+        <!-- js -->
+        <script src="{{ asset('vendors/scripts/core.js') }}"></script>
+        <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>
+        <script src="{{ asset('vendors/scripts/process.js') }}"></script>
+        <script>
+            let mensagensPendentes = [];
+            let carregamentoConcluido = false;
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const userIdLogado = document.querySelector('meta[name="user-id"]').getAttribute('content');
+                fetch('/mensagens_nao_lidas')
+                    .then(res => res.json())
+                    .then(dados => {
+                        if (dados && dados.length > 0) {
+                            mensagensPendentes = dados;
+                            atualizarAlerta();
+                        }
+                        carregamentoConcluido = true;
+                    });
+                if (!window.echoRegistered) {
+                    Echo.channel('mensagem_sos')
+                        .listen('.NovaMensagemSosEvent', (e) => {
+                            if (String(e.user_id) !== userIdLogado) {
+                                return;
+                            }
+                            const mensagem = {
+                                id: e.id,
+                                conteudo: e.conteudo,
+                                data: e.data
+                            };
+                            mensagensPendentes.unshift(mensagem);
+                            atualizarAlerta();
+                        });
+                    window.echoRegistered = true;
+                }
+                document.getElementById('mensagemAlerta').addEventListener('click', () => {
+                    mostrarProximaMensagem();
+                });
+                document.getElementById('fecharModal').addEventListener('click', () => {
+                    const mensagemAtual = mensagensPendentes.shift();
+                    document.getElementById('mensagemModal').classList.add('hidden');
+
+                    fetch('/mensagem_lida', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            id: mensagemAtual.id
+                        })
+                    });
+                    if (mensagensPendentes.length > 0) {
+                        setTimeout(() => mostrarProximaMensagem(), 300);
+                    } else {
+                        document.getElementById('mensagemAlerta').classList.add('hidden');
+                    }
+                    atualizarAlerta();
+                });
+
+                function atualizarAlerta() {
+                    const alerta = document.getElementById('mensagemAlerta');
+                    const texto = document.getElementById('mensagemTextoCompleto');
+
+                    if (mensagensPendentes.length > 0) {
+                        alerta.classList.remove('hidden');
+                        texto.textContent = `Nova mensagem (${mensagensPendentes.length})`;
+                    } else {
+                        alerta.classList.add('hidden');
+                        texto.textContent = '';
+                    }
+                }
+
+                function mostrarProximaMensagem() {
+                    const mensagem = mensagensPendentes[0];
+                    if (!mensagem) return;
+                    document.getElementById('mensagemConteudo').textContent = mensagem.conteudo;
+                    document.getElementById('mensagemData').textContent = formatarData(mensagem.data);
+                    document.getElementById('mensagemModal').classList.remove('hidden');
+                }
+
+                function formatarData(dataString) {
+                    const data = new Date(dataString);
+                    return data.toLocaleString('pt-PT', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                }
+            });
+
+            function abrirModalMensagem(mensagem) {
+                const modal = document.getElementById('mensagemModal');
+                const conteudo = document.getElementById('mensagemConteudo');
+                const data = document.getElementById('mensagemData');
+                conteudo.textContent = mensagem.conteudo;
+                data.textContent = mensagem.data;
+                modal.dataset.mensagemId = mensagem.id;
+                modal.classList.remove('hidden');
+            }
+            document.getElementById('enviarResposta').addEventListener('click', () => {
+                const mensagemAtual = mensagensPendentes[0];
+                if (mensagemAtual && mensagemAtual.id) {
+                    window.location.href = `/responder_mensagem_sos/${mensagemAtual.id}`;
+                } else {
+                    alert('Mensagem inválida para responder.');
+                }
+            });
+        </script>
+
+</body>
+
 </html>
