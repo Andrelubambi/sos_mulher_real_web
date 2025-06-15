@@ -72,101 +72,98 @@
 
     <!-- jQuery -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<style>
-    .mensagem-alerta {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #caa606;
-        color: white;
-        padding: 25px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px #ccc;
-        font-weight: bold;
-        z-index: 9999;
-        min-height: 40px;
-    }
+    <style>
+        .mensagem-alerta {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #caa606;
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px #ccc;
+            font-weight: bold;
+            z-index: 9999;
+            min-height: 40px;
+        }
 
-    .mensagem-contador {
-        margin-left: 8px;
-        background: green;
-        color: white;
-        padding: 2px 8px;
-        border-radius: 12px;
-    }
+        .mensagem-contador {
+            margin-left: 8px;
+            background: green;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
 
-    .mensagem-modal {
-        position: fixed;
-        top: 30%;
-        left: 50%;
-        transform: translate(-50%, -30%);
-        background: #fff;
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 0 30px rgba(0,0,0,0.3);
-        z-index: 10000;
-    }
+        .mensagem-modal {
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -30%);
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+        }
 
-    .hidden {
-        display: none;
-    }
-    #btn-enviar-sos {
-        display: block;
-        width: 100%;
-        padding: 12px 0;
-        background-color: #d93025; 
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-weight: bold;
-        font-size: 1.1rem;
-        cursor: pointer;
-        box-shadow: 0 4px 6px rgba(217, 48, 37, 0.4);
-        transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        margin-top: 15px;
-    }
+        .hidden {
+            display: none;
+        }
 
-    #btn-enviar-sos:hover {
-        background-color: #b1261d;
-        box-shadow: 0 6px 8px rgba(177, 38, 29, 0.6);
-    }
+        #btn-enviar-sos {
+            display: block;
+            width: 100%;
+            padding: 12px 0;
+            background-color: #d93025;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(217, 48, 37, 0.4);
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            margin-top: 15px;
+        }
 
-    #enviarResposta {
-    background-color: #007bff;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
+        #btn-enviar-sos:hover {
+            background-color: #b1261d;
+            box-shadow: 0 6px 8px rgba(177, 38, 29, 0.6);
+        }
 
-#enviarResposta:hover {
-    background-color: #0056b3;
-}
+        #enviarResposta {
+            background-color: #007bff;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
 
-#fecharModal {
-    background-color: #6c757d;
-    color: white;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 5px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
+        #enviarResposta:hover {
+            background-color: #0056b3;
+        }
 
-#fecharModal:hover {
-    background-color: #5a6268;
-}
+        #fecharModal {
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
 
+        #fecharModal:hover {
+            background-color: #5a6268;
+        }
+    </style>
 
-    
-
-</style>
-
-<!-- Vite -->
+    <!-- Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
 </head>
@@ -249,9 +246,11 @@
                         <div class="notification-list mx-h-350 customscroll">
                             <ul>
                                 <li>
-                                    <a href="#"><img src="{{ asset('vendors/images/img.jpg') }}" alt="" />
+                                    <a href="#"><img src="{{ asset('vendors/images/img.jpg') }}"
+                                            alt="" />
                                         <h3>John Doe</h3>
-                                        <p>Lorem ipsum dolor sit amet...</p></a>
+                                        <p>Lorem ipsum dolor sit amet...</p>
+                                    </a>
                                 </li>
                             </ul>
                         </div>
@@ -259,20 +258,21 @@
                 </div>
             </div>
 
-        @if (auth()->user()->role == 'admin')
-            <!-- SOS Button -->
-            <div class="user-notification">
-                <form action="{{ route('mensagem_sos') }}" method="POST" style="display:inline-block; margin-left: 10px;">
-                    @csrf
-                    <input type="hidden" name="mensagem" value="conteudo da mensagem sos">
-                    <button type="submit" title="Enviar SOS" style="background:none; border:none; cursor:pointer;">
-                        <i class="fa fa-exclamation-triangle" style="color:red; font-size: 20px;"></i>
-                    </button>
-                </form>
-            </div>
+            @if (auth()->user()->role == 'vitima')
+                <!-- SOS Button -->
+                <div class="user-notification">
+                    <form action="{{ route('mensagem_sos') }}" method="POST"
+                        style="display:inline-block; margin-left: 10px;">
+                        @csrf
+                        <input type="hidden" name="mensagem" value="conteudo da mensagem sos">
+                        <button type="submit" title="Enviar SOS"
+                            style="background:none; border:none; cursor:pointer;">
+                            <i class="fa fa-exclamation-triangle" style="color:red; font-size: 20px;"></i>
+                        </button>
+                    </form>
+                </div>
+            @endif
 
-        @endif
-            
             <div id="mensagemAlerta" class="mensagem-alerta hidden" style="cursor:pointer;">
                 <span class="mensagem-icone"><i class="fa fa-envelope"></i></span>
                 <span id="mensagemTextoCompleto" class="mensagem-texto"></span>
@@ -309,8 +309,11 @@
                         <a class="dropdown-item" href="profile.html"><i class="dw dw-user1"></i> Profile</a>
                         <a class="dropdown-item" href="profile.html"><i class="dw dw-settings2"></i> Setting</a>
                         <a class="dropdown-item" href="faq.html"><i class="dw dw-help"></i> Help</a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">@csrf</form>
-                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="dw dw-logout"></i> Log Out</a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                            style="display: none;">@csrf</form>
+                        <a class="dropdown-item" href="#"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i
+                                class="dw dw-logout"></i> Log Out</a>
                     </div>
                 </div>
             </div>
@@ -782,132 +785,133 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NXZMQSS" height="0" width="0"
             style="display: none; visibility: hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
-   <script>
-    let mensagensPendentes = [];
-    let carregamentoConcluido = false;
+    <script>
+        let mensagensPendentes = [];
+        let carregamentoConcluido = false;
 
-    document.addEventListener('DOMContentLoaded', function () {
-        const userIdLogado = document.querySelector('meta[name="user-id"]').getAttribute('content');
+        document.addEventListener('DOMContentLoaded', function() {
+            const userIdLogado = document.querySelector('meta[name="user-id"]').getAttribute('content');
 
-        fetch('/mensagens_nao_lidas')
-            .then(res => res.json())
-            .then(dados => {
-                if (dados && dados.length > 0) {
-                    mensagensPendentes = dados;
-                    atualizarAlerta();
-                }
-                carregamentoConcluido = true;
-            });
-
-        if (!window.echoRegistered) {
-            Echo.channel('mensagem_sos')
-                .listen('.NovaMensagemSosEvent', (e) => {
-                    if (String(e.user_id) !== userIdLogado) {
-                        return; 
+            fetch('/mensagens_nao_lidas')
+                .then(res => res.json())
+                .then(dados => {
+                    if (dados && dados.length > 0) {
+                        mensagensPendentes = dados;
+                        atualizarAlerta();
                     }
-
-                    const mensagem = {
-                        id: e.id,
-                        conteudo: e.conteudo,
-                        data: e.data
-                    };
-
-                    mensagensPendentes.unshift(mensagem);
-                    atualizarAlerta();
+                    carregamentoConcluido = true;
                 });
-            window.echoRegistered = true;
-        }
 
-        // Ao clicar no alerta, mostra a próxima mensagem
-        document.getElementById('mensagemAlerta').addEventListener('click', () => {
-            mostrarProximaMensagem();
-        });
+            if (!window.echoRegistered) {
+                Echo.channel('mensagem_sos')
+                    .listen('.NovaMensagemSosEvent', (e) => {
+                        if (String(e.user_id) !== userIdLogado) {
+                            return;
+                        }
 
-        // Botão OK do modal
-        document.getElementById('fecharModal').addEventListener('click', () => {
-            const mensagemAtual = mensagensPendentes.shift();
-            document.getElementById('mensagemModal').classList.add('hidden');
+                        const mensagem = {
+                            id: e.id,
+                            conteudo: e.conteudo,
+                            data: e.data
+                        };
 
-            fetch('/mensagem_lida', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                },
-                body: JSON.stringify({ id: mensagemAtual.id })
-            });
-
-            if (mensagensPendentes.length > 0) {
-                setTimeout(() => mostrarProximaMensagem(), 300);
-            } else {
-                document.getElementById('mensagemAlerta').classList.add('hidden');
+                        mensagensPendentes.unshift(mensagem);
+                        atualizarAlerta();
+                    });
+                window.echoRegistered = true;
             }
 
-            atualizarAlerta();
+            // Ao clicar no alerta, mostra a próxima mensagem
+            document.getElementById('mensagemAlerta').addEventListener('click', () => {
+                mostrarProximaMensagem();
+            });
+
+            // Botão OK do modal
+            document.getElementById('fecharModal').addEventListener('click', () => {
+                const mensagemAtual = mensagensPendentes.shift();
+                document.getElementById('mensagemModal').classList.add('hidden');
+
+                fetch('/mensagem_lida', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                            .getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        id: mensagemAtual.id
+                    })
+                });
+
+                if (mensagensPendentes.length > 0) {
+                    setTimeout(() => mostrarProximaMensagem(), 300);
+                } else {
+                    document.getElementById('mensagemAlerta').classList.add('hidden');
+                }
+
+                atualizarAlerta();
+            });
+
+            // Atualiza o alerta no topo com a quantidade de mensagens
+            function atualizarAlerta() {
+                const alerta = document.getElementById('mensagemAlerta');
+                const texto = document.getElementById('mensagemTextoCompleto');
+
+                if (mensagensPendentes.length > 0) {
+                    alerta.classList.remove('hidden');
+                    texto.textContent = `Nova mensagem (${mensagensPendentes.length})`;
+                } else {
+                    alerta.classList.add('hidden');
+                    texto.textContent = '';
+                }
+            }
+
+            // Exibe o modal com o conteúdo da mensagem e data formatada
+            function mostrarProximaMensagem() {
+                const mensagem = mensagensPendentes[0];
+                if (!mensagem) return;
+
+                document.getElementById('mensagemConteudo').textContent = mensagem.conteudo;
+                document.getElementById('mensagemData').textContent = formatarData(mensagem.data);
+                document.getElementById('mensagemModal').classList.remove('hidden');
+            }
+
+            function formatarData(dataString) {
+                const data = new Date(dataString);
+                return data.toLocaleString('pt-PT', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
         });
 
-        // Atualiza o alerta no topo com a quantidade de mensagens
-        function atualizarAlerta() {
-            const alerta = document.getElementById('mensagemAlerta');
-            const texto = document.getElementById('mensagemTextoCompleto');
+        function abrirModalMensagem(mensagem) {
+            const modal = document.getElementById('mensagemModal');
+            const conteudo = document.getElementById('mensagemConteudo');
+            const data = document.getElementById('mensagemData');
 
-            if (mensagensPendentes.length > 0) {
-                alerta.classList.remove('hidden');
-                texto.textContent = `Nova mensagem (${mensagensPendentes.length})`;
+            conteudo.textContent = mensagem.conteudo;
+            data.textContent = mensagem.data;
+
+            modal.dataset.mensagemId = mensagem.id;
+
+            // Exibe o modal
+            modal.classList.remove('hidden');
+        }
+
+        document.getElementById('enviarResposta').addEventListener('click', () => {
+            const mensagemAtual = mensagensPendentes[0]; // ainda não foi removida
+
+            if (mensagemAtual && mensagemAtual.id) {
+                window.location.href = `/responder_mensagem_sos/${mensagemAtual.id}`;
             } else {
-                alerta.classList.add('hidden');
-                texto.textContent = '';
+                alert('Mensagem inválida para responder.');
             }
-        }
-
-        // Exibe o modal com o conteúdo da mensagem e data formatada
-        function mostrarProximaMensagem() {
-            const mensagem = mensagensPendentes[0];
-            if (!mensagem) return;
-
-            document.getElementById('mensagemConteudo').textContent = mensagem.conteudo;
-            document.getElementById('mensagemData').textContent = formatarData(mensagem.data);
-            document.getElementById('mensagemModal').classList.remove('hidden');
-        }
-
-        function formatarData(dataString) {
-            const data = new Date(dataString);
-            return data.toLocaleString('pt-PT', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-    });
-
-    function abrirModalMensagem(mensagem) {
-        const modal = document.getElementById('mensagemModal');
-        const conteudo = document.getElementById('mensagemConteudo');
-        const data = document.getElementById('mensagemData');
-
-        conteudo.textContent = mensagem.conteudo;
-        data.textContent = mensagem.data;
-
-        modal.dataset.mensagemId = mensagem.id;
-
-        // Exibe o modal
-        modal.classList.remove('hidden');
-    }
-
-    document.getElementById('enviarResposta').addEventListener('click', () => {
-    const mensagemAtual = mensagensPendentes[0]; // ainda não foi removida
-
-    if (mensagemAtual && mensagemAtual.id) {
-        window.location.href = `/responder_mensagem_sos/${mensagemAtual.id}`;
-    } else {
-        alert('Mensagem inválida para responder.');
-    }
-});
-
-
-</script>
+        });
+    </script>
 
 </body>
 

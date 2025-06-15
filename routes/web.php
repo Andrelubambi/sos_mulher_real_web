@@ -10,11 +10,11 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MensagemSosController;
 
 
-Route::middleware('auth:web')->group(function () {
+/*Route::middleware('auth:web')->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
-});
+});*/
 
-
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware('auth:sanctum')->get('/', [DashboardController::class, 'index'])->name('index');
 
  
