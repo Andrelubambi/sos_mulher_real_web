@@ -121,10 +121,12 @@
 
     <div class="left-side-bar">
         <div class="brand-logo">
-            <a href="{{ route('index') }}">
-                <img src="vendors/images/android-chrome-192x192.png" alt="" style="height: 60px;" />
+            <a href="{{ route('admin.dashboard') }}">
+                <img src="{{ asset('vendors/images/android-chrome-192x192.png') }}" alt="Logo"
+                    style="height: 60px;" />
             </a>
         </div>
+
         <div class="menu-block customscroll">
             <div class="sidebar-menu">
                 <ul id="accordion-menu">
