@@ -5,7 +5,7 @@
 <head>
     <!-- Basic Page Info -->
     <meta charset="utf-8" />
-    <title>Grupo: {{ $grupo->nome }}</title>
+    <title>Grupo - {{ $grupo->nome }}</title>
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -33,88 +33,6 @@
 
     {{-- Vite Assets --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
-    <style>
-        .chat-container {
-            display: flex;
-            flex-direction: column;
-            height: calc(100vh - 100px);
-            background-color: #f4f4f4;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        .chat-header {
-            background-color: #007bff;
-            color: #fff;
-            padding: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px;
-            background-color: #fff;
-        }
-
-        .chat-input {
-            display: flex;
-            gap: 10px;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-top: 1px solid #ddd;
-        }
-
-        .chat-input textarea {
-            flex: 1;
-            resize: none;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
-
-        .chat-input button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .chat-input button:hover {
-            background-color: #0056b3;
-        }
-
-        .message {
-            margin-bottom: 15px;
-        }
-
-        .message.sent {
-            text-align: right;
-        }
-
-        .message.received {
-            text-align: left;
-        }
-
-        .message-content {
-            display: inline-block;
-            padding: 10px 15px;
-            border-radius: 15px;
-            background-color: #e9ecef;
-            max-width: 70%;
-        }
-
-        .message.sent .message-content {
-            background-color: #007bff;
-            color: #fff;
-        }
-    </style>
 </head>
 
 <body>
@@ -153,12 +71,23 @@
         <div class="pd-ltr-20 xs-pd-20-10">
             <div class="min-height-200px">
                 <div class="chat-container">
-                    <!-- Cabeçalho do Chat -->
-                    <div class="chat-header">
-                        Grupo: {{ $grupo->nome }}
+
+                    <div
+                        class="chat-header d-flex justify-content-between align-items-center bg-danger text-white px-3 py-2 rounded-top">
+                        <span>Grupo: {{ $grupo->nome }}</span>
+
+                        @if ($grupo->podeSerExcluidoPelo(auth()->user()))
+                            <form action="{{ route('grupos.destroy', $grupo->id) }}" method="POST"
+                                onsubmit="return confirm('Tem certeza que deseja excluir este grupo?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-light text-danger">
+                                    <i class="bi bi-trash"></i> Excluir Grupo
+                                </button>
+                            </form>
+                        @endif
                     </div>
 
-                    <!-- Mensagens -->
                     <div id="messages" class="chat-messages">
                         @forelse ($mensagens as $mensagem)
                             <div class="message {{ $mensagem->user_id === auth()->id() ? 'sent' : 'received' }}">
@@ -167,6 +96,7 @@
                                     {{ $mensagem->conteudo }}
                                 </div>
                             </div>
+
                         @empty
                             <div class="text-muted">Nenhuma mensagem ainda.</div>
                         @endforelse
@@ -176,7 +106,14 @@
                     <form id="sendMessageForm" class="chat-input">
                         @csrf
                         <textarea name="conteudo" id="conteudo" placeholder="Digite sua mensagem..." required></textarea>
-                        <button type="submit">Enviar</button>
+                        <button type="submit" class="btn btn-danger btn-sm" id="sendBtn">
+                            <span id="sendBtnText"><i class="bi bi-send"></i> Enviar</span>
+                            <span id="sendBtnLoading" class="d-none">
+                                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                Enviando...
+                            </span>
+                        </button>
+
                     </form>
                 </div>
             </div>
@@ -190,51 +127,61 @@
     <script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
     <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const messagesDiv = document.getElementById('messages');
-        const sendMessageForm = document.getElementById('sendMessageForm');
-        const conteudoInput = document.getElementById('conteudo');
+        document.addEventListener('DOMContentLoaded', function() {
+            const messagesDiv = document.getElementById('messages');
+            const sendMessageForm = document.getElementById('sendMessageForm');
+            const conteudoInput = document.getElementById('conteudo');
 
-        //Escutar o canal
-        window.Echo.private('grupo.{{ $grupo->id }}')
-            .listen('.GroupMessageSent', function (data) {
-                const isCurrentUser = data.user_id === {{ auth()->id() }};
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message', isCurrentUser ? 'sent' : 'received');
+            //Escutar o canal
+            window.Echo.private('grupo.{{ $grupo->id }}')
+                .listen('.GroupMessageSent', function(data) {
+                    const isCurrentUser = data.user_id === {{ auth()->id() }};
+                    const messageDiv = document.createElement('div');
+                    messageDiv.classList.add('message', isCurrentUser ? 'sent' : 'received');
 
-                messageDiv.innerHTML = `
-                    <div class="message-content">
-                        <strong>${isCurrentUser ? 'Você' : data.user.name}:</strong>
-                        ${data.conteudo}
-                    </div>
-                `;
-                messagesDiv.appendChild(messageDiv);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                    messageDiv.innerHTML = `
+    <div class="message-content">
+        <strong>${isCurrentUser ? 'Você' : data.user.name}:</strong>
+        ${data.conteudo}
+    </div>
+`;
+
+                    messagesDiv.appendChild(messageDiv);
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                });
+            sendMessageForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const conteudo = conteudoInput.value;
+                const sendBtn = document.getElementById('sendBtn');
+                const sendBtnText = document.getElementById('sendBtnText');
+                const sendBtnLoading = document.getElementById('sendBtnLoading');
+
+                // Mostrar loading
+                sendBtn.disabled = true;
+                sendBtnText.classList.add('d-none');
+                sendBtnLoading.classList.remove('d-none');
+
+
+                fetch(`/grupos/{{ $grupo->id }}/mensagens`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        },
+                        body: JSON.stringify({
+                            conteudo
+                        }),
+                    }).then(response => response.json())
+                    .then(message => {
+                        conteudoInput.value = '';
+                    });
             });
-
-        // Enviar mensagem
-        sendMessageForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const conteudo = conteudoInput.value;
-
-            fetch(`/grupos/{{ $grupo->id }}/mensagens`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                },
-                body: JSON.stringify({ conteudo }),
-            }).then(response => response.json())
-              .then(message => {
-                  conteudoInput.value = '';
-              });
         });
-    });
-</script>
+    </script>
 
     <script>
-        window.laravel_echo_port = '{{ env("LARAVEL_ECHO_PORT", 6001) }}';
+        window.laravel_echo_port = '{{ env('LARAVEL_ECHO_PORT', 6001) }}';
     </script>
     <script src="//{{ Request::getHost() }}:{{ env('LARAVEL_ECHO_PORT', 6001) }}/socket.io/socket.io.js"></script>
 

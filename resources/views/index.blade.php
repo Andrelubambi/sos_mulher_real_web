@@ -124,52 +124,72 @@
             <a href="{{ route('index') }}">
                 <img src="vendors/images/android-chrome-192x192.png" alt="" style="height: 60px;" />
             </a>
-
-            <div class="close-sidebar" data-toggle="left-sidebar-close">
-                <i class="ion-close-round"></i>
-            </div>
         </div>
         <div class="menu-block customscroll">
             <div class="sidebar-menu">
                 <ul id="accordion-menu">
+
                     <li class="dropdown">
                         <a href="javascript:;" class="dropdown-toggle">
-                            <span class="micon bi bi-house"></span><span class="mtext">Home</span>
+                            <span class="micon bi bi-calendar-check"></span>
+                            <span class="mtext">Dashboard</span>
                         </a>
                         <ul class="submenu">
-                            <li><a href="{{ route('index') }}">Dashboard Médico</a></li>
+                            <li><a href="{{ route('admin.dashboard') }}">Dashboard Admin</a></li>
+                        </ul>
+                    </li>
+
+
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <span class="micon bi bi-calendar-check"></span>
+                            </span><span class="mtext">Consultas</span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="{{ route('consulta') }}">Todas as Consultas</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
                         <a href="javascript:;" class="dropdown-toggle">
-                            <span class="micon bi bi-house"></span><span class="mtext">Médico</span>
+                            <span class="micon bi bi-person-badge"></span>
+                            </span><span class="mtext">Médico</span>
                         </a>
                         <ul class="submenu">
-                            <li><a href="{{ route('users.doutor') }}">Médico</a></li>
+                            <li><a href="{{ route('users.doutor') }}">Lista de Médicos</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
                         <a href="javascript:;" class="dropdown-toggle">
-                            <span class="micon bi bi-house"></span><span class="mtext">Vítimas</span>
-                        </a>
-                        <ul class="submenu">
-                            <li><a href="{{ route('users.vitima') }}">Vítimas</a></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a href="javascript:;" class="dropdown-toggle">
-                            <span class="micon bi bi-house"></span><span class="mtext">Assistntes</span>
+                            <span class="micon bi bi-person-workspace"></span>
+                            <span class="mtext">Lista de Assistentes</span>
                         </a>
                         <ul class="submenu">
                             <li><a href="{{ route('users.estagiario') }}">Assistntes</a></li>
                         </ul>
                     </li>
+
                     <li class="dropdown">
                         <a href="javascript:;" class="dropdown-toggle">
-                            <span class="micon bi bi-house"></span><span class="mtext">Consultas</span>
+                            <span class="micon bi bi-people"></span>
+                            </span><span class="mtext">Vítimas</span>
                         </a>
                         <ul class="submenu">
-                            <li><a href="{{ route('consulta') }}">Consultas</a></li>
+                            <li><a href="{{ route('users.vitima') }}">>Lista de Vítimas</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <span class="micon bi bi-collection"></span>
+                            <span class="mtext">Grupos</span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="#" data-toggle="modal" data-target="#createGroupModal">Criar Grupo</a>
+                            </li>
+                            @foreach ($grupos as $grupo)
+                                <li>
+                                    <a href="{{ route('grupos.show', $grupo->id) }}">{{ $grupo->nome }}</a>
+                                </li>
+                            @endforeach
                         </ul>
                     </li>
                     <li>
@@ -178,20 +198,7 @@
                             <span class="mtext">Chat</span>
                         </a>
                     </li>
-                    <li class="dropdown">
-                        <a href="javascript:;" class="dropdown-toggle">
-                            <span class="micon bi bi-chat-right-dots"></span>
-                            <span class="mtext">Grupos</span>
-                        </a>
-                        <ul class="submenu">
-                            @foreach ($grupos as $grupo)
-                                <li>
-                                    <a href="{{ route('grupos.show', $grupo->id) }}">{{ $grupo->nome }}</a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </li>
-                </ul>
+
                 </ul>
             </div>
         </div>
@@ -200,191 +207,183 @@
     <div class="main-container">
         <div class="xs-pd-20-10 pd-ltr-20">
             <div class="card-box pb-10">
-                <div class="h5 pd-20 mb-0">Gerenciar Grupos</div>
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <button class="btn btn-danger" data-toggle="modal" data-target="#createGroupModal">Criar
-                        Grupo</button>
-                </div>
-                <table class="data-table table nowrap">
-                    <thead>
-                        <tr>
-                            <th>Nome do Grupo</th>
-                            <th>Descrição</th>
-                            <th>Administrador</th>
-                            <th class="datatable-nosort">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($grupos as $grupo)
-                            <tr>
-                                <td>{{ $grupo->nome }}</td>
-                                <td>{{ $grupo->descricao }}</td>
-                                <td>{{ $grupo->admin->name }}</td>
-                                <td>
-                                    <div class="table-actions">
-                                        @if (auth()->user()->id === $grupo->user_id)
-                                            <form action="{{ route('grupos.destroy', $grupo->id) }}" method="POST"
-                                                style="display: inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm"
-                                                    onclick="return confirm('Tem certeza que deseja excluir este grupo?')">
-                                                    Excluir
-                                                </button>
-                                            </form>
-                                        @endif
+                <div class="row pb-10">
+                    <div class="col-xl-3 col-lg-3 col-md-6 mb-20">
+                        <div class="card-box height-100-p widget-style3">
+                            <div class="d-flex flex-wrap">
+                                <div class="widget-data">
+                                    <div class="weight-700 font-24 text-dark">{{ $consultasMarcadasCount }}</div>
+                                    <div class="font-14 text-secondary weight-500">Consultas Marcadas</div>
+                                </div>
+                                <div class="widget-icon">
+                                    <div class="icon" data-color="#00eccf">
+                                        <i class="icon-copy dw dw-calendar1"></i>
                                     </div>
-                                </td>
-
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="createGroupModal" tabindex="-1" role="dialog"
-        aria-labelledby="createGroupModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <form action="{{ route('grupos.store') }}" method="POST">
-                    @csrf
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="createGroupModalLabel">Criar Novo Grupo</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="nome">Nome do Grupo</label>
-                            <input type="text" class="form-control" id="nome" name="nome" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="descricao">Descrição</label>
-                            <textarea class="form-control" id="descricao" name="descricao" rows="3"></textarea>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-danger">Criar Grupo</button>
+                    <div class="col-xl-3 col-lg-3 col-md-6 mb-20">
+                        <div class="card-box height-100-p widget-style3">
+                            <div class="d-flex flex-wrap">
+                                <div class="widget-data">
+                                    <div class="weight-700 font-24 text-dark">{{ $vitimasCount }}</div>
+                                    <div class="font-14 text-secondary weight-500">Total de Vítimas</div>
+                                </div>
+                                <div class="widget-icon">
+                                    <div class="icon" data-color="#ff5b5b">
+                                        <span class="icon-copy ti-heart"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </form>
+                    <div class="col-xl-3 col-lg-3 col-md-6 mb-20">
+                        <div class="card-box height-100-p widget-style3">
+                            <div class="d-flex flex-wrap">
+                                <div class="widget-data">
+                                    <div class="weight-700 font-24 text-dark">{{ $doutoresCount }}</div>
+                                    <div class="font-14 text-secondary weight-500">Total de Doutores</div>
+                                </div>
+                                <div class="widget-icon">
+                                    <div class="icon">
+                                        <i class="icon-copy fa fa-stethoscope" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-3 col-md-6 mb-20">
+                        <div class="card-box height-100-p widget-style3">
+                            <div class="d-flex flex-wrap">
+                                <div class="widget-data">
+                                    <div class="weight-700 font-24 text-dark">{{ $estagiariosCount }}</div>
+                                    <div class="font-14 text-secondary weight-500">Total de Estagiários</div>
+                                </div>
+                                <div class="widget-icon">
+                                    <div class="icon" data-color="#09cc06">
+                                        <i class="icon-copy fa fa-money" aria-hidden="true"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    <!-- js -->
-    <script src="{{ asset('vendors/scripts/core.js') }}"></script>
-    <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>
-    <script src="{{ asset('vendors/scripts/process.js') }}"></script>
-    <script>
-        let mensagensPendentes = [];
-        let carregamentoConcluido = false;
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const userIdLogado = document.querySelector('meta[name="user-id"]').getAttribute('content');
-            fetch('/mensagens_nao_lidas')
-                .then(res => res.json())
-                .then(dados => {
-                    if (dados && dados.length > 0) {
-                        mensagensPendentes = dados;
-                        atualizarAlerta();
-                    }
-                    carregamentoConcluido = true;
-                });
-            if (!window.echoRegistered) {
-                Echo.channel('mensagem_sos')
-                    .listen('.NovaMensagemSosEvent', (e) => {
-                        if (String(e.user_id) !== userIdLogado) {
-                            return;
+        <!-- js -->
+        <script src="{{ asset('vendors/scripts/core.js') }}"></script>
+        <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>
+        <script src="{{ asset('vendors/scripts/process.js') }}"></script>
+        <script>
+            let mensagensPendentes = [];
+            let carregamentoConcluido = false;
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const userIdLogado = document.querySelector('meta[name="user-id"]').getAttribute('content');
+                fetch('/mensagens_nao_lidas')
+                    .then(res => res.json())
+                    .then(dados => {
+                        if (dados && dados.length > 0) {
+                            mensagensPendentes = dados;
+                            atualizarAlerta();
                         }
-                        const mensagem = {
-                            id: e.id,
-                            conteudo: e.conteudo,
-                            data: e.data
-                        };
-                        mensagensPendentes.unshift(mensagem);
-                        atualizarAlerta();
+                        carregamentoConcluido = true;
                     });
-                window.echoRegistered = true;
-            }
-            document.getElementById('mensagemAlerta').addEventListener('click', () => {
-                mostrarProximaMensagem();
-            });
-            document.getElementById('fecharModal').addEventListener('click', () => {
-                const mensagemAtual = mensagensPendentes.shift();
-                document.getElementById('mensagemModal').classList.add('hidden');
-
-                fetch('/mensagem_lida', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                            .getAttribute('content')
-                    },
-                    body: JSON.stringify({
-                        id: mensagemAtual.id
-                    })
-                });
-                if (mensagensPendentes.length > 0) {
-                    setTimeout(() => mostrarProximaMensagem(), 300);
-                } else {
-                    document.getElementById('mensagemAlerta').classList.add('hidden');
+                if (!window.echoRegistered) {
+                    Echo.channel('mensagem_sos')
+                        .listen('.NovaMensagemSosEvent', (e) => {
+                            if (String(e.user_id) !== userIdLogado) {
+                                return;
+                            }
+                            const mensagem = {
+                                id: e.id,
+                                conteudo: e.conteudo,
+                                data: e.data
+                            };
+                            mensagensPendentes.unshift(mensagem);
+                            atualizarAlerta();
+                        });
+                    window.echoRegistered = true;
                 }
-                atualizarAlerta();
+                document.getElementById('mensagemAlerta').addEventListener('click', () => {
+                    mostrarProximaMensagem();
+                });
+                document.getElementById('fecharModal').addEventListener('click', () => {
+                    const mensagemAtual = mensagensPendentes.shift();
+                    document.getElementById('mensagemModal').classList.add('hidden');
+
+                    fetch('/mensagem_lida', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            id: mensagemAtual.id
+                        })
+                    });
+                    if (mensagensPendentes.length > 0) {
+                        setTimeout(() => mostrarProximaMensagem(), 300);
+                    } else {
+                        document.getElementById('mensagemAlerta').classList.add('hidden');
+                    }
+                    atualizarAlerta();
+                });
+
+                function atualizarAlerta() {
+                    const alerta = document.getElementById('mensagemAlerta');
+                    const texto = document.getElementById('mensagemTextoCompleto');
+
+                    if (mensagensPendentes.length > 0) {
+                        alerta.classList.remove('hidden');
+                        texto.textContent = `Nova mensagem (${mensagensPendentes.length})`;
+                    } else {
+                        alerta.classList.add('hidden');
+                        texto.textContent = '';
+                    }
+                }
+
+                function mostrarProximaMensagem() {
+                    const mensagem = mensagensPendentes[0];
+                    if (!mensagem) return;
+                    document.getElementById('mensagemConteudo').textContent = mensagem.conteudo;
+                    document.getElementById('mensagemData').textContent = formatarData(mensagem.data);
+                    document.getElementById('mensagemModal').classList.remove('hidden');
+                }
+
+                function formatarData(dataString) {
+                    const data = new Date(dataString);
+                    return data.toLocaleString('pt-PT', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                }
             });
 
-            function atualizarAlerta() {
-                const alerta = document.getElementById('mensagemAlerta');
-                const texto = document.getElementById('mensagemTextoCompleto');
-
-                if (mensagensPendentes.length > 0) {
-                    alerta.classList.remove('hidden');
-                    texto.textContent = `Nova mensagem (${mensagensPendentes.length})`;
+            function abrirModalMensagem(mensagem) {
+                const modal = document.getElementById('mensagemModal');
+                const conteudo = document.getElementById('mensagemConteudo');
+                const data = document.getElementById('mensagemData');
+                conteudo.textContent = mensagem.conteudo;
+                data.textContent = mensagem.data;
+                modal.dataset.mensagemId = mensagem.id;
+                modal.classList.remove('hidden');
+            }
+            document.getElementById('enviarResposta').addEventListener('click', () => {
+                const mensagemAtual = mensagensPendentes[0];
+                if (mensagemAtual && mensagemAtual.id) {
+                    window.location.href = `/responder_mensagem_sos/${mensagemAtual.id}`;
                 } else {
-                    alerta.classList.add('hidden');
-                    texto.textContent = '';
+                    alert('Mensagem inválida para responder.');
                 }
-            }
-
-            function mostrarProximaMensagem() {
-                const mensagem = mensagensPendentes[0];
-                if (!mensagem) return;
-                document.getElementById('mensagemConteudo').textContent = mensagem.conteudo;
-                document.getElementById('mensagemData').textContent = formatarData(mensagem.data);
-                document.getElementById('mensagemModal').classList.remove('hidden');
-            }
-
-            function formatarData(dataString) {
-                const data = new Date(dataString);
-                return data.toLocaleString('pt-PT', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-            }
-        });
-
-        function abrirModalMensagem(mensagem) {
-            const modal = document.getElementById('mensagemModal');
-            const conteudo = document.getElementById('mensagemConteudo');
-            const data = document.getElementById('mensagemData');
-            conteudo.textContent = mensagem.conteudo;
-            data.textContent = mensagem.data;
-            modal.dataset.mensagemId = mensagem.id;
-            modal.classList.remove('hidden');
-        }
-        document.getElementById('enviarResposta').addEventListener('click', () => {
-            const mensagemAtual = mensagensPendentes[0];
-            if (mensagemAtual && mensagemAtual.id) {
-                window.location.href = `/responder_mensagem_sos/${mensagemAtual.id}`;
-            } else {
-                alert('Mensagem inválida para responder.');
-            }
-        });
-    </script>
+            });
+        </script>
 
 </body>
 

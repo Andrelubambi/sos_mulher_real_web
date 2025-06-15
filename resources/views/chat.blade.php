@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
     <title>Chat</title>
@@ -13,187 +14,186 @@
 
     <!-- jQuery -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<!-- Vite -->
-@vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Vite -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-<style>
-    /* GLOBAL */
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f4f4f4;
-        margin: 0;
-    }
+    <style>
+        /* GLOBAL */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+        }
 
-    /* LAYOUT */
-    .chat-layout {
-        display: flex;
-        height: 90vh;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        overflow: hidden;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
+        /* LAYOUT */
+        .chat-layout {
+            display: flex;
+            height: 90vh;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
 
-    /* SIDEBAR */
-    .sidebar {
-        width: 260px;
-        border-right: 1px solid #ddd;
-        background-color: #fafafa;
-        overflow-y: auto;
-        transition: transform 0.3s ease-in-out;
-    }
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            border-right: 1px solid #ddd;
+            background-color: #fafafa;
+            overflow-y: auto;
+            transition: transform 0.3s ease-in-out;
+        }
 
-    .sidebar h5 {
-        font-weight: bold;
-        padding: 12px 16px;
-        margin: 0;
-        font-size: 15px;
-        background-color: #e9ecef;
-        border-bottom: 1px solid #ccc;
-    }
+        .sidebar h5 {
+            font-weight: bold;
+            padding: 12px 16px;
+            margin: 0;
+            font-size: 15px;
+            background-color: #e9ecef;
+            border-bottom: 1px solid #ccc;
+        }
 
-    .user-item {
-        padding: 12px 16px;
-        cursor: pointer;
-        border-bottom: 1px solid #eee;
-        transition: background-color 0.2s;
-    }
+        .user-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s;
+        }
 
-    .user-item:hover,
-    .user-item.active {
-        background-color: #e2e6ea;
-    }
+        .user-item:hover,
+        .user-item.active {
+            background-color: #e2e6ea;
+        }
 
-    /* CHAT AREA */
-    .chat-area {
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        background-color: #fefefe;
-    }
+        /* CHAT AREA */
+        .chat-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: #fefefe;
+        }
 
-    .chat-header {
-        padding: 16px;
-        font-weight: bold;
-        font-size: 17px;
-        border-bottom: 1px solid #ddd;
-        background-color: #f8f9fa;
-    }
+        .chat-header {
+            padding: 16px;
+            font-weight: bold;
+            font-size: 17px;
+            border-bottom: 1px solid #ddd;
+            background-color: #f8f9fa;
+        }
 
-    .chat-messages {
-        flex-grow: 1;
-        overflow-y: auto;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
 
-    /* MESSAGE BUBBLES */
-    .message {
-        max-width: 100%;
-        padding: 12px 16px;
-        border-radius: 10px;
-        line-height: 1.5;
-        word-wrap: break-word;
-        position: relative;
-    }
+        /* MESSAGE BUBBLES */
+        .message {
+            max-width: 100%;
+            padding: 12px 16px;
+            border-radius: 10px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            position: relative;
+        }
 
 
-    /* CHAT INPUT */
-    .chat-input {
-        display: flex;
-        padding: 12px 16px;
-        border-top: 1px solid #ddd;
-        background-color: #f9f9f9;
-    }
+        /* CHAT INPUT */
+        .chat-input {
+            display: flex;
+            padding: 12px 16px;
+            border-top: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
 
-    .chat-input textarea {
-        flex-grow: 1;
-        resize: none;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        padding: 10px;
-        font-size: 14px;
-        height: 60px;
-        background-color: #fff;
-    }
+        .chat-input textarea {
+            flex-grow: 1;
+            resize: none;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 14px;
+            height: 60px;
+            background-color: #fff;
+        }
 
-    .chat-input button {
-        margin-left: 12px;
-        padding: 10px 20px;
-        background-color: #007bff;
-        border: none;
-        color: white;
-        border-radius: 6px;
-        font-weight: 500;
-        transition: background-color 0.2s;
-    }
+        .chat-input button {
+            margin-left: 12px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
 
-    .chat-input button:hover {
-        background-color: #0056b3;
-    }
+        .chat-input button:hover {
+            background-color: #0056b3;
+        }
 
-    /* TABS */
-    .tab-buttons {
-        display: flex;
-        justify-content: space-between;
-        padding: 10px;
-        background-color: #f0f0f0;
-        border-bottom: 1px solid #ccc;
-    }
+        /* TABS */
+        .tab-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-bottom: 1px solid #ccc;
+        }
 
-    .tab-buttons button {
-        background-color: #dee2e6;
-        color: #333;
-        border: none;
-        padding: 6px 14px;
-        border-radius: 5px;
-        font-weight: 500;
-        cursor: pointer;
-    }
+        .tab-buttons button {
+            background-color: #dee2e6;
+            color: #333;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+        }
 
-    .tab-buttons button.active {
-        background-color: #adb5bd;
-        color: white;
-    }
+        .tab-buttons button.active {
+            background-color: #adb5bd;
+            color: white;
+        }
 
-    .tab-buttons button:hover {
-        background-color: #ced4da;
-    }
+        .tab-buttons button:hover {
+            background-color: #ced4da;
+        }
 
-    /* HAMBURGER */
-    .hamburger {
-        display: none;
-        padding: 12px;
-        background: #007bff;
-        color: white;
-        border: none;
-        width: 100%;
-        text-align: left;
-        font-size: 18px;
-    }
+        /* HAMBURGER */
+        .hamburger {
+            display: none;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-size: 18px;
+        }
 
-    @media (max-width: 768px) {
-    .sidebar {
-        position: relative;
-        width: 100%;
-        height: auto;
-        transform: none !important;
-        z-index: 1;
-    }
+        @media (max-width: 768px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                transform: none !important;
+                z-index: 1;
+            }
 
-    .chat-area {
-        margin-top: 0;
-    }
+            .chat-area {
+                margin-top: 0;
+            }
 
-    .hamburger {
-        display: none;
-    }
-}
-
-</style>
+            .hamburger {
+                display: none;
+            }
+        }
+    </style>
 
 </head>
 
@@ -208,16 +208,19 @@
                 <button onclick="mostrarUsuarios()">Usuários</button>
             </div>
 
-           <!-- Mensagens Recentes -->
+            <!-- Mensagens Recentes -->
             <div id="mensagensRecentes" style="display: block;">
                 <h5 class="mb-3">Mensagens Recentes</h5>
 
                 @forelse ($chatsRecentes as $chat)
-                    <div class="card mb-2 user-item" data-user-id="{{ $chat['user']->id }}" data-user-name="{{ $chat['user']->name }}">
+                    <div class="card mb-2 user-item" data-user-id="{{ $chat['user']->id }}"
+                        data-user-name="{{ $chat['user']->name }}">
                         <div class="card-body">
                             <strong>{{ $chat['user']->name }}</strong><br>
-                            <small class="text-muted">{{ \Carbon\Carbon::parse($chat['mensagem']->created_at)->format('d/m/Y H:i') }}</small>
-                            <div class="mt-1">{{ \Illuminate\Support\Str::limit($chat['mensagem']->conteudo, 40) }}</div>
+                            <small
+                                class="text-muted">{{ \Carbon\Carbon::parse($chat['mensagem']->created_at)->format('d/m/Y H:i') }}</small>
+                            <div class="mt-1">{{ \Illuminate\Support\Str::limit($chat['mensagem']->conteudo, 40) }}
+                            </div>
                         </div>
                     </div>
                 @empty
@@ -276,7 +279,7 @@
         }
 
 
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const messagesDiv = document.getElementById('messages');
             const sendMessageForm = document.getElementById('sendMessageForm');
             const conteudoInput = document.getElementById('conteudo');
@@ -336,20 +339,23 @@
                 });
             });
 
-            sendMessageForm.addEventListener('submit', function (e) {
+            sendMessageForm.addEventListener('submit', function(e) {
                 e.preventDefault();
 
                 const conteudo = conteudoInput.value.trim();
                 if (!conteudo || !usuarioAtualId) return;
 
                 fetch(`/chat/send/${usuarioAtualId}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                    },
-                    body: JSON.stringify({ conteudo }),
-                })
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                                .getAttribute('content'),
+                        },
+                        body: JSON.stringify({
+                            conteudo
+                        }),
+                    })
                     .then(res => res.json())
                     .then(data => {
                         appendMessage(data, true);
@@ -363,4 +369,5 @@
         });
     </script>
 </body>
+
 </html>

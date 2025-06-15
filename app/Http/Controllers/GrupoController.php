@@ -59,8 +59,6 @@ class GrupoController extends Controller
 
     
 
-
-
     public function destroy(Grupo $grupo)
     {
     if (auth()->id() !== $grupo->admin_id) {

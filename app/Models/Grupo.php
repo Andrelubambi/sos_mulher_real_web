@@ -29,4 +29,10 @@ class Grupo extends Model
     {
         return $this->hasMany(MensagemGrupo::class);
     }
+
+    public function podeSerExcluidoPelo($user)
+{
+    return $this->admin_id === $user->id || $user->role === 'admin'; 
+}
+
 }
