@@ -271,13 +271,13 @@
                 const alerta = document.getElementById('mensagemAlerta');
                 const texto = document.getElementById('mensagemTextoCompleto');
 
-                if (mensagensPendentes.length > 0) {
+                if (mensagensPendentes.length > 0) { 
                     alerta.classList.remove('hidden');
                     texto.textContent = `Nova mensagem (${mensagensPendentes.length})`;
                 } else {
                     alerta.classList.add('hidden');
                     texto.textContent = '';
-                }
+                } 
             }
 
             function mostrarProximaMensagem() {

@@ -439,7 +439,7 @@
                             } else {
                                 alerta.classList.add('hidden');
                                 texto.textContent = '';
-                            }
+                            }    
                         }
 
                         function mostrarProximaMensagem() {
