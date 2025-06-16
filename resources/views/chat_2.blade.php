@@ -48,11 +48,11 @@
 
         .chat-header {
             padding: 18px 24px;
-            background-color: #007bff;
+            background-color: #dc3545;
             color: #fff;
             font-weight: 700;
             font-size: 20px;
-            border-bottom: 1px solid #0056b3;
+            border-bottom: 1px solid #842029;
             user-select: none;
         }
 
@@ -71,7 +71,7 @@
             width: 8px;
         }
         .chat-messages::-webkit-scrollbar-thumb {
-            background-color: rgba(0,123,255,0.3);
+            background-color: rgba(245, 137, 140, 0.3);
             border-radius: 4px;
         }
         .chat-messages::-webkit-scrollbar-track {
@@ -94,7 +94,7 @@
         /* Mensagens enviadas */
         .sent {
             align-self: flex-end;
-            background: linear-gradient(135deg, #007bff, #0056b3);
+            background: linear-gradient(135deg, #dc3545, #842029);
             color: #fff;
             border-bottom-right-radius: 4px;
             animation: slideInRight 0.3s ease forwards;
@@ -152,14 +152,14 @@
 
         .chat-input textarea:focus {
             outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 6px rgba(0, 123, 255, 0.5);
+            border-color: #dc3545;
+            box-shadow: 0 0 6px rgba(247, 121, 121, 0.5);
         }
 
         .chat-input button {
             margin-left: 14px;
             padding: 0 28px;
-            background-color: #007bff;
+            background-color: #dc3545;
             border: none;
             border-radius: 10px;
             color: #fff;
@@ -170,11 +170,11 @@
         }
 
         .chat-input button:hover:not(:disabled) {
-            background-color: #0056b3;
+            background-color: #842029;
         }
 
         .chat-input button:disabled {
-            background-color: #a1c4fd;
+            background-color:rgb(243, 138, 148);
             cursor: not-allowed;
         }
 
