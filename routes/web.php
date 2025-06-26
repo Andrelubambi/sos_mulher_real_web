@@ -6,16 +6,22 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ConsultaController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\GrupoController;
-use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\MensagemSosController;
 
 
-Route::middleware('auth:web')->group(function () {
+/*Route::middleware('auth:web')->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
-});
+});*/
+
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::middleware('auth:sanctum')->get('/', function () {
+    return redirect()->route('admin.dashboard');
+})->name('index');
 
 
-Route::middleware('auth:sanctum')->get('/', [DashboardController::class, 'index'])->name('index');
+Route::middleware('auth:sanctum')->get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+
 
  
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login.form');

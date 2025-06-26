@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Models\Medico; 
+use App\Models\Grupo; 
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -54,9 +55,9 @@ public function listNaoDoutores()
 
 
 public function createDoutor()
-{
+{ $grupos = Grupo::all();
     $users = User::where('role', 'doutor')->get();
-    return view('doutor', compact('users'));
+    return view('doutor', compact('users','grupos'));
 }
 
 public function storeDoutor(Request $request)
@@ -87,9 +88,10 @@ public function storeDoutor(Request $request)
                                         // ==========================  Estagiário  =============================== //
 
 public function createEstagiario()
-{
+{ 
+     $grupos = Grupo::all();
     $users = User::where('role', 'estagiario')->get();
-    return view('estagiario', compact('users'));
+    return view('estagiario', compact('users','grupos'));
 }
 
 public function storeEstagiario(Request $request)
@@ -122,9 +124,9 @@ public function storeEstagiario(Request $request)
 public function createVitima()
 {
 
-
+    $grupos = Grupo::all();
     $users = User::where('role', 'vitima')->get();
-    return view('vitima', compact('users'));
+    return view('vitima', compact('users','grupos'));
 }
 
 

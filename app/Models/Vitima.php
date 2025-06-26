@@ -9,8 +9,8 @@ class Vitima extends User
 {
     protected static function booted()
     {
-        static::addGlobalScope('tipo', function (Builder $builder) {
-            $builder->where('tipo', 'vitima');
+        static::addGlobalScope('role', function (Builder $builder) {
+            $builder->where('role', 'vitima');
         });
     }
 }

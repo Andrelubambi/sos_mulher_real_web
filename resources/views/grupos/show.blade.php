@@ -1,148 +1,205 @@
-<!-- filepath: c:\laragon\www\sos-mulher\resources\views\grupos\show.blade.php -->
 <!DOCTYPE html>
 <html>
 
 <head>
-    <!-- Basic Page Info -->
-    <meta charset="utf-8" />
-    <title>Grupo: {{ $grupo->nome }}</title>
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="user-id" content="{{ auth()->user()->id }}">
+
+
+    <!-- Basic Page Info -->
+    <meta charset="utf-8" />
+    <title> Dashboard | SOS-MULHER</title>
 
     <!-- Site favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('vendors/images/apple-touch-icon.png') }}" />
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('vendors/images/favicon-32x32.png') }}" />
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('vendors/images/favicon-16x16.png') }}" />
-
     <!-- Mobile Specific Metas -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet" />
-
-    <!-- CSS -->
+    <!-- Link Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/core.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/icon-font.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/dataTables.bootstrap4.min.css" />
+    <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/responsive.bootstrap4.min.css" />
     <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}" />
-
-    {{-- Bootstrap CSS --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.css" />
-
-    {{-- jQuery --}}
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GBZ3SGGX85"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2973766580778258"
+        crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
-    {{-- Vite Assets --}}
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-
     <style>
-        .chat-container {
-            display: flex;
-            flex-direction: column;
-            height: calc(100vh - 100px);
-            background-color: #f4f4f4;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
 
-        .chat-header {
-            background-color: #007bff;
-            color: #fff;
-            padding: 15px;
-            font-size: 18px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px;
-            background-color: #fff;
-        }
-
-        .chat-input {
-            display: flex;
-            gap: 10px;
-            padding: 15px;
-            background-color: #f9f9f9;
-            border-top: 1px solid #ddd;
-        }
-
-        .chat-input textarea {
-            flex: 1;
-            resize: none;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-        }
-
-        .chat-input button {
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .chat-input button:hover {
-            background-color: #0056b3;
-        }
-
-        .message {
-            margin-bottom: 15px;
-        }
-
-        .message.sent {
-            text-align: right;
-        }
-
-        .message.received {
-            text-align: left;
-        }
-
-        .message-content {
-            display: inline-block;
-            padding: 10px 15px;
-            border-radius: 15px;
-            background-color: #e9ecef;
-            max-width: 70%;
-        }
-
-        .message.sent .message-content {
-            background-color: #007bff;
-            color: #fff;
-        }
     </style>
+    <!-- Vite -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body>
+    <div class="pre-loader">
+        <div class="pre-loader-box">
+            <div class="loader-logo">
+                <img src="{{ asset('vendors/images/sos-progress.jpg') }}" alt=""
+                    style="width: 120px; height: auto;" />
+            </div>
+            <div class="loader-progress" id="progress_div">
+                <div class="bar" id="bar1"></div>
+            </div>
+            <div class="percent" id="percent1">0%</div>
+            <div class="loading-text">Por favor, aguarde ...</div>
+        </div>
+    </div>
+    <div class="header">
+        <div class="header-left">
+            <div class="menu-icon bi bi-list"></div>
+            <div class="search-toggle-icon bi bi-search" data-toggle="header_search"></div>
+            <div class="header-search">
+
+            </div>
+        </div>
+
+        <div class="header-right">
+            <!-- Settings Icon -->
+
+            @if (auth()->user()->role == 'vitima')
+                <!-- SOS Button -->
+                <div class="user-notification">
+                    <form action="{{ route('mensagem_sos') }}" method="POST"
+                        style="display:inline-block; margin-left: 10px;">
+                        @csrf
+                        <input type="hidden" name="mensagem" value="conteudo da mensagem sos">
+                        <button type="submit" title="Enviar SOS" style="background:none; border:none; cursor:pointer;">
+                            <i class="fa fa-exclamation-triangle" style="color:red; font-size: 20px;"></i>
+                        </button>
+                    </form>
+                </div>
+            @endif
+
+            <div id="mensagemAlerta" class="mensagem-alerta hidden" style="cursor:pointer;">
+                <span class="mensagem-icone"><i class="fa fa-envelope"></i></span>
+                <span id="mensagemTextoCompleto" class="mensagem-texto"></span>
+            </div>
+
+            <div id="mensagemModal" class="mensagem-modal hidden" data-mensagem-id="">
+                <div class="mensagem-modal-conteudo">
+                    <h4>Mensagem Recebida</h4>
+                    <p id="mensagemConteudo"></p>
+                    <small id="mensagemData" style="display:block;margin-top:10px;color:#666;"></small>
+
+                    <div style="margin-top: 10px; text-align: right;">
+                        <button id="enviarResposta" style="margin-right: 10px;">Responder</button>
+                        <button id="fecharModal">OK</button>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- User Info -->
+            <div class="user-info-dropdown">
+                <div class="dropdown">
+                    <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown">
+                        <span class="user-icon">
+                            <i class="fa fa-user-circle" style="font-size: 35px; color: #555;"></i>
+                        </span>
+                        @guest
+                            <p>Olá, seja bem-vindo visitante! Faça login para acessar suas informações.</p>
+                        @else
+                            <span class="user-name">Olá, seja bem-vindo {{ Auth::user()->name }}!</span>
+                        @endguest
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf</form>
+                        <a class="dropdown-item" href="#"
+                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i
+                                class="dw dw-logout"></i>Sair</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="left-side-bar">
+        <div class="brand-logo">
+            <a href="{{ route('admin.dashboard') }}">
+                <img src="{{ asset('vendors/images/android-chrome-192x192.png') }}" alt="Logo"
+                    style="height: 60px;" />
+            </a>
+        </div>
+
         <div class="menu-block customscroll">
             <div class="sidebar-menu">
                 <ul id="accordion-menu">
+
                     <li class="dropdown">
                         <a href="javascript:;" class="dropdown-toggle">
-                            <span class="micon bi bi-house"></span><span class="mtext">Home</span>
+                            <span class="micon bi bi-speedometer2"></span>
+                            <span class="mtext">Dashboard</span>
                         </a>
                         <ul class="submenu">
-                            <li><a href="{{ route('index') }}">Dashboard Médico</a></li>
-                            <li><a href="{{ route('index3') }}">Dashboard Administrador</a></li>
+                            <li><a href="{{ route('admin.dashboard') }}">Dashboard Admin</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <span class="micon bi bi-calendar-check"></span>
+                            </span><span class="mtext">Consultas</span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="{{ route('consulta') }}">Todas as Consultas</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
                         <a href="javascript:;" class="dropdown-toggle">
-                            <span class="micon bi bi-chat-right-dots"></span><span class="mtext">Grupos</span>
+                            <span class="micon bi bi-person-badge"></span>
+                            </span><span class="mtext">Médico</span>
                         </a>
                         <ul class="submenu">
-                            @foreach ($grupos as $grupoItem)
+                            <li><a href="{{ route('users.doutor') }}">Lista de Médicos</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <span class="micon bi bi-person-workspace"></span>
+                            <span class="mtext">Lista de Assistentes</span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="{{ route('users.estagiario') }}">Assistntes</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <span class="micon bi bi-people"></span>
+                            </span><span class="mtext">Vítimas</span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="{{ route('users.vitima') }}">>Lista de Vítimas</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <span class="micon bi bi-collection"></span>
+                            <span class="mtext">Grupos</span>
+                        </a>
+                        <ul class="submenu">
+                            <li><a href="#" data-toggle="modal" data-target="#createGroupModal">Criar Grupo</a>
+                            </li>
+                            @foreach ($grupos as $grupo)
                                 <li>
-                                    <a href="{{ route('grupos.show', $grupoItem->id) }}">{{ $grupoItem->nome }}</a>
+                                    <a href="{{ route('grupos.show', $grupo->id) }}">{{ $grupo->nome }}</a>
                                 </li>
                             @endforeach
                         </ul>
                     </li>
+                    <li>
+                        <a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
+                            <span class="micon bi bi-chat-right-dots"></span>
+                            <span class="mtext">Chat</span>
+                        </a>
+                    </li>
+
                 </ul>
             </div>
         </div>
@@ -153,12 +210,23 @@
         <div class="pd-ltr-20 xs-pd-20-10">
             <div class="min-height-200px">
                 <div class="chat-container">
-                    <!-- Cabeçalho do Chat -->
-                    <div class="chat-header">
-                        Grupo: {{ $grupo->nome }}
+
+                    <div
+                        class="chat-header d-flex justify-content-between align-items-center bg-danger text-white px-3 py-2 rounded-top">
+                        <span>Grupo: {{ $grupo->nome }}</span>
+
+                        @if ($grupo->podeSerExcluidoPelo(auth()->user()))
+                            <form action="{{ route('grupos.destroy', $grupo->id) }}" method="POST"
+                                onsubmit="return confirm('Tem certeza que deseja excluir este grupo?')">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-light text-danger">
+                                    <i class="bi bi-trash"></i> Excluir Grupo
+                                </button>
+                            </form>
+                        @endif
                     </div>
 
-                    <!-- Mensagens -->
                     <div id="messages" class="chat-messages">
                         @forelse ($mensagens as $mensagem)
                             <div class="message {{ $mensagem->user_id === auth()->id() ? 'sent' : 'received' }}">
@@ -167,6 +235,7 @@
                                     {{ $mensagem->conteudo }}
                                 </div>
                             </div>
+
                         @empty
                             <div class="text-muted">Nenhuma mensagem ainda.</div>
                         @endforelse
@@ -176,7 +245,15 @@
                     <form id="sendMessageForm" class="chat-input">
                         @csrf
                         <textarea name="conteudo" id="conteudo" placeholder="Digite sua mensagem..." required></textarea>
-                        <button type="submit">Enviar</button>
+                        <button type="submit" class="btn btn-danger btn-sm" id="sendBtn">
+                            <span id="sendBtnText"><i class="bi bi-send"></i> Enviar</span>
+                            <span id="sendBtnLoading" class="d-none">
+                                <span class="spinner-border spinner-border-sm" role="status"
+                                    aria-hidden="true"></span>
+                                Enviando...
+                            </span>
+                        </button>
+
                     </form>
                 </div>
             </div>
@@ -190,51 +267,61 @@
     <script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
     <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const messagesDiv = document.getElementById('messages');
-        const sendMessageForm = document.getElementById('sendMessageForm');
-        const conteudoInput = document.getElementById('conteudo');
+        document.addEventListener('DOMContentLoaded', function() {
+            const messagesDiv = document.getElementById('messages');
+            const sendMessageForm = document.getElementById('sendMessageForm');
+            const conteudoInput = document.getElementById('conteudo');
 
-        //Escutar o canal
-        window.Echo.private('grupo.{{ $grupo->id }}')
-            .listen('.GroupMessageSent', function (data) {
-                const isCurrentUser = data.user_id === {{ auth()->id() }};
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message', isCurrentUser ? 'sent' : 'received');
+            //Escutar o canal
+            window.Echo.private('grupo.{{ $grupo->id }}')
+                .listen('.GroupMessageSent', function(data) {
+                    const isCurrentUser = data.user_id === {{ auth()->id() }};
+                    const messageDiv = document.createElement('div');
+                    messageDiv.classList.add('message', isCurrentUser ? 'sent' : 'received');
 
-                messageDiv.innerHTML = `
-                    <div class="message-content">
-                        <strong>${isCurrentUser ? 'Você' : data.user.name}:</strong>
-                        ${data.conteudo}
-                    </div>
-                `;
-                messagesDiv.appendChild(messageDiv);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                    messageDiv.innerHTML = `
+    <div class="message-content">
+        <strong>${isCurrentUser ? 'Você' : data.user.name}:</strong>
+        ${data.conteudo}
+    </div>
+`;
+
+                    messagesDiv.appendChild(messageDiv);
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                });
+            sendMessageForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const conteudo = conteudoInput.value;
+                const sendBtn = document.getElementById('sendBtn');
+                const sendBtnText = document.getElementById('sendBtnText');
+                const sendBtnLoading = document.getElementById('sendBtnLoading');
+
+                // Mostrar loading
+                sendBtn.disabled = true;
+                sendBtnText.classList.add('d-none');
+                sendBtnLoading.classList.remove('d-none');
+
+
+                fetch(`/grupos/{{ $grupo->id }}/mensagens`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        },
+                        body: JSON.stringify({
+                            conteudo
+                        }),
+                    }).then(response => response.json())
+                    .then(message => {
+                        conteudoInput.value = '';
+                    });
             });
-
-        // Enviar mensagem
-        sendMessageForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const conteudo = conteudoInput.value;
-
-            fetch(`/grupos/{{ $grupo->id }}/mensagens`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                },
-                body: JSON.stringify({ conteudo }),
-            }).then(response => response.json())
-              .then(message => {
-                  conteudoInput.value = '';
-              });
         });
-    });
-</script>
+    </script>
 
     <script>
-        window.laravel_echo_port = '{{ env("LARAVEL_ECHO_PORT", 6001) }}';
+        window.laravel_echo_port = '{{ env('LARAVEL_ECHO_PORT', 6001) }}';
     </script>
     <script src="//{{ Request::getHost() }}:{{ env('LARAVEL_ECHO_PORT', 6001) }}/socket.io/socket.io.js"></script>
 

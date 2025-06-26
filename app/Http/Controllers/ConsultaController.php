@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Consulta;
 use App\Models\User; 
+use App\Models\Grupo; 
 class ConsultaController extends Controller
 {
     public function index()
     {
+
+           $grupos = Grupo::all();
  
         $user = auth()->user();
     
@@ -18,7 +21,6 @@ class ConsultaController extends Controller
             return redirect()->route('login');
         }
     
-        // Busca as consultas com base no papel (role) do usuário
         switch ($user->role) {
             case 'admin':
                 // Administradores podem ver todas as consultas
@@ -26,12 +28,10 @@ class ConsultaController extends Controller
                 break;
             
             case 'medico':
-                // Médicos veem apenas as consultas atribuídas a eles
                 $consultas = Consulta::where('medico_id', $user->id)->get();
                 break;
             
             case 'criador':
-                // Criadores veem apenas as consultas criadas por eles
                 $consultas = Consulta::where('criada_por', $user->id)->get();
                 break;
     
@@ -46,7 +46,7 @@ class ConsultaController extends Controller
        $medicos = User::where('role', 'doutor')->get();
 
     
-        return view('consulta', compact('consultas', 'medicos'));
+        return view('consulta', compact('consultas', 'medicos','grupos'));
     }
 
     
