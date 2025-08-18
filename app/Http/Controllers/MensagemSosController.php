@@ -23,7 +23,6 @@ class MensagemSosController extends Controller
     }
 
 
-    //Remove a notificação. Esta acção é invocada quando o user recebe e lê a notificacao ou a mensagem
     public function mensagemLida(Request $request)
     {
         $mensagemSos = MensagemSos::find($request->id);

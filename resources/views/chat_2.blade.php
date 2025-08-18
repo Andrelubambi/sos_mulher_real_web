@@ -334,7 +334,7 @@
             .catch(err => {
                 alert(err.message);
                 button.disabled = false;
-            });
+            });             
         });
 
         // Scroll inicial para o fim da conversa

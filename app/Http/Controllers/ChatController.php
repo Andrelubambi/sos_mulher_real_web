@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Mensagem;
 use App\Models\MensagemSos;
 use App\Events\MessageSent;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 use Illuminate\Http\Request;
@@ -60,37 +61,43 @@ class ChatController extends Controller
 
     }
 
-    public function responderMensagemSos($id)
-    {
-        $userId = auth()->id();
-        $mensagemSos = MensagemSos::findOrFail($id);
+   public function responderMensagemSos($id)
+{
+    // O ID do estagiário que está a responder (usuário logado)
+    $estagiarioId = Auth::id();
 
-        $remetenteId = $mensagemSos->enviado_por; 
+    // Encontra a mensagem de SOS para obter o ID da vítima
+    $mensagemSos = MensagemSos::findOrFail($id);
+    $vitimaId = $mensagemSos->enviado_por;
 
+    // 1. Crie a mensagem corretamente, do estagiário para a vítima.
+    $mensagem = Mensagem::create([
+        'de' => $estagiarioId,
+        'para' => $vitimaId,
+        'conteudo' => $mensagemSos->conteudo,
+    ]);
 
-        $mensagem = Mensagem::create([
-            'de' => $remetenteId,
-            'para' => $userId,
-            'conteudo' => $mensagemSos->conteudo,
-        ]);
+    // 2. DISPARE O EVENTO DE BROADCAST AQUI!
+    // Para que a vítima seja notificada em tempo real.
+    $minId = min($estagiarioId, $vitimaId);
+    $maxId = max($estagiarioId, $vitimaId);
+    event(new MessageSent($mensagem, $minId, $maxId));
 
-        // Busca o histórico de mensagens entre os dois usuários
-        $mensagens = Mensagem::where(function ($query) use ($userId, $remetenteId) {
-            $query->where('de', $userId)->where('para', $remetenteId);
-        })->orWhere(function ($query) use ($userId, $remetenteId) {
-            $query->where('de', $remetenteId)->where('para', $userId);
-        })->with('remetente')->orderBy('created_at')->get();
+    // O restante do seu código pode permanecer para a view.
+    $mensagens = Mensagem::where(function ($query) use ($estagiarioId, $vitimaId) {
+        $query->where('de', $estagiarioId)->where('para', $vitimaId);
+    })->orWhere(function ($query) use ($estagiarioId, $vitimaId) {
+        $query->where('de', $vitimaId)->where('para', $estagiarioId);
+    })->with('remetente')->orderBy('created_at')->get();
 
-        $mensagemSos->status = 'lido';
-        $mensagemSos->save();
+    $mensagemSos->status = 'lido';
+    $mensagemSos->save();
 
-        // Passa os dados para a view
-        return view('chat_2', [
-            'mensagens' => $mensagens,
-            'remetente' => User::find($mensagemSos->enviado_por),
-        ]);
-    }
-
+    return view('chat_2', [
+        'mensagens' => $mensagens,
+        'remetente' => User::find($vitimaId), // Agora o remetente na view é a vítima
+    ]);
+}
     public function getMessages($usuarioId)
     {
         $usuario = User::find($usuarioId);
