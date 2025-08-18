@@ -266,59 +266,76 @@
     <script src="{{ asset('vendors/scripts/process.js') }}"></script>
     <script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
     <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
+    
+    
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const messagesDiv = document.getElementById('messages');
-            const sendMessageForm = document.getElementById('sendMessageForm');
-            const conteudoInput = document.getElementById('conteudo');
-
-            //Escutar o canal
-            window.Echo.private('grupo.{{ $grupo->id }}')
-                .listen('.GroupMessageSent', function(data) {
-                    const isCurrentUser = data.user_id === {{ auth()->id() }};
-                    const messageDiv = document.createElement('div');
-                    messageDiv.classList.add('message', isCurrentUser ? 'sent' : 'received');
-
-                    messageDiv.innerHTML = `
-    <div class="message-content">
-        <strong>${isCurrentUser ? 'Você' : data.user.name}:</strong>
-        ${data.conteudo}
-    </div>
-`;
-
-                    messagesDiv.appendChild(messageDiv);
-                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                });
-            sendMessageForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                const conteudo = conteudoInput.value;
-                const sendBtn = document.getElementById('sendBtn');
-                const sendBtnText = document.getElementById('sendBtnText');
-                const sendBtnLoading = document.getElementById('sendBtnLoading');
-
-                // Mostrar loading
-                sendBtn.disabled = true;
-                sendBtnText.classList.add('d-none');
-                sendBtnLoading.classList.remove('d-none');
+    document.addEventListener('DOMContentLoaded', function() {
+        const messagesDiv = document.getElementById('messages');
+        const sendMessageForm = document.getElementById('sendMessageForm');
+        const conteudoInput = document.getElementById('conteudo');
+        const sendBtn = document.getElementById('sendBtn');
+        const sendBtnText = document.getElementById('sendBtnText');
+        const sendBtnLoading = document.getElementById('sendBtnLoading');
 
 
-                fetch(`/grupos/{{ $grupo->id }}/mensagens`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                        },
-                        body: JSON.stringify({
-                            conteudo
-                        }),
-                    }).then(response => response.json())
-                    .then(message => {
-                        conteudoInput.value = '';
-                    });
+        window.Echo.private('grupo.{{ $grupo->id }}')
+            .listen('.GroupMessageSent', function(data) {
+                const isCurrentUser = data.user_id === {{ auth()->id() }};
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message', isCurrentUser ? 'sent' : 'received');
+
+                messageDiv.innerHTML = `
+                    <div class="message-content">
+                        <strong>${isCurrentUser ? 'Você' : data.user.name}:</strong>
+                        ${data.conteudo}
+                    </div>
+                `;
+
+                messagesDiv.appendChild(messageDiv);
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            });
+
+        sendMessageForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const conteudo = conteudoInput.value;
+
+            // Mostrar loading
+            sendBtn.disabled = true;
+            sendBtnText.classList.add('d-none');
+            sendBtnLoading.classList.remove('d-none');
+
+
+            fetch(`/grupos/{{ $grupo->id }}/mensagens`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                },
+                body: JSON.stringify({
+                    conteudo
+                }),
+            }).then(response => response.json())
+            .then(message => {
+                // Limpa o input
+                conteudoInput.value = '';
+
+                // Esconde loading e reativa o botão
+                sendBtn.disabled = false;
+                sendBtnText.classList.remove('d-none');
+                sendBtnLoading.classList.add('d-none');
+            })
+            .catch(error => {
+                console.error('Erro ao enviar mensagem:', error);
+                
+                // Em caso de erro, reativa o botão
+                sendBtn.disabled = false;
+                sendBtnText.classList.remove('d-none');
+                sendBtnLoading.classList.add('d-none');
             });
         });
-    </script>
+    });
+</script>
 
     <script>
         window.laravel_echo_port = '{{ env('LARAVEL_ECHO_PORT', 6001) }}';
