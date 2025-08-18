@@ -139,21 +139,26 @@
             }
 
 
-            function escutarMensagens(usuarioId) {
-                const minId = Math.min(usuarioLogadoId, usuarioId);
-                const maxId = Math.max(usuarioLogadoId, usuarioId);
-                const canal = `chat.${minId}-${maxId}`;
+           function escutarMensagens(usuarioId) {
+    const minId = Math.min(usuarioLogadoId, usuarioId);
+    const maxId = Math.max(usuarioLogadoId, usuarioId);
+    
+    // O nome do canal deve ser exatamente como o Laravel espera.
+    // O Laravel Echo já irá adicionar o prefixo 'private-' automaticamente.
+    const canal = `chat.${minId}-${maxId}`;
 
-                if (currentChannel) Echo.leave(currentChannel);
-                currentChannel = `private-${canal}`;
+    if (currentChannel) Echo.leave(currentChannel);
+    currentChannel = canal; // Remova o prefixo 'private-' daqui
 
-                Echo.private(canal)
-                    .listen('MessageSent', (e) => {
-                        if (e.de !== usuarioLogadoId) {
-                            appendMessage(e, false);
-                        }
-                    });
+    // Aqui o Echo adiciona o prefixo `private-`
+    Echo.private(canal)
+        .listen('MessageSent', (e) => {
+            console.log('Nova mensagem recebida:', e);
+            if (e.de !== usuarioLogadoId) {
+                appendMessage(e, false);
             }
+        });
+}
 
             document.querySelectorAll('.user-item').forEach(item => {
                 item.addEventListener('click', () => {

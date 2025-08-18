@@ -157,8 +157,12 @@ class ChatController extends Controller
             'para' => $usuario->id,      
             'conteudo' => $request->conteudo,  
         ]);
-    
-        event(new MessageSent($mensagem));  
+
+
+    $minId = min(auth()->user()->id, $usuario->id);
+        $maxId = max(auth()->user()->id, $usuario->id);
+        
+        event(new MessageSent($mensagem, $minId, $maxId));
  
     return response()->json($mensagem);
 }
