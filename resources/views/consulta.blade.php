@@ -184,7 +184,7 @@
                             <span class="mtext">Grupos</span>
                         </a>
                         <ul class="submenu">
-                            <li><a href="#" data-toggle="modal" data-target="#createGroupModal">Criar Grupo</a>
+                           <li><a href="{{ route('grupos.create') }}">Criar Grupo</a></li>
                             </li>
                             @foreach ($grupos as $grupo)
                                 <li>

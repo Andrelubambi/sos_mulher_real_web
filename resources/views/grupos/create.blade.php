@@ -206,124 +206,104 @@
     </div>
     <div class="mobile-menu-overlay"></div>
 
-    <div class="main-container">
-        <div class="xs-pd-20-10 pd-ltr-20">
-            <div class="title pb-20">
-                <h2 class="h3 mb-0">Gerir Médicos</h2>
+    
+
+<div class="main-container">
+
+    <div class="xs-pd-20-10 pd-ltr-20">
+
+        <div class="card-box pb-10">
+
+            <div class="pd-20">
+
+                <h4 class="text-blue h4">Criar Novo Grupo</h4>
+
             </div>
 
-            <div class="card-box pb-10">
-                <div class="h5 pd-20 mb-0">Médicos Recentes</div>
+            
 
-                <!-- Botão -->
-                <button type="button" class="btn btn-primary mb-3" data-toggle="modal"
-                    data-target="#modalAdicionarMedico">
-                    Adicionar Médico
-                </button>
+            <form action="{{ route('grupos.store') }}" method="POST">
 
-                <!-- Tabela de doutores -->
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Nome</th>
-                            <th>Telefone</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($users as $doutor)
-                            <tr>
-                                <td>{{ $doutor->name }}</td>
-                                <td>{{ $doutor->telefone }}</td>
-                                <td>
-                                    <div class="d-flex gap-2">
-                                        <button type="button"
-                                            class="btn btn-primary btn-sm d-flex align-items-center gap-1"
-                                            data-toggle="modal" data-target="#editModal"
-                                            onclick="editDoutor({{ $doutor->id }})">
-                                            <i class="bi bi-pencil-square"></i> Editar
-                                        </button>
+                @csrf
 
-                                        <form action="{{ route('users.destroy', $doutor->id) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="btn btn-danger btn-sm d-flex align-items-center gap-1">
-                                                <i class="bi bi-trash"></i> Excluir
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
+                <div class="pd-20">
 
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                    <div class="form-group">
 
-            <!-- Modal Criar Doutor -->
-            <div class="modal fade" id="modalAdicionarMedico" tabindex="-1">
-                <div class="modal-dialog">
-                    <form method="POST" action="{{ route('users.doutor.store') }}" class="modal-content">
-                        @csrf
-                        <div class="modal-header">
+                        <label for="nomeGrupo">Nome do Grupo</label>
 
-                            <body>
-                                <h5 class="modal-title">Novo Doutor</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <input type="hidden" name="role" value="doutor">
-                            <div class="mb-3"><input type="text" name="name" class="form-control"
-                                    placeholder="Nome" required></div>
-                            <div class="mb-3"><input type="tel" name="telefone" class="form-control"
-                                    placeholder="Telefone" required></div>
-                            <div class="mb-3"><input type="password" name="password" class="form-control"
-                                    placeholder="Senha" required></div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Criar</button>
-                        </div>
-                    </form>
+                        <input type="text" class="form-control" id="nomeGrupo" name="nome" required>
+
+                    </div>
+
+                    
+
+                    <div class="form-group">
+
+                        <label for="descricaoGrupo">Descrição do Grupo (Opcional)</label>
+
+                        <textarea class="form-control" id="descricaoGrupo" name="descricao" rows="3"></textarea>
+
+                    </div>
+
+                    
+
+                    <h5 class="mt-4">Adicionar Membros</h5>
+
+                    <div class="form-group">
+
+                        <small class="form-text text-muted">
+
+                            Selecione os usuários para adicionar ao grupo. O administrador do grupo será adicionado automaticamente.
+
+                        </small>
+
+                        
+
+                        {{-- O "selectpicker" é uma classe do Bootstrap-Select para um seletor pesquisável --}}
+
+                        <select name="membros[]" class="form-control selectpicker" multiple data-live-search="true">
+
+                            @foreach ($usuariosDisponiveis as $usuario)
+
+                                <option value="{{ $usuario->id }}">{{ $usuario->name }} ({{ $usuario->role }})</option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
                 </div>
-            </div>
 
-            <!-- Modal Editar Doutor -->
-            <div class="modal fade" id="editModal" tabindex="-1">
-                <div class="modal-dialog">
-                    <form id="editForm" method="POST" class="modal-content">
-                        @csrf
-                        @method('PUT')
-                        <div class="modal-header">
-                            <h5 class="modal-title">Editar Doutor</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-                        <div class="modal-body">
-                            <div class="mb-3"><input type="text" class="form-control" id="name"
-                                    name="name" required></div>
-                            <div class="mb-3"><input type="telefone" class="form-control" id="telefone"
-                                    name="telefone" required></div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Salvar</button>
-                        </div>
-                    </form>
+                
+
+                <div class="text-right pd-20">
+
+                    <button type="submit" class="btn btn-primary">Criar Grupo</button>
+
+                    <a href="{{ url()->previous() }}" class="btn btn-secondary">Cancelar</a>
+
                 </div>
-            </div>
 
-            <script>
-                function editDoutor(id) {
-                    fetch(`/users/${id}/edit`)
-                        .then(response => response.json())
-                        .then(data => {
-                            document.getElementById('name').value = data.name;
-                            document.getElementById('telefone').value = data.telefone;
-                            document.getElementById('editForm').action = `/users/${id}`;
-                        });
-                }
-            </script>
+            </form>
 
         </div>
+
+    </div>
+
+</div>
+
+
+
+{{-- Inclua os scripts e estilos necessários para o "selectpicker" aqui --}}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+
+
+
 
         <script src="{{ asset('vendors/scripts/core.js') }}"></script>
         <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>

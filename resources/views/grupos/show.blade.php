@@ -178,21 +178,21 @@
                             <li><a href="{{ route('users.vitima') }}">>Lista de Vítimas</a></li>
                         </ul>
                     </li>
-                    <li class="dropdown">
-                        <a href="javascript:;" class="dropdown-toggle">
-                            <span class="micon bi bi-collection"></span>
-                            <span class="mtext">Grupos</span>
-                        </a>
-                        <ul class="submenu">
-                            <li><a href="#" data-toggle="modal" data-target="#createGroupModal">Criar Grupo</a>
-                            </li>
-                            @foreach ($grupos as $grupo)
-                                <li>
-                                    <a href="{{ route('grupos.show', $grupo->id) }}">{{ $grupo->nome }}</a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </li>
+                 <li class="dropdown">
+    <a href="javascript:;" class="dropdown-toggle">
+        <span class="micon bi bi-collection"></span>
+        <span class="mtext">Grupos</span>
+    </a>
+    <ul class="submenu">
+        {{-- Substitua a linha do modal por esta nova linha --}}
+        <li><a href="{{ route('grupos.create') }}">Criar Grupo</a></li>
+        @foreach ($grupos as $grupo)
+            <li>
+                <a href="{{ route('grupos.show', $grupo->id) }}">{{ $grupo->nome }}</a>
+            </li>
+        @endforeach
+    </ul>
+</li>
                     <li>
                         <a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
                             <span class="micon bi bi-chat-right-dots"></span>

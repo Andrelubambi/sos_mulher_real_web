@@ -16,6 +16,18 @@ class GrupoController extends Controller
         return view('index', compact('grupos'));
     }
 
+ public function create()
+    {
+        // Pega todos os usuários, exceto o usuário logado
+        $usuariosDisponiveis = User::where('id', '!=', auth()->id())->get();
+        
+        // Pega todos os grupos para a barra lateral
+        $grupos = Grupo::all(); 
+
+        // Retorna a view e passa os dados
+        return view('grupos.create', compact('usuariosDisponiveis', 'grupos'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -115,4 +127,4 @@ class GrupoController extends Controller
         $grupo->users()->detach($user->id);
         return redirect()->route('grupos.show', $grupo->id)->with('success', 'Usuário removido do grupo.');
     }
-}
+} 
