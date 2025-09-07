@@ -215,11 +215,13 @@
             <div class="card-box pb-10">
                 <div class="h5 pd-20 mb-0">Consultas Recente</div>
 
-                <!-- Botão -->
+                <!-- Botão Adicionar Consulta - Visível apenas para criadores e vítimas -->
+                @if(auth()->user()->role == 'criador' || auth()->user()->role == 'vitima')
                 <button type="button" class="btn btn-primary mb-3" data-toggle="modal"
                     data-target="#modalAdicionarConsulta">
                     Adicionar Consulta
                 </button>
+                @endif
 
 
                 <!-- Tabela de Consulta -->
@@ -232,7 +234,9 @@
                             <th>Data</th>
                             <th>Médico</th>
                             <th>Criado por</th>
+                            @if(auth()->user()->role == 'admin' || auth()->user()->role == 'criador' || auth()->user()->role == 'vitima' || auth()->user()->role == 'medico')
                             <th>Ações</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -246,6 +250,7 @@
                                 <td>{{ $consulta->criador->name ?? 'N/A' }}</td>
                                 <td>
                                     <div class="d-flex gap-2">
+                                        @if(auth()->user()->role == 'admin' || auth()->user()->id == $consulta->criada_por || (auth()->user()->role == 'medico' && auth()->user()->id == $consulta->medico_id))
                                         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
                                             data-target="#editModal" onclick="editConsulta({{ $consulta->id }})">
                                             <i class="bi bi-pencil-square"></i> Editar
@@ -259,6 +264,7 @@
                                                 <i class="bi bi-trash"></i> Excluir
                                             </button>
                                         </form>
+                                        @endif
                                     </div>
                                 </td>
                             </tr>

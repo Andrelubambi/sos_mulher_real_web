@@ -114,12 +114,7 @@
             <div class="sidebar-menu">
                 <ul id="accordion-menu">
                     {{-- Conteúdo comum a todos os usuários logados --}}
-                    <li>
-                        <a href="{{ route('profile') }}" class="dropdown-toggle no-arrow">
-                            <span class="micon bi bi-person-circle"></span>
-                            <span class="mtext">Meu Perfil</span>
-                        </a>
-                    </li>
+                    
                     {{-- Conteúdo para a Vítima --}}
                     @if (Auth::user()->role === 'vitima')
                         <li>
