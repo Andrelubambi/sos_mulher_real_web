@@ -41,10 +41,15 @@ class AdminDashboardController extends Controller
             ->take(10)
             ->get();
 
+        // NOVO: Coleta dados de consultas por status para o gráfico de donut
+        $consultasPorStatus = Consulta::selectRaw('status, COUNT(*) as total')
+            ->groupBy('status')
+            ->get();
+
         return view('admin.dashboard', compact(
             'estagiariosCount', 'doutoresCount', 'vitimasCount', 'consultasMarcadasCount',
             'estagiarios', 'doutores', 'vitimas', 'consultasMarcadas', 'grupos',
-            'consultasPorDoutor', 'consultasPorData'
+            'consultasPorDoutor', 'consultasPorData', 'consultasPorStatus'
         ));
     }
 }

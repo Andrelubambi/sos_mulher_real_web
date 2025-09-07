@@ -478,19 +478,27 @@
                     }
                 }
             });
-            // Gráfico de Linha para Consultas
+            // Gráfico de Donut para Consultas
             const ctx2 = document.getElementById('consultasChart').getContext('2d');
             const consultasChart = new Chart(ctx2, {
-                type: 'line',
+                type: 'doughnut',
                 data: {
                     labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro'],
                     datasets: [{
-                        label: 'Consultas Marcadas',
+                        label: 'Número de Consultas',
                         data: [12, 19, 3, 5, 2, 3, 7, 15, 20],
-                        borderColor: '#00eccf',
-                        backgroundColor: 'rgba(0, 236, 207, 0.2)',
-                        tension: 0.1,
-                        fill: true
+                        backgroundColor: [
+                            '#FF6384',
+                            '#36A2EB',
+                            '#FFCE56',
+                            '#4BC0C0',
+                            '#9966FF',
+                            '#FF9F40',
+                            '#E7E9ED',
+                            '#6A5ACD',
+                            '#F08080'
+                        ],
+                        hoverOffset: 4
                     }]
                 },
                 options: {
@@ -502,7 +510,7 @@
                         },
                         title: {
                             display: true,
-                            text: 'Consultas Marcadas por Mês'
+                            text: 'Consultas por Mês'
                         }
                     }
                 }
