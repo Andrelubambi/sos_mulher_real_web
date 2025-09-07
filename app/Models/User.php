@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Support\Facades\Hash;
-
 
 class User extends Authenticatable
 {
@@ -22,36 +20,31 @@ class User extends Authenticatable
         'role', 
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
 
+    // 🔥 MÉTODO ESSENCIAL PARA AUTENTICAÇÃO POR TELEFONE
+    public function findForPassport($username)
+    {
+        return $this->where('telefone', $username)->first();
+    }
+
     public function createTokenForUser(string $tokenName = 'default')
-{
-    return $this->createToken($tokenName)->plainTextToken;
-}
+    {
+        return $this->createToken($tokenName)->plainTextToken;
+    }
 
-public function isMedico()
-{
-    return $this->role === 'doutor';
-}
-
+    public function isMedico()
+    {
+        return $this->role === 'doutor';
+    }
 
     public function consultasCriadas()
     {
@@ -68,18 +61,5 @@ public function isMedico()
         return $this->belongsToMany(GrupoApoio::class, 'grupo_user');
     }
 
-    protected static function booted()
-    {
-        static::creating(function ($user) {
-            if ($user->password) {
-                $user->password = Hash::make($user->password);
-            }
-        });
-
-        static::updating(function ($user) {
-            if ($user->password) {
-                $user->password = Hash::make($user->password);
-            }
-        });
-    }
+    
 }

@@ -61,7 +61,7 @@
                         <span class="input-group-text"><i class="fa fa-phone"></i></span>
                     </div>
                     <input type="text" name="telefone" id="telefone" class="form-control" placeholder="Telefone"
-                        required>
+                        required> 
                 </div>
 
                 <div class="input-group custom mb-3">

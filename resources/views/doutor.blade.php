@@ -2,15 +2,11 @@
 <html>
 
 <head>
-
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="user-id" content="{{ auth()->user()->id }}">
-
-
     <!-- Basic Page Info -->
     <meta charset="utf-8" />
-    <title> Dashboard | SOS-MULHER</title>
-
+    <title>Dashboard | SOS-MULHER</title>
     <!-- Site favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('vendors/images/apple-touch-icon.png') }}" />
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('vendors/images/favicon-32x32.png') }}" />
@@ -25,8 +21,7 @@
     <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/responsive.bootstrap4.min.css" />
     <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}" />
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-GBZ3SGGX85"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2973766580778258"
-        crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2973766580778258" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <style>
 
@@ -39,8 +34,7 @@
     <div class="pre-loader">
         <div class="pre-loader-box">
             <div class="loader-logo">
-                <img src="{{ asset('vendors/images/sos-progress.jpg') }}" alt=""
-                    style="width: 120px; height: auto;" />
+                <img src="{{ asset('vendors/images/sos-progress.jpg') }}" alt="" style="width: 120px; height: auto;" />
             </div>
             <div class="loader-progress" id="progress_div">
                 <div class="bar" id="bar1"></div>
@@ -57,15 +51,12 @@
 
             </div>
         </div>
-
         <div class="header-right">
             <!-- Settings Icon -->
-
             @if (auth()->user()->role == 'vitima')
                 <!-- SOS Button -->
                 <div class="user-notification">
-                    <form action="{{ route('mensagem_sos') }}" method="POST"
-                        style="display:inline-block; margin-left: 10px;">
+                    <form action="{{ route('mensagem_sos.send') }}" method="POST" style="display:inline-block; margin-left: 10px;">
                         @csrf
                         <input type="hidden" name="mensagem" value="conteudo da mensagem sos">
                         <button type="submit" title="Enviar SOS" style="background:none; border:none; cursor:pointer;">
@@ -74,26 +65,21 @@
                     </form>
                 </div>
             @endif
-
             <div id="mensagemAlerta" class="mensagem-alerta hidden" style="cursor:pointer;">
                 <span class="mensagem-icone"><i class="fa fa-envelope"></i></span>
                 <span id="mensagemTextoCompleto" class="mensagem-texto"></span>
             </div>
-
             <div id="mensagemModal" class="mensagem-modal hidden" data-mensagem-id="">
                 <div class="mensagem-modal-conteudo">
                     <h4>Mensagem Recebida</h4>
                     <p id="mensagemConteudo"></p>
                     <small id="mensagemData" style="display:block;margin-top:10px;color:#666;"></small>
-
                     <div style="margin-top: 10px; text-align: right;">
                         <button id="enviarResposta" style="margin-right: 10px;">Responder</button>
                         <button id="fecharModal">OK</button>
                     </div>
                 </div>
             </div>
-
-
             <!-- User Info -->
             <div class="user-info-dropdown">
                 <div class="dropdown">
@@ -109,118 +95,145 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf</form>
-                        <a class="dropdown-item" href="#"
-                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i
+                            @csrf
+                        </form>
+                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i
                                 class="dw dw-logout"></i>Sair</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
     <div class="left-side-bar">
         <div class="brand-logo">
             <a href="{{ route('admin.dashboard') }}">
-                <img src="{{ asset('vendors/images/android-chrome-192x192.png') }}" alt="Logo"
-                    style="height: 60px;" />
+                <img src="{{ asset('vendors/images/android-chrome-192x192.png') }}" alt="Logo" style="height: 60px;" />
             </a>
         </div>
-
         <div class="menu-block customscroll">
             <div class="sidebar-menu">
                 <ul id="accordion-menu">
-
-                    <li class="dropdown">
-                        <a href="javascript:;" class="dropdown-toggle">
-                            <span class="micon bi bi-speedometer2"></span>
-                            <span class="mtext">Dashboard</span>
-                        </a>
-                        <ul class="submenu">
-                            <li><a href="{{ route('admin.dashboard') }}">Dashboard Admin</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="dropdown">
-                        <a href="javascript:;" class="dropdown-toggle">
-                            <span class="micon bi bi-calendar-check"></span>
-                            </span><span class="mtext">Consultas</span>
-                        </a>
-                        <ul class="submenu">
-                            <li><a href="{{ route('consulta') }}">Todas as Consultas</a></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a href="javascript:;" class="dropdown-toggle">
-                            <span class="micon bi bi-person-badge"></span>
-                            </span><span class="mtext">Médico</span>
-                        </a>
-                        <ul class="submenu">
-                            <li><a href="{{ route('users.doutor') }}">Lista de Médicos</a></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a href="javascript:;" class="dropdown-toggle">
-                            <span class="micon bi bi-person-workspace"></span>
-                            <span class="mtext">Lista de Assistentes</span>
-                        </a>
-                        <ul class="submenu">
-                            <li><a href="{{ route('users.estagiario') }}">Assistntes</a></li>
-                        </ul>
-                    </li>
-
-                    <li class="dropdown">
-                        <a href="javascript:;" class="dropdown-toggle">
-                            <span class="micon bi bi-people"></span>
-                            </span><span class="mtext">Vítimas</span>
-                        </a>
-                        <ul class="submenu">
-                            <li><a href="{{ route('users.vitima') }}">>Lista de Vítimas</a></li>
-                        </ul>
-                    </li>
-                    <li class="dropdown">
-                        <a href="javascript:;" class="dropdown-toggle">
-                            <span class="micon bi bi-collection"></span>
-                            <span class="mtext">Grupos</span>
-                        </a>
-                        <ul class="submenu">
-                          <li><a href="{{ route('grupos.create') }}">Criar Grupo</a></li>
-                            </li>
-                            @foreach ($grupos as $grupo)
-                                <li>
-                                    <a href="{{ route('grupos.show', $grupo->id) }}">{{ $grupo->nome }}</a>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </li>
+                    {{-- Conteúdo comum a todos os usuários logados --}}
                     <li>
-                        <a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
-                            <span class="micon bi bi-chat-right-dots"></span>
-                            <span class="mtext">Chat</span>
+                        <a href="{{ route('profile') }}" class="dropdown-toggle no-arrow">
+                            <span class="micon bi bi-person-circle"></span>
+                            <span class="mtext">Meu Perfil</span>
                         </a>
                     </li>
-
+                    {{-- Conteúdo para a Vítima --}}
+                    @if (Auth::user()->role === 'vitima')
+                        <li>
+                            <a href="{{ route('consulta') }}" class="dropdown-toggle no-arrow">
+                                <span class="micon bi bi-calendar-check"></span>
+                                <span class="mtext">Minhas Consultas</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
+                                <span class="micon bi bi-chat-right-dots"></span>
+                                <span class="mtext">Chat</span>
+                            </a>
+                        </li>
+                    @endif
+                    {{-- Conteúdo para o Doutor --}}
+                    @if (Auth::user()->role === 'doutor')
+                        <li class="dropdown">
+                            <a href="javascript:;" class="dropdown-toggle">
+                                <span class="micon bi bi-person-circle"></span>
+                                <span class="mtext">Pacientes</span>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="{{ route('users.vitima') }}">Lista de Vítimas</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
+                                <span class="micon bi bi-chat-right-dots"></span>
+                                <span class="mtext">Chat</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('consulta') }}" class="dropdown-toggle no-arrow">
+                                <span class="micon bi bi-calendar-check"></span>
+                                <span class="mtext">Consultas</span>
+                            </a>
+                        </li>
+                    @endif
+                    {{-- Conteúdo para o Estagiário --}}
+                    @if (Auth::user()->role === 'estagiario')
+                        <li>
+                            <a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
+                                <span class="micon bi bi-chat-right-dots"></span>
+                                <span class="mtext">Chat</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('users.vitima') }}" class="dropdown-toggle no-arrow">
+                                <span class="micon bi bi-people"></span>
+                                <span class="mtext">Vítimas</span>
+                            </a>
+                        </li>
+                    @endif
+                    {{-- Conteúdo para o Admin --}}
+                    @if (Auth::user()->role === 'admin')
+                        <li class="dropdown">
+                            <a href="{{ route('admin.dashboard') }}" class="dropdown-toggle no-arrow">
+                                <span class="micon bi bi-speedometer2"></span>
+                                <span class="mtext">Dashboard</span>
+                            </a>
+                        </li>
+                        <li class="dropdown">
+                            <a href="javascript:;" class="dropdown-toggle">
+                                <span class="micon bi bi-person-badge"></span>
+                                <span class="mtext">Usuários</span>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="{{ route('users.doutor') }}">Doutores</a></li>
+                                <li><a href="{{ route('users.estagiario') }}">Estagiários</a></li>
+                                <li><a href="{{ route('users.vitima') }}">Vítimas</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="{{ route('consulta') }}" class="dropdown-toggle no-arrow">
+                                <span class="micon bi bi-calendar-check"></span>
+                                <span class="mtext">Consultas</span>
+                            </a>
+                        </li>
+                        <li class="dropdown">
+                            <a href="javascript:;" class="dropdown-toggle">
+                                <span class="micon bi bi-collection"></span>
+                                <span class="mtext">Grupos</span>
+                            </a>
+                            <ul class="submenu">
+                                <li><a href="{{ route('grupos.create') }}">Criar Grupo</a></li>
+                                @foreach ($grupos as $grupo)
+                                    <li><a href="{{ route('grupos.show', $grupo->id) }}">{{ $grupo->nome }}</a></li>
+                                @endforeach
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
+                                <span class="micon bi bi-chat-right-dots"></span>
+                                <span class="mtext">Chat</span>
+                            </a>
+                        </li>
+                    @endif
                 </ul>
             </div>
         </div>
     </div>
-    <div class="mobile-menu-overlay"></div>
-
     <div class="main-container">
         <div class="xs-pd-20-10 pd-ltr-20">
             <div class="title pb-20">
                 <h2 class="h3 mb-0">Gerir Médicos</h2>
             </div>
-
             <div class="card-box pb-10">
                 <div class="h5 pd-20 mb-0">Médicos Recentes</div>
-
                 <!-- Botão -->
                 <button type="button" class="btn btn-primary mb-3" data-toggle="modal"
                     data-target="#modalAdicionarMedico">
                     Adicionar Médico
                 </button>
-
                 <!-- Tabela de doutores -->
                 <table class="table">
                     <thead>
@@ -243,7 +256,6 @@
                                             onclick="editDoutor({{ $doutor->id }})">
                                             <i class="bi bi-pencil-square"></i> Editar
                                         </button>
-
                                         <form action="{{ route('users.destroy', $doutor->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
@@ -254,32 +266,25 @@
                                         </form>
                                     </div>
                                 </td>
-
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
-
             <!-- Modal Criar Doutor -->
             <div class="modal fade" id="modalAdicionarMedico" tabindex="-1">
                 <div class="modal-dialog">
                     <form method="POST" action="{{ route('users.doutor.store') }}" class="modal-content">
                         @csrf
                         <div class="modal-header">
-
-                            <body>
-                                <h5 class="modal-title">Novo Doutor</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            <h5 class="modal-title">Novo Doutor</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body">
                             <input type="hidden" name="role" value="doutor">
-                            <div class="mb-3"><input type="text" name="name" class="form-control"
-                                    placeholder="Nome" required></div>
-                            <div class="mb-3"><input type="tel" name="telefone" class="form-control"
-                                    placeholder="Telefone" required></div>
-                            <div class="mb-3"><input type="password" name="password" class="form-control"
-                                    placeholder="Senha" required></div>
+                            <div class="mb-3"><input type="text" name="name" class="form-control" placeholder="Nome" required></div>
+                            <div class="mb-3"><input type="tel" name="telefone" class="form-control" placeholder="Telefone" required></div>
+                            <div class="mb-3"><input type="password" name="password" class="form-control" placeholder="Senha" required></div>
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">Criar</button>
@@ -287,7 +292,6 @@
                     </form>
                 </div>
             </div>
-
             <!-- Modal Editar Doutor -->
             <div class="modal fade" id="editModal" tabindex="-1">
                 <div class="modal-dialog">
@@ -299,10 +303,8 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body">
-                            <div class="mb-3"><input type="text" class="form-control" id="name"
-                                    name="name" required></div>
-                            <div class="mb-3"><input type="telefone" class="form-control" id="telefone"
-                                    name="telefone" required></div>
+                            <div class="mb-3"><input type="text" class="form-control" id="name" name="name" required></div>
+                            <div class="mb-3"><input type="telefone" class="form-control" id="telefone" name="telefone" required></div>
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">Salvar</button>
@@ -310,7 +312,6 @@
                     </form>
                 </div>
             </div>
-
             <script>
                 function editDoutor(id) {
                     fetch(`/users/${id}/edit`)
@@ -322,18 +323,12 @@
                         });
                 }
             </script>
-
         </div>
-
         <script src="{{ asset('vendors/scripts/core.js') }}"></script>
         <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>
         <script src="{{ asset('vendors/scripts/process.js') }}"></script>
         <script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
-
         <!-- js -->
-        <script src="{{ asset('vendors/scripts/core.js') }}"></script>
-        <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>
-        <script src="{{ asset('vendors/scripts/process.js') }}"></script>
         <script>
             let mensagensPendentes = [];
             let carregamentoConcluido = false;
@@ -371,13 +366,11 @@
                 document.getElementById('fecharModal').addEventListener('click', () => {
                     const mensagemAtual = mensagensPendentes.shift();
                     document.getElementById('mensagemModal').classList.add('hidden');
-
                     fetch('/mensagem_lida', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                .getAttribute('content')
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                         },
                         body: JSON.stringify({
                             id: mensagemAtual.id
@@ -390,11 +383,9 @@
                     }
                     atualizarAlerta();
                 });
-
                 function atualizarAlerta() {
                     const alerta = document.getElementById('mensagemAlerta');
                     const texto = document.getElementById('mensagemTextoCompleto');
-
                     if (mensagensPendentes.length > 0) {
                         alerta.classList.remove('hidden');
                         texto.textContent = `Nova mensagem (${mensagensPendentes.length})`;
@@ -403,7 +394,6 @@
                         texto.textContent = '';
                     }
                 }
-
                 function mostrarProximaMensagem() {
                     const mensagem = mensagensPendentes[0];
                     if (!mensagem) return;
@@ -411,7 +401,6 @@
                     document.getElementById('mensagemData').textContent = formatarData(mensagem.data);
                     document.getElementById('mensagemModal').classList.remove('hidden');
                 }
-
                 function formatarData(dataString) {
                     const data = new Date(dataString);
                     return data.toLocaleString('pt-PT', {
@@ -423,7 +412,6 @@
                     });
                 }
             });
-
             function abrirModalMensagem(mensagem) {
                 const modal = document.getElementById('mensagemModal');
                 const conteudo = document.getElementById('mensagemConteudo');
@@ -442,7 +430,6 @@
                 }
             });
         </script>
-
+    </div>
 </body>
-
 </html>

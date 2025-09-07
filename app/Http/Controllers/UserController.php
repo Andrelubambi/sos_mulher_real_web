@@ -72,7 +72,7 @@ public function storeDoutor(Request $request)
         $user = User::create([
             'name' => $validated['name'],
             'telefone' => $validated['telefone'],
-            'password' => Hash::make($validated['password']),
+             'password' => Hash::make($validated['password']),
             'role' => 'doutor',
         ]);
 
@@ -144,16 +144,16 @@ public function storeVitima(Request $request)
         $user = User::create([
             'name' => $validated['name'],
             'telefone' => $validated['telefone'],
-            'password' => Hash::make($validated['password']),
+             'password' => Hash::make($validated['password']),
             'role' => 'vitima',  // Atribuindo o papel 'vitima'
         ]);
 
         // Retorna os dados do usuário criado como resposta JSON
-        return response()->json([
+        /*sreturn response()->json([
             'success' => true,
             'message' => 'Vitima criada com sucesso!',
             'user' => $user
-        ], 201); // Código HTTP 201 para indicar que o recurso foi criado com sucesso.
+        ], 201); */// Código HTTP 201 para indicar que o recurso foi criado com sucesso.
 
     } catch (\Exception $e) {
         // Caso ocorra um erro, retorna uma mensagem de erro com código 500

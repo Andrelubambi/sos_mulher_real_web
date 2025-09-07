@@ -8,6 +8,9 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\MensagemSosController;
+use App\Http\Controllers\DoutorDashboardController;
+use App\Http\Controllers\EstagiarioDashboardController;
+use App\Http\Controllers\VitimaDashboardController; 
 
 
 /*Route::middleware('auth:web')->group(function () {
@@ -104,6 +107,17 @@ Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->n
     Route::post('/mensagem_lida',[MensagemSosController::class,'mensagemLida'])->name('mensagem_lida');
     Route::get('/mensagens_nao_lidas',[MensagemSosController::class,'pegarMensagensNaoLidas'])->name('mensagens_nao_lidas');
     Route::get('/responder_mensagem_sos/{id}', [ChatController::class, 'responderMensagemSos'])->name('responder_mensagem_sos');
+
+
+
+
+
+    // Rotas de dashboard, protegidas pelo middleware de role
+Route::middleware(['auth', 'role:admin'])->get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+Route::middleware(['auth', 'role:doutor'])->get('/doutor/dashboard', [DoutorDashboardController::class, 'index'])->name('doutor.dashboard');
+Route::middleware(['auth', 'role:estagiario'])->get('/estagiario/dashboard', [EstagiarioDashboardController::class, 'index'])->name('estagiario.dashboard');
+Route::middleware(['auth', 'role:vitima'])->get('/vitima/dashboard', [VitimaDashboardController::class, 'index'])->name('vitima.dashboard');
+
 
 
     // Demais páginas administrativas
