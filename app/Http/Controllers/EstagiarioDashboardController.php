@@ -9,8 +9,7 @@ class EstagiarioDashboardController extends Controller
 {
     public function index()
     {
-        $grupos = Grupo::all();
-        // Lógica para mostrar pacientes ou tarefas
+        $grupos = Grupo::all(); 
         return view('dashboards.estagiario', compact('grupos'));
     }
 }

@@ -24,7 +24,7 @@
                         <div class="card-box height-100-p widget-style3">
                             <div class="d-flex flex-wrap">
                                 <div class="widget-data">
-                                    <div class="weight-700 font-24 text-dark">{{ auth()->user()->pacientes->count() }}</div>
+                                    <div class="weight-700 font-24 text-dark">{{ $pacientesCount }}</div>
                                     <div class="font-14 text-secondary weight-500">Total de Pacientes</div>
                                 </div>
                                 <div class="widget-icon">

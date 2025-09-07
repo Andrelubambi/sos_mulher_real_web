@@ -12,13 +12,12 @@ class Consulta extends Model
     protected $fillable = [
         'criada_por', 
         'medico_id', 
-        'vitima_id', // ✅ ADICIONAR ESTE CAMPO
         'descricao', 
         'bairro', 
         'provincia', 
         'data',
-        'horario', // ✅ Verifique se existe
-        'status'    // ✅ Verifique se existe
+        'status',
+        'vitima_id',
     ];
 
     public function criador()
@@ -29,11 +28,5 @@ class Consulta extends Model
     public function medico()
     {
         return $this->belongsTo(User::class, 'medico_id');
-    }
-
-    // ✅ ADICIONAR RELAÇÃO COM VÍTIMA
-    public function vitima()
-    {
-        return $this->belongsTo(User::class, 'vitima_id');
     }
 }

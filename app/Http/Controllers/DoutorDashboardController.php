@@ -11,10 +11,19 @@ class DoutorDashboardController extends Controller
     public function index()
     {
         $doutorId = Auth::id();
-        $proximasConsultas = Consulta::where('doutor_id', $doutorId)
+
+        // Conta o número de pacientes únicos com base nas consultas do médico
+        $pacientesCount = Consulta::where('medico_id', $doutorId)
+            ->distinct('vitima_id')
+            ->count('vitima_id');
+        
+        // Obtém as próximas consultas
+        $proximasConsultas = Consulta::where('medico_id', $doutorId)
+            ->where('data', '>=', now())
             ->orderBy('data', 'asc')
             ->get();
-
-        return view('dashboards.doutor', compact('proximasConsultas'));
+        
+        // Passa as duas variáveis para a view
+        return view('dashboards.doutor', compact('pacientesCount', 'proximasConsultas'));
     }
 }

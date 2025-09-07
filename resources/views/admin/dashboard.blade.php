@@ -214,7 +214,7 @@
                 </div>
                 <div class="col-md-6 col-xl-6 mb-30">
                     <div class="card-box">
-                        <h5 class="h5 text-dark mb-20 p-4">Consultas por Mês</h5>
+                        <h5 class="h5 text-dark mb-20 p-4">Distribuição de Consultas por Status</h5>
                         <div class="p-4">
                             <canvas id="consultasChart" width="400" height="400"></canvas>
                         </div>
@@ -479,14 +479,16 @@
                 }
             });
             // Gráfico de Donut para Consultas
+            const consultasData = @json($consultasPorStatus->pluck('total'));
+            const consultasLabels = @json($consultasPorStatus->pluck('status'));
             const ctx2 = document.getElementById('consultasChart').getContext('2d');
             const consultasChart = new Chart(ctx2, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro'],
+                    labels: consultasLabels,
                     datasets: [{
                         label: 'Número de Consultas',
-                        data: [12, 19, 3, 5, 2, 3, 7, 15, 20],
+                        data: consultasData,
                         backgroundColor: [
                             '#FF6384',
                             '#36A2EB',
@@ -510,7 +512,7 @@
                         },
                         title: {
                             display: true,
-                            text: 'Consultas por Mês'
+                            text: 'Distribuição de Consultas por Status'
                         }
                     }
                 }

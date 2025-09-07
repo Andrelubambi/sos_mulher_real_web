@@ -137,7 +137,7 @@
                     @endif
                     {{-- Conteúdo para o Doutor --}}
                     @if (Auth::user()->role === 'doutor')
-                        <li class="dropdown">
+                        <li class="dropdown"> 
                             <a href="javascript:;" class="dropdown-toggle">
                                 <span class="micon bi bi-person-circle"></span>
                                 <span class="mtext">Pacientes</span>
