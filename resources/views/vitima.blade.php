@@ -215,12 +215,13 @@
             <div class="card-box pb-10">
                 <div class="h5 pd-20 mb-0">Vítmas Recente</div>
 
-                <!-- Botão -->
+               <div class="col-md-12 col-xl-12 mb-30">
+                    <div class="pl-20 mb-3">
                 <button type="button" class="btn btn-primary mb-3" data-toggle="modal"
                     data-target="#modalAdicionarVitima">
                     Adicionar Vítimas
                 </button>
-
+    </div>
                 <!-- Tabela de Vítimas -->
                 <table class="table">
                     <thead>
@@ -235,25 +236,25 @@
                             <tr>
                                 <td>{{ $vitima->name }}</td>
                                 <td>{{ $vitima->telefone }}</td>
-                                <td>
-                                    <div class="d-flex gap-2">
-                                        <button type="button"
-                                            class="btn btn-primary btn-sm d-flex align-items-center gap-1"
-                                            data-toggle="modal" data-target="#editModal"
-                                            onclick="editVitima({{ $vitima->id }})">
-                                            <i class="bi bi-pencil-square"></i> Editar
-                                        </button>
+                               <td>
+    <div class="d-flex" style="gap: 20px !important;">
+        <button type="button"
+            class="btn btn-primary btn-sm d-flex align-items-center gap-1"
+            data-toggle="modal" data-target="#editModal"
+            onclick="editVitima({{ $vitima->id }})">
+            <i class="bi bi-pencil-square"></i> Editar
+        </button>
 
-                                        <form action="{{ route('users.destroy', $vitima->id) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="btn btn-danger btn-sm d-flex align-items-center gap-1">
-                                                <i class="bi bi-trash"></i> Excluir
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
+        <form action="{{ route('users.destroy', $vitima->id) }}" method="POST">
+            @csrf
+            @method('DELETE')
+            <button type="submit"
+                class="btn btn-danger btn-sm d-flex align-items-center gap-1">
+                <i class="bi bi-trash"></i> Excluir
+            </button>
+        </form>
+    </div>
+</td>
 
                             </tr>
                         @endforeach

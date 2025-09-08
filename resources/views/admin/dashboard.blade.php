@@ -226,7 +226,7 @@
                 <!-- Lista de Doutores -->
                 <div class="col-md-6 col-xl-6 mb-30">
                     <div class="card-box">
-                        <h5 class="h5 text-dark mb-20">Lista de Doutores</h5>
+                        <h5 class="h5 text-dark mb-20 pl-20 mt-4">Lista de Doutores</h5>
                         <table class="table table-bordered">
                             <thead class="thead-dark">
                                 <tr>
@@ -252,7 +252,7 @@
                 <!-- Lista de Estagiários -->
                 <div class="col-md-6 col-xl-6 mb-30">
                     <div class="card-box">
-                        <h5 class="h5 text-dark mb-20">Lista de Estagiários</h5>
+                        <h5 class="h5 text-dark mb-20 pl-20 mt-4">Lista de Estagiários</h5>
                         <table class="table table-bordered">
                             <thead class="thead-dark">
                                 <tr>
@@ -278,7 +278,7 @@
                 <!-- Lista de Vítimas -->
                 <div class="col-md-12 col-xl-12 mb-30">
                     <div class="card-box">
-                        <h5 class="h5 text-dark mb-20">Lista de Vítimas</h5>
+                        <h5 class="h5 text-dark mb-20 pl-20 mt-4">Lista de Vítimas</h5>
                         <table class="table table-bordered">
                             <thead class="thead-dark">
                                 <tr>
@@ -304,7 +304,7 @@
                 <!-- Lista de Consultas -->
                 <div class="col-md-12 col-xl-12 mb-30">
                     <div class="card-box">
-                        <h5 class="h5 text-dark mb-20">Lista de Consultas</h5>
+                        <h5 class="h5 text-dark mb-20 pl-20 mt-4">Lista de Consultas</h5>
                         <input type="text" id="searchConsulta" class="form-control mb-3" placeholder="Pesquisar por vítima ou médico">
                         <div class="table-responsive">
                             <table class="table table-bordered">

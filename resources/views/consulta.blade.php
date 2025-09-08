@@ -101,7 +101,7 @@
                         <span class="user-icon">
                             <i class="fa fa-user-circle" style="font-size: 35px; color: #555;"></i>
                         </span>
-                        @guest
+                        @guest 
                             <p>Olá, seja bem-vindo visitante! Faça login para acessar suas informações.</p>
                         @else
                             <span class="user-name">Olá, seja bem-vindo {{ Auth::user()->name }}!</span>
@@ -213,16 +213,19 @@
             </div>
 
             <div class="card-box pb-10">
-                <div class="h5 pd-20 mb-0">Consultas Recente</div>
+                <div class="h5 pd-20 mb-0">Consultas Recentes</div>
 
                 <!-- Botão Adicionar Consulta - Visível apenas para criadores e vítimas -->
                 @if(auth()->user()->role == 'criador' || auth()->user()->role == 'vitima')
-                <button type="button" class="btn btn-primary mb-3" data-toggle="modal"
-                    data-target="#modalAdicionarConsulta">
-                    Adicionar Consulta
-                </button>
+                <div class="pl-20 mb-3">
+                        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal"
+                            data-target="#modalAdicionarConsulta">
+                            Adicionar Consulta
+                        </button>
+                    </div>
                 @endif
 
+               
 
                 <!-- Tabela de Consulta -->
                 <table class="table">
@@ -249,7 +252,7 @@
                                 <td>{{ $consulta->medico->name ?? 'N/A' }}</td>
                                 <td>{{ $consulta->criador->name ?? 'N/A' }}</td>
                                 <td>
-                                    <div class="d-flex gap-2">
+                                   <div class="d-flex" style="gap: 20px !important;">
                                         @if(auth()->user()->role == 'admin' || auth()->user()->id == $consulta->criada_por || (auth()->user()->role == 'medico' && auth()->user()->id == $consulta->medico_id))
                                         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
                                             data-target="#editModal" onclick="editConsulta({{ $consulta->id }})">

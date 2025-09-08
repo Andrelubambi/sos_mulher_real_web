@@ -4118,3 +4118,15 @@ body.IE .register-page-wrap .container{
 .welcome-modal-btn i{
 	margin-top: 6px;
 }
+
+.custom-spacing {
+    gap: 1rem !important; /* 16px de espaçamento */
+}
+
+  .btn-spacing {
+        margin-right: 15px !important;
+    }
+    
+    .custom-spacing {
+        gap: 15px !important;
+    }

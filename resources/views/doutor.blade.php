@@ -223,12 +223,14 @@
                 <h2 class="h3 mb-0">Gerir Médicos</h2>
             </div>
             <div class="card-box pb-10">
-                <div class="h5 pd-20 mb-0">Médicos Recentes</div>
+                <div class="h5 pd-20 mb-0 pl-20">Médicos Recentes</div>
                 <!-- Botão -->
+                           <div class="pl-20 mb-3">
                 <button type="button" class="btn btn-primary mb-3" data-toggle="modal"
                     data-target="#modalAdicionarMedico">
                     Adicionar Médico
                 </button>
+                         </div>
                 <!-- Tabela de doutores -->
                 <table class="table">
                     <thead>
@@ -244,7 +246,7 @@
                                 <td>{{ $doutor->name }}</td>
                                 <td>{{ $doutor->telefone }}</td>
                                 <td>
-                                    <div class="d-flex gap-2">
+                                    <div class="d-flex" style="gap: 20px !important;">
                                         <button type="button"
                                             class="btn btn-primary btn-sm d-flex align-items-center gap-1"
                                             data-toggle="modal" data-target="#editModal"
