@@ -215,7 +215,7 @@
                         </li>
                     @endif
                 </ul>
-            </div>
+            </div> 
         </div>
     </div>
     <div class="mobile-menu-overlay"></div>

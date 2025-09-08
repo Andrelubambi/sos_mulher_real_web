@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="user-id" content="{{ auth()->user()->id }}">
@@ -23,13 +22,13 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-GBZ3SGGX85"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2973766580778258" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-
     </style>
     <!-- Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-
 <body>
     <div class="pre-loader">
         <div class="pre-loader-box">
@@ -48,7 +47,6 @@
             <div class="menu-icon bi bi-list"></div>
             <div class="search-toggle-icon bi bi-search" data-toggle="header_search"></div>
             <div class="header-search">
-
             </div>
         </div>
         <div class="header-right">
@@ -56,7 +54,7 @@
             @if (auth()->user()->role == 'vitima')
                 <!-- SOS Button -->
                 <div class="user-notification">
-                    <form action="{{ route('mensagem_sos.send') }}" method="POST" style="display:inline-block; margin-left: 10px;">
+                    <form action="{{ route('mensagem_sos') }}" method="POST" style="display:inline-block; margin-left: 10px;">
                         @csrf
                         <input type="hidden" name="mensagem" value="conteudo da mensagem sos">
                         <button type="submit" title="Enviar SOS" style="background:none; border:none; cursor:pointer;">
@@ -97,125 +95,127 @@
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                             @csrf
                         </form>
-                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i
-                                class="dw dw-logout"></i>Sair</a>
+                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="dw dw-logout"></i>Sair</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
+    
     <div class="left-side-bar">
         <div class="brand-logo">
-            <a href="{{ route('admin.dashboard') }}">
+             <a href="">
                 <img src="{{ asset('vendors/images/android-chrome-192x192.png') }}" alt="Logo" style="height: 60px;" />
             </a>
         </div>
-        <div class="menu-block customscroll">
-            <div class="sidebar-menu">
-                <ul id="accordion-menu">
-                    {{-- Conteúdo comum a todos os usuários logados --}}
-                    
-                    {{-- Conteúdo para a Vítima --}}
-                    @if (Auth::user()->role === 'vitima')
-                        <li>
-                            <a href="{{ route('consulta') }}" class="dropdown-toggle no-arrow">
-                                <span class="micon bi bi-calendar-check"></span>
-                                <span class="mtext">Minhas Consultas</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
-                                <span class="micon bi bi-chat-right-dots"></span>
-                                <span class="mtext">Chat</span>
-                            </a>
-                        </li>
-                    @endif
-                    {{-- Conteúdo para o Doutor --}}
-                    @if (Auth::user()->role === 'doutor')
-                        <li class="dropdown"> 
-                            <a href="javascript:;" class="dropdown-toggle">
-                                <span class="micon bi bi-person-circle"></span>
-                                <span class="mtext">Pacientes</span>
-                            </a>
-                            <ul class="submenu">
-                                <li><a href="{{ route('users.vitima') }}">Lista de Vítimas</a></li>
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
-                                <span class="micon bi bi-chat-right-dots"></span>
-                                <span class="mtext">Chat</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('consulta') }}" class="dropdown-toggle no-arrow">
-                                <span class="micon bi bi-calendar-check"></span>
-                                <span class="mtext">Consultas</span>
-                            </a>
-                        </li>
-                    @endif
-                    {{-- Conteúdo para o Estagiário --}}
-                    @if (Auth::user()->role === 'estagiario')
-                        <li>
-                            <a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
-                                <span class="micon bi bi-chat-right-dots"></span>
-                                <span class="mtext">Chat</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('users.vitima') }}" class="dropdown-toggle no-arrow">
-                                <span class="micon bi bi-people"></span>
-                                <span class="mtext">Vítimas</span>
-                            </a>
-                        </li>
-                    @endif
-                    {{-- Conteúdo para o Admin --}}
-                    @if (Auth::user()->role === 'admin')
-                        <li class="dropdown">
-                            <a href="{{ route('admin.dashboard') }}" class="dropdown-toggle no-arrow">
-                                <span class="micon bi bi-speedometer2"></span>
-                                <span class="mtext">Dashboard</span>
-                            </a>
-                        </li>
-                        <li class="dropdown">
-                            <a href="javascript:;" class="dropdown-toggle">
-                                <span class="micon bi bi-person-badge"></span>
-                                <span class="mtext">Usuários</span>
-                            </a>
-                            <ul class="submenu">
-                                <li><a href="{{ route('users.doutor') }}">Doutores</a></li>
-                                <li><a href="{{ route('users.estagiario') }}">Estagiários</a></li>
-                                <li><a href="{{ route('users.vitima') }}">Vítimas</a></li>
-                            </ul>
-                        </li>
-                        <li class="dropdown">
-                            <a href="{{ route('consulta') }}" class="dropdown-toggle no-arrow">
-                                <span class="micon bi bi-calendar-check"></span>
-                                <span class="mtext">Consultas</span>
-                            </a>
-                        </li>
-                        <li class="dropdown">
-                            <a href="javascript:;" class="dropdown-toggle">
-                                <span class="micon bi bi-collection"></span>
-                                <span class="mtext">Grupos</span>
-                            </a>
-                            <ul class="submenu">
-                                <li><a href="{{ route('grupos.create') }}">Criar Grupo</a></li>
-                                @foreach ($grupos as $grupo)
-                                    <li><a href="{{ route('grupos.show', $grupo->id) }}">{{ $grupo->nome }}</a></li>
-                                @endforeach
-                            </ul>
-                        </li>
-                        <li>
-                            <a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
-                                <span class="micon bi bi-chat-right-dots"></span>
-                                <span class="mtext">Chat</span>
-                            </a>
-                        </li>
+       <div class="menu-block customscroll">
+    <div class="sidebar-menu">
+        <ul id="accordion-menu">
+            <!-- Dashboard (todos têm acesso) -->
+            <li class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle">
+                    <span class="micon bi bi-speedometer2"></span>
+                    <span class="mtext">Dashboard</span>
+                </a>
+                <ul class="submenu">
+                    @if(auth()->user()->role === 'admin')
+                        <li><a href="{{ route('admin.dashboard') }}">Dashboard Admin</a></li>
+                    @elseif(auth()->user()->role === 'doutor')
+                        <li><a href="{{ route('doutor.dashboard') }}">Dashboard Médico</a></li>
+                    @elseif(auth()->user()->role === 'estagiario')
+                        <li><a href="{{ route('estagiario.dashboard') }}">Dashboard Assistente</a></li>
+                    @elseif(auth()->user()->role === 'vitima')
+                        <li><a href="{{ route('vitima.dashboard') }}">Dashboard Vítima</a></li>
                     @endif
                 </ul>
-            </div>
-        </div>
+            </li>
+
+            <!-- Consultas -->
+            @if(in_array(auth()->user()->role, ['admin', 'doutor', 'estagiario']))
+            <li class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle">
+                    <span class="micon bi bi-calendar-check"></span>
+                    <span class="mtext">Consultas</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="{{ route('consulta') }}">Todas as Consultas</a></li>
+                </ul>
+            </li>
+            @endif
+
+            <!-- Médicos (apenas admin) -->
+            @if(auth()->user()->role === 'admin')
+            <li class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle">
+                    <span class="micon bi bi-person-badge"></span>
+                    <span class="mtext">Médico</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="{{ route('users.doutor') }}">Lista de Médicos</a></li>
+                </ul>
+            </li>
+            @endif
+
+            <!-- Assistentes (apenas admin) -->
+            @if(auth()->user()->role === 'admin')
+            <li class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle">
+                    <span class="micon bi bi-person-workspace"></span>
+                    <span class="mtext">Lista de Assistentes</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="{{ route('users.estagiario') }}">Assistentes</a></li>
+                </ul>
+            </li> 
+            @endif
+
+            <!-- Vítimas (admin e médicos) -->
+            @if(in_array(auth()->user()->role, ['admin', 'doutor']))
+            <li class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle">
+                    <span class="micon bi bi-people"></span>
+                    <span class="mtext">Vítimas</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="{{ route('users.vitima') }}">Lista de Vítimas</a></li>
+                </ul>
+            </li>
+            @endif
+
+            <!-- Grupos (admin, médicos e assistentes) -->
+         
+            <li class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle">
+                    <span class="micon bi bi-collection"></span>
+                    <span class="mtext">Grupos</span>
+                </a>
+                <ul class="submenu">
+                    @if(auth()->user()->role === 'admin')
+                       <li><a href="{{ route('grupos.create') }}">Criar Grupo</a></li>
+                    @endif
+                    @foreach ($grupos as $grupo)
+                        <li>
+                            <a href="{{ route('grupos.show', $grupo->id) }}">{{ $grupo->nome }}</a>
+                        </li>
+                    @endforeach
+                </ul>
+            </li>
+          
+
+            <!-- Chat (todos têm acesso) -->
+            <li>
+                <a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
+                    <span class="micon bi bi-chat-right-dots"></span>
+                    <span class="mtext">Chat</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+    
+
+
     </div>
     <div class="main-container">
         <div class="xs-pd-20-10 pd-ltr-20">

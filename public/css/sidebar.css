@@ -1,0 +1,150 @@
+/* Sidebar Styles */
+.left-side-bar {
+    background: linear-gradient(180deg, var(--primary-color) 0%, #2c3e50 100%);
+    color: white;
+    height: 100vh;
+    position: fixed;
+    width: 280px;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+.brand-logo {
+    padding: 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+.sidebar-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    color: white;
+    cursor: pointer;
+    display: none;
+}
+
+.menu-block {
+    height: calc(100vh - 80px);
+    overflow-y: auto;
+}
+
+.sidebar-menu {
+    padding: 1rem 0;
+}
+
+#accordion-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#accordion-menu li {
+    margin: 0.2rem 0;
+}
+
+#accordion-menu .dropdown-toggle {
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-left: 4px solid transparent;
+}
+
+#accordion-menu .dropdown-toggle:hover,
+#accordion-menu .dropdown-toggle.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-left-color: var(--secondary-color);
+}
+
+#accordion-menu .micon {
+    width: 24px;
+    margin-right: 1rem;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+#accordion-menu .mtext {
+    flex: 1;
+    font-weight: 500;
+}
+
+.submenu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: rgba(0, 0, 0, 0.2);
+    display: none;
+}
+
+.submenu.show {
+    display: block;
+}
+
+.submenu li a {
+    display: block;
+    padding: 0.8rem 1.5rem 0.8rem 3.5rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.submenu li a:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    padding-left: 4rem;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .left-side-bar {
+        transform: translateX(-100%);
+        width: 280px;
+    }
+    
+    .left-side-bar.open {
+        transform: translateX(0);
+    }
+    
+    .sidebar-close {
+        display: block;
+    }
+    
+    .mobile-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        display: none;
+    }
+    
+    .mobile-menu-overlay.show {
+        display: block;
+    }
+}
+
+/* Scrollbar for Sidebar */
+.menu-block::-webkit-scrollbar {
+    width: 4px;
+}
+
+.menu-block::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.menu-block::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+}
+
+.menu-block::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}

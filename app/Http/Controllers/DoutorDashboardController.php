@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Consulta;
 use App\Models\User;
+use App\Models\Grupo; 
 use Carbon\Carbon;
 
 class DoutorDashboardController extends Controller
@@ -46,12 +47,15 @@ class DoutorDashboardController extends Controller
             ->where('role', 'vitima')
             ->get();
         
+         $grupos = Grupo::all();
+        
         return view('dashboards.doutor', compact(
             'pacientesCount', 
             'proximasConsultas', 
             'consultasRealizadas',
             'consultasHoje',
-            'pacientes'
+            'pacientes',
+            'grupos' // E adicione a variável 'grupos' aqui para passá-la para a view
         ));
     }
 }

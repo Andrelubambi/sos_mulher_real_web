@@ -10,7 +10,7 @@
     <!-- Basic Page Info -->
     <meta charset="utf-8" />
     <title>Grupos | SOS-MULHER</title>
-
+ 
     <!-- Site favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('vendors/images/apple-touch-icon.png') }}" />
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('vendors/images/favicon-32x32.png') }}" />
@@ -75,10 +75,12 @@
                 </div>
             @endif
 
-            <div id="mensagemAlerta" class="mensagem-alerta hidden" style="cursor:pointer;">
-                <span class="mensagem-icone"><i class="fa fa-envelope"></i></span>
-                <span id="mensagemTextoCompleto" class="mensagem-texto"></span>
-            </div>
+              @if (in_array(auth()->user()->role, ['admin', 'doutor', 'estagiario']))
+        <div id="mensagemAlerta" class="mensagem-alerta hidden" style="cursor:pointer;">
+            <span class="mensagem-icone"><i class="fa fa-envelope"></i></span>
+            <span id="mensagemTextoCompleto" class="mensagem-texto"></span>
+        </div>
+    @endif
 
             <div id="mensagemModal" class="mensagem-modal hidden" data-mensagem-id="">
                 <div class="mensagem-modal-conteudo">

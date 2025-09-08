@@ -149,16 +149,16 @@ public function storeVitima(Request $request)
         ]);
 
         // Retorna os dados do usuário criado como resposta JSON
-        /*sreturn response()->json([
+        return response()->json([
             'success' => true,
             'message' => 'Vitima criada com sucesso!',
             'user' => $user
-        ], 201); */// Código HTTP 201 para indicar que o recurso foi criado com sucesso.
+        ], 201); // Código HTTP 201 para indicar que o recurso foi criado com sucesso.
 
     } catch (\Exception $e) {
         // Caso ocorra um erro, retorna uma mensagem de erro com código 500
         return response()->json([
-            'success' => false,
+            'success' => false, 
             'message' => 'Falha ao criar vitima: ' . $e->getMessage()
         ], 500);
     }

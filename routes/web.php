@@ -11,7 +11,7 @@ use App\Http\Controllers\MensagemSosController;
 use App\Http\Controllers\DoutorDashboardController;
 use App\Http\Controllers\EstagiarioDashboardController;
 use App\Http\Controllers\VitimaDashboardController; 
-
+  
 
 /*Route::middleware('auth:web')->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');

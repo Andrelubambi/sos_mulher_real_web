@@ -1,163 +1,359 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Estagiário | SOS-MULHER</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="user-id" content="{{ auth()->user()->id }}">
+    <meta charset="utf-8" />
+    <title>Dashboard | SOS-MULHER</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('vendors/images/apple-touch-icon.png') }}" />
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('vendors/images/favicon-32x32.png') }}" />
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('vendors/images/favicon-16x16.png') }}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/core.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/icon-font.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/dataTables.bootstrap4.min.css" />
+    <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/responsive.bootstrap4.min.css" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}" />
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GBZ3SGGX85"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2973766580778258" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --light-color: #ecf0f1;
-            --success-color: #27ae60;
-        }
-        
-        body {
-            background-color: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .card-dashboard {
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
-            border: none;
-            margin-bottom: 20px;
-        }
-        
-        .card-dashboard:hover {
-            transform: translateY(-5px);
-        }
-        
-        .card-icon {
-            font-size: 2.5rem;
-            color: var(--secondary-color);
-        }
-        
-        .stats-number {
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-        
-        .stats-label {
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
     </style>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Conteúdo Principal -->
-            <div class="col-12 main-content">
-                <!-- Header -->
-                <div class="header py-3 mb-4 bg-white shadow-sm">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h4 class="mb-0">Dashboard Estagiário</h4>
-                        <div class="d-flex align-items-center">
-                            <span class="me-3">{{ Auth::user()->name }}</span>
-                            <a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="btn btn-outline-secondary btn-sm">
-                                Sair
-                            </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                @csrf
-                            </form>
-                        </div>
+    <div class="pre-loader">
+        <div class="pre-loader-box">
+            <div class="loader-logo">
+                <img src="{{ asset('vendors/images/sos-progress.jpg') }}" alt="" style="width: 120px; height: auto;" />
+            </div>
+            <div class="loader-progress" id="progress_div">
+                <div class="bar" id="bar1"></div>
+            </div>
+            <div class="percent" id="percent1">0%</div>
+            <div class="loading-text">Por favor, aguarde ...</div>
+        </div>
+    </div>
+    <div class="header">
+        <div class="header-left">
+            <div class="menu-icon bi bi-list"></div>
+            <div class="search-toggle-icon bi bi-search" data-toggle="header_search"></div>
+            <div class="header-search">
+            </div>
+        </div>
+        <div class="header-right">
+            @if (auth()->user()->role == 'vitima')
+                <div class="user-notification">
+                    <form action="{{ route('mensagem_sos') }}" method="POST" style="display:inline-block; margin-left: 10px;">
+                        @csrf
+                        <input type="hidden" name="mensagem" value="conteudo da mensagem sos">
+                        <button type="submit" title="Enviar SOS" style="background:none; border:none; cursor:pointer;">
+                            <i class="fa fa-exclamation-triangle" style="color:red; font-size: 20px;"></i>
+                        </button>
+                    </form>
+                </div>
+            @endif
+            <div id="mensagemAlerta" class="mensagem-alerta hidden" style="cursor:pointer;">
+                <span class="mensagem-icone"><i class="fa fa-envelope"></i></span>
+                <span id="mensagemTextoCompleto" class="mensagem-texto"></span>
+            </div>
+            <div id="mensagemModal" class="mensagem-modal hidden" data-mensagem-id="">
+                <div class="mensagem-modal-conteudo">
+                    <h4>Mensagem Recebida</h4>
+                    <p id="mensagemConteudo"></p>
+                    <small id="mensagemData" style="display:block;margin-top:10px;color:#666;"></small>
+                    <div style="margin-top: 10px; text-align: right;">
+                        <button id="enviarResposta" style="margin-right: 10px;">Responder</button>
+                        <button id="fecharModal">OK</button>
                     </div>
                 </div>
-
-                <!-- Estatísticas -->
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="card-dashboard text-center p-4">
-                            <div class="card-icon mb-3">
-                                <i class="fas fa-group"></i>
-                            </div>
-                            <h3 class="stats-number">{{ $grupos->count() }}</h3>
-                            <p class="stats-label">Total de Grupos</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card-dashboard text-center p-4">
-                            <div class="card-icon mb-3">
-                                <i class="fas fa-heartbeat"></i>
-                            </div>
-                            <h3 class="stats-number">{{ $vitimas->count() }}</h3>
-                            <p class="stats-label">Total de Vítimas</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card-dashboard text-center p-4">
-                            <div class="card-icon mb-3">
-                                <i class="fas fa-calendar-check"></i>
-                            </div>
-                            <h3 class="stats-number">0</h3>
-                            <p class="stats-label">Atendimentos Hoje</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Conteúdo -->
-                <div class="row mt-4">
-                    <div class="col-md-6">
-                        <div class="card-dashboard p-4">
-                            <h5 class="mb-4">Grupos de Apoio</h5>
-                            
-                            @if($grupos->count() > 0)
-                                <div class="list-group">
-                                    @foreach($grupos as $grupo)
-                                        <div class="list-group-item d-flex justify-content-between align-items-center">
-                                            <div>
-                                                <h6 class="mb-1">{{ $grupo->nome }}</h6>
-                                                <small class="text-muted">{{ $grupo->descricao ?? 'Sem descrição' }}</small>
-                                            </div>
-                                            <span class="badge bg-primary rounded-pill">{{ $grupo->users_count ?? $grupo->users()->count() }} membros</span>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @else
-                                <div class="text-center py-4">
-                                    <i class="fas fa-group fa-3x text-muted mb-3"></i>
-                                    <p class="text-muted">Nenhum grupo cadastrado</p>
-                                </div>
-                            @endif
-                        </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="card-dashboard p-4">
-                            <h5 class="mb-4">Vítimas Cadastradas</h5>
-                            
-                            @if($vitimas->count() > 0)
-                                <div class="list-group">
-                                    @foreach($vitimas as $vitima)
-                                        <div class="list-group-item">
-                                            <div class="d-flex justify-content-between align-items-center">
-                                                <div>
-                                                    <h6 class="mb-1">{{ $vitima->name }}</h6>
-                                                    <small class="text-muted">{{ $vitima->telefone ?? 'N/A' }}</small>
-                                                </div>
-                                                <button class="btn btn-sm btn-outline-primary">Ver</button>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
-                            @else
-                                <div class="text-center py-4">
-                                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
-                                    <p class="text-muted">Nenhuma vítima cadastrada</p>
-                                </div>
-                            @endif
-                        </div>
+            </div>
+            <div class="user-info-dropdown">
+                <div class="dropdown">
+                    <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown">
+                        <span class="user-icon">
+                            <i class="fa fa-user-circle" style="font-size: 35px; color: #555;"></i>
+                        </span>
+                        @guest
+                            <p>Olá, seja bem-vindo visitante! Faça login para acessar suas informações.</p>
+                        @else
+                            <span class="user-name">Olá, seja bem-vindo {{ Auth::user()->name }}!</span>
+                        @endguest
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                        <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="dw dw-logout"></i>Sair</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
+    <div class="left-side-bar">
+        <div class="brand-logo">
+             <a href="">
+                <img src="{{ asset('vendors/images/android-chrome-192x192.png') }}" alt="Logo" style="height: 60px;" />
+            </a>
+        </div>
+       <div class="menu-block customscroll">
+    <div class="sidebar-menu">
+        <ul id="accordion-menu">
+            <!-- Dashboard (todos têm acesso) -->
+            <li class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle">
+                    <span class="micon bi bi-speedometer2"></span>
+                    <span class="mtext">Dashboard</span>
+                </a>
+                <ul class="submenu">
+                    @if(auth()->user()->role === 'admin')
+                        <li><a href="{{ route('admin.dashboard') }}">Dashboard Admin</a></li>
+                    @elseif(auth()->user()->role === 'doutor')
+                        <li><a href="{{ route('doutor.dashboard') }}">Dashboard Médico</a></li>
+                    @elseif(auth()->user()->role === 'estagiario')
+                        <li><a href="{{ route('estagiario.dashboard') }}">Dashboard Assistente</a></li>
+                    @elseif(auth()->user()->role === 'vitima')
+                        <li><a href="{{ route('vitima.dashboard') }}">Dashboard Vítima</a></li>
+                    @endif
+                </ul>
+            </li>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <!-- Consultas -->
+            @if(in_array(auth()->user()->role, ['admin', 'doutor', 'estagiario']))
+            <li class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle">
+                    <span class="micon bi bi-calendar-check"></span>
+                    <span class="mtext">Consultas</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="{{ route('consulta') }}">Todas as Consultas</a></li>
+                </ul>
+            </li>
+            @endif
+
+            <!-- Médicos (apenas admin) -->
+            @if(auth()->user()->role === 'admin')
+            <li class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle">
+                    <span class="micon bi bi-person-badge"></span>
+                    <span class="mtext">Médico</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="{{ route('users.doutor') }}">Lista de Médicos</a></li>
+                </ul>
+            </li>
+            @endif
+
+            <!-- Assistentes (apenas admin) -->
+            @if(auth()->user()->role === 'admin')
+            <li class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle">
+                    <span class="micon bi bi-person-workspace"></span>
+                    <span class="mtext">Lista de Assistentes</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="{{ route('users.estagiario') }}">Assistentes</a></li>
+                </ul>
+            </li> 
+            @endif
+
+            <!-- Vítimas (admin e médicos) -->
+            @if(in_array(auth()->user()->role, ['admin', 'doutor']))
+            <li class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle">
+                    <span class="micon bi bi-people"></span>
+                    <span class="mtext">Vítimas</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="{{ route('users.vitima') }}">Lista de Vítimas</a></li>
+                </ul>
+            </li>
+            @endif
+
+            <!-- Grupos (admin, médicos e assistentes) -->
+ 
+            <li class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle">
+                    <span class="micon bi bi-collection"></span>
+                    <span class="mtext">Grupos</span>
+                </a>
+                <ul class="submenu">
+                    @if(auth()->user()->role === 'admin')
+                       <li><a href="{{ route('grupos.create') }}">Criar Grupo</a></li>
+                    @endif
+                    @foreach ($grupos as $grupo)
+                        <li>
+                            <a href="{{ route('grupos.show', $grupo->id) }}">{{ $grupo->nome }}</a>
+                        </li>
+                    @endforeach
+                </ul>
+            </li>
+     
+
+            <!-- Chat (todos têm acesso) -->
+            <li>
+                <a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
+                    <span class="micon bi bi-chat-right-dots"></span>
+                    <span class="mtext">Chat</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+    
+
+    </div>
+    <div class="mobile-menu-overlay"></div>
+    <div class="main-container">
+        <div class="xs-pd-20-10 pd-ltr-20">
+            <div class="row">
+                <div class="col-md-12 col-xl-12 mb-30">
+                    <div class="card-box">
+                        <h5 class="h5 text-dark mb-20 pl-20 mt-4">Lista de Vítimas</h5>
+                        <input type="text" id="searchVitima" class="form-control mb-3" placeholder="Pesquisar por nome ou ID">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>ID</th>
+                                        <th>Telefone</th>
+                                        <th>Email</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="vitimaTableBody">
+                                    @foreach ($vitimas as $vitima)
+                                        <tr>
+                                            <td>{{ $vitima->name }}</td>
+                                            <td>{{ $vitima->id }}</td>
+                                            <td>{{ $vitima->telefone ?? 'N/A' }}</td>
+                                            <td>{{ $vitima->email ?? 'N/A' }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    document.getElementById('searchVitima').addEventListener('keyup', function() {
+                        const filtro = this.value.toLowerCase();
+                        const linhas = document.querySelectorAll('#vitimaTableBody tr');
+                        linhas.forEach(function(linha) {
+                            const texto = linha.textContent.toLowerCase();
+                            linha.style.display = texto.includes(filtro) ? '' : 'none';
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+        <script src="{{ asset('vendors/scripts/core.js') }}"></script>
+        <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>
+        <script src="{{ asset('vendors/scripts/process.js') }}"></script>
+        <script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
+        <script>
+            let mensagensPendentes = [];
+            let carregamentoConcluido = false;
+            document.addEventListener('DOMContentLoaded', function() {
+                const userIdLogado = document.querySelector('meta[name="user-id"]').getAttribute('content');
+                fetch('/mensagens_nao_lidas')
+                    .then(res => res.json())
+                    .then(dados => {
+                        if (dados && dados.length > 0) {
+                            mensagensPendentes = dados;
+                            atualizarAlerta();
+                        }
+                        carregamentoConcluido = true;
+                    });
+                if (!window.echoRegistered) {
+                    Echo.channel('mensagem_sos')
+                        .listen('.NovaMensagemSosEvent', (e) => {
+                            if (String(e.user_id) !== userIdLogado) {
+                                return;
+                            }
+                            const mensagem = {
+                                id: e.id,
+                                conteudo: e.conteudo,
+                                data: e.data
+                            };
+                            mensagensPendentes.unshift(mensagem);
+                            atualizarAlerta();
+                        });
+                    window.echoRegistered = true;
+                }
+                document.getElementById('mensagemAlerta').addEventListener('click', () => {
+                    mostrarProximaMensagem();
+                });
+                document.getElementById('fecharModal').addEventListener('click', () => {
+                    const mensagemAtual = mensagensPendentes.shift();
+                    document.getElementById('mensagemModal').classList.add('hidden');
+                    fetch('/mensagem_lida', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({
+                            id: mensagemAtual.id
+                        })
+                    });
+                    if (mensagensPendentes.length > 0) {
+                        setTimeout(() => mostrarProximaMensagem(), 300);
+                    } else {
+                        document.getElementById('mensagemAlerta').classList.add('hidden');
+                    }
+                    atualizarAlerta();
+                });
+                function atualizarAlerta() {
+                    const alerta = document.getElementById('mensagemAlerta');
+                    const texto = document.getElementById('mensagemTextoCompleto');
+                    if (mensagensPendentes.length > 0) {
+                        alerta.classList.remove('hidden');
+                        texto.textContent = `Nova mensagem (${mensagensPendentes.length})`;
+                    } else {
+                        alerta.classList.add('hidden');
+                        texto.textContent = '';
+                    }
+                }
+                function mostrarProximaMensagem() {
+                    const mensagem = mensagensPendentes[0];
+                    if (!mensagem) return;
+                    document.getElementById('mensagemConteudo').textContent = mensagem.conteudo;
+                    document.getElementById('mensagemData').textContent = formatarData(mensagem.data);
+                    document.getElementById('mensagemModal').classList.remove('hidden');
+                }
+                function formatarData(dataString) {
+                    const data = new Date(dataString);
+                    return data.toLocaleString('pt-PT', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                }
+            });
+            function abrirModalMensagem(mensagem) {
+                const modal = document.getElementById('mensagemModal');
+                const conteudo = document.getElementById('mensagemConteudo');
+                const data = document.getElementById('mensagemData');
+                conteudo.textContent = mensagem.conteudo;
+                data.textContent = mensagem.data;
+                modal.dataset.mensagemId = mensagem.id;
+                modal.classList.remove('hidden');
+            }
+            document.getElementById('enviarResposta').addEventListener('click', () => {
+                const mensagemAtual = mensagensPendentes[0];
+                if (mensagemAtual && mensagemAtual.id) {
+                    window.location.href = `/responder_mensagem_sos/${mensagemAtual.id}`;
+                } else {
+                    alert('Mensagem inválida para responder.');
+                }
+            });
+        </script>
+    </div>
 </body>
 </html>

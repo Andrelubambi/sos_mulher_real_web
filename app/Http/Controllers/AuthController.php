@@ -43,7 +43,7 @@ class AuthController extends Controller
                 default:
                     // Redireciona para uma página padrão se a role não for encontrada
                     return redirect()->route('home');
-            }
+            } 
         }
 
         // 4. Retorna com erro se a autenticação falhar
