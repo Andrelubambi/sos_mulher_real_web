@@ -56,9 +56,16 @@ class User extends Authenticatable
         return $this->hasMany(Consulta::class, 'medico_id');
     }
     
-    public function grupos()
+
+    // 🔥 ADICIONE ESTA RELAÇÃO (consultas onde o user é a vítima)
+    public function consultasComoVitima()
     {
-        return $this->belongsToMany(GrupoApoio::class, 'grupo_user');
+        return $this->hasMany(Consulta::class, 'vitima_id');
+    } 
+
+  public function grupos()
+    {
+        return $this->belongsToMany(Grupo::class, 'grupo_user', 'user_id', 'grupo_id');
     }
 
     

@@ -51,15 +51,15 @@
                                 <th>Horário</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @foreach ($proximasConsultas as $consulta)
-                                <tr>
-                                    <td>{{ $consulta->vitima->name }}</td>
-                                    <td>{{ $consulta->data }}</td>
-                                    <td>{{ $consulta->horario }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
+                    <tbody>
+    @foreach ($proximasConsultas as $consulta)
+        <tr>
+            <td>{{ $consulta->vitima?->name ?? 'Paciente não encontrado' }}</td>
+            <td>{{ $consulta->data }}</td>
+            <td>{{ $consulta->horario }}</td>
+        </tr>
+    @endforeach
+</tbody>
                     </table>
                 </div>
             </div>

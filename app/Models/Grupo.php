@@ -22,7 +22,7 @@ class Grupo extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'grupo_user');
+        return $this->belongsToMany(User::class, 'grupo_user', 'grupo_id', 'user_id');
     }
 
     public function mensagens()

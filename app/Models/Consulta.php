@@ -29,4 +29,9 @@ class Consulta extends Model
     {
         return $this->belongsTo(User::class, 'medico_id');
     }
+
+      public function vitima()
+    {
+        return $this->belongsTo(User::class, 'vitima_id');
+    }
 }
