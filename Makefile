@@ -3,24 +3,35 @@
 
 # Comando padrão: dev
 APP_ENV ?= dev
+export $(shell sed 's/=.*//' .env.$(APP_ENV))
 
-# Nome do stack docker
+# Nome da stack Docker
 STACK_NAME=laravel_app
 
-# Função para deploy com rollback
-define deploy
-	@echo "🔹 Deploy iniciado para $$APP_ENV..."
-	@docker compose up -d --build || { \
-		echo "❌ Deploy falhou, iniciando rollback..."; \
-		docker compose down; \
-		exit 1; \
-	}
-	@echo "✅ Deploy concluído!"
-endef
-
-# Deploy
+# Deploy com rollback
 up:
-	$(call deploy)
+	@echo "🔹 Deploy iniciado para $(APP_ENV)..."
+	@if [ "$(APP_ENV)" = "prod" ]; then \
+		docker compose --env-file .env.prod -f docker-compose.yml -f docker-compose.prod.yml up -d --build || { \
+			echo "❌ Deploy falhou, rollback..."; \
+			docker compose down; \
+			exit 1; \
+		}; \
+	elif [ "$(APP_ENV)" = "staging" ]; then \
+		docker compose --env-file .env.staging -f docker-compose.yml -f docker-compose.staging.yml up -d --build || { \
+			echo "❌ Deploy falhou, rollback..."; \
+			docker compose down; \
+			exit 1; \
+		}; \
+	else \
+		docker compose --env-file .env.dev -f docker-compose.yml -f docker-compose.override.yml up -d --build || { \
+			echo "❌ Deploy falhou, rollback..."; \
+			docker compose down; \
+			exit 1; \
+		}; \
+	fi
+	@echo "✅ Deploy concluído!"
+	$(MAKE) slack_notify
 
 # Parar containers
 down:
@@ -35,11 +46,11 @@ restart:
 logs:
 	docker compose logs -f
 
-# Notificação Slack (exemplo simples)
+# Notificação Slack/Teams (exemplo)
 slack_notify:
-	@echo "🔔 Notificação: Deploy de $(APP_ENV) concluído!" 
-	# Aqui pode colocar curl para webhook do Slack/Teams
+	@echo "🔔 Notificação: Deploy de $(APP_ENV) concluído!"
+	# curl -X POST -H 'Content-type: application/json' --data '{"text":"Deploy de $(APP_ENV) concluído!"}' $WEBHOOK_URL
 
-# Atualizar cache Docker para acelerar builds
+# Build cache Docker
 build-cache:
 	docker build --cache-from $(STACK_NAME) -t $(STACK_NAME) .

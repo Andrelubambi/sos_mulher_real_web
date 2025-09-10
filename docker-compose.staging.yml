@@ -1,0 +1,26 @@
+services:
+  nginx:
+    ports:
+      - "8080:80"
+
+  mysql:
+    ports:
+      - "3307:3306"
+
+  redis:
+    ports:
+      - "6380:6379"
+
+  npm:
+    image: node:18
+    container_name: laravel_npm_staging
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    ports:
+      - "5174:5173"
+    command: npm run dev
+    networks:
+      - laravel
+    depends_on:
+      - app
