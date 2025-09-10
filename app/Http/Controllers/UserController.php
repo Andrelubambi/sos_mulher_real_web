@@ -126,7 +126,7 @@ public function createVitima()
 
     $grupos = Grupo::all();
     $users = User::where('role', 'vitima')->get();
-    return view('vitima', compact('users','grupos'));
+    return view('vitima', compact('users','grupos'));   
 }
 
 

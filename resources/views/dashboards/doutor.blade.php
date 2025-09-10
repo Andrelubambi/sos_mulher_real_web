@@ -3,16 +3,12 @@
 <head>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="user-id" content="{{ auth()->user()->id }}">
-    <!-- Basic Page Info -->
     <meta charset="utf-8" />
     <title>Dashboard | SOS-MULHER</title>
-    <!-- Site favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('vendors/images/apple-touch-icon.png') }}" />
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('vendors/images/favicon-32x32.png') }}" />
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('vendors/images/favicon-16x16.png') }}" />
-    <!-- Mobile Specific Metas -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <!-- Link Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/core.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/icon-font.min.css') }}" />
@@ -22,7 +18,6 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-GBZ3SGGX85"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2973766580778258" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .card-patient {
@@ -40,6 +35,57 @@
             color: #666;
             font-size: 14px;
         }
+        /* CSS para o novo modal de lista */
+        .mensagem-list-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .mensagem-list-conteudo {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .mensagem-list-item {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .mensagem-list-item:hover {
+            background-color: #f4f4f4;
+        }
+        .mensagem-list-item h5 {
+            margin: 0;
+            font-size: 16px;
+        }
+        .mensagem-list-item p {
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 70%;
+        }
+        .mensagem-list-item small {
+            font-size: 12px;
+            color: #999;
+        }
     </style>
     <style>
     /* ... seu CSS existente ... */
@@ -55,7 +101,6 @@
         100% { transform: scale(1); }
     }
 </style>
-    <!-- Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
@@ -79,42 +124,48 @@
             </div>
         </div>
         <div class="header-right">
-            <!-- Settings Icon -->
-      @if (auth()->user()->role == 'vitima')
-                <!-- SOS Button -->
-                <div class="user-notification">
-                    <form action="{{ route('mensagem_sos') }}" method="POST"
-                        style="display:inline-block; margin-left: 10px;">
-                        @csrf
-                        <input type="hidden" name="mensagem" value="conteudo da mensagem sos">
-                        <button type="submit" title="Enviar SOS" style="background:none; border:none; cursor:pointer;">
-                            <i class="fa fa-exclamation-triangle" style="color:red; font-size: 20px;"></i>
-                        </button>
-                    </form>
+            @if (auth()->user()->role == 'vitima')
+        <div class="user-notification">
+            <form action="{{ route('mensagem_sos') }}" method="POST" style="display:inline-block; margin-left: 10px;">
+                @csrf
+                <input type="hidden" name="mensagem" value="conteudo da mensagem sos">
+                <button type="submit" title="Enviar SOS" style="background:none; border:none; cursor:pointer;">
+                    <i class="fa fa-exclamation-triangle" style="color:red; font-size: 20px;"></i>
+                </button>
+            </form>
+        </div>
+    @endif
+
+               @if(in_array(auth()->user()->role, ['admin', 'doutor', 'estagiario']))
+        <div id="mensagemAlerta" class="mensagem-alerta" style="cursor:pointer;">
+            <span class="mensagem-icone"><i class="fa fa-envelope"></i></span>
+            <span id="mensagemTextoCompleto" class="mensagem-texto"></span>
+        </div>
+    @endif
+
+        <div id="mensagemListModal" class="mensagem-list-modal hidden">
+            <div class="mensagem-list-conteudo">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4>Mensagens Pendentes</h4>
+                    <button id="fecharListModal" class="btn btn-sm btn-danger">Fechar</button>
                 </div>
-            @endif
-
-             <div id="mensagemAlerta" class="mensagem-alerta hidden" style="cursor:pointer;">
-                <span class="mensagem-icone"><i class="fa fa-envelope"></i></span>
-                <span id="mensagemTextoCompleto" class="mensagem-texto"></span>
-            </div>
-
-          
-          
-            
-            <div id="mensagemModal" class="mensagem-modal hidden" data-mensagem-id="">
-                <div class="mensagem-modal-conteudo">
-                    <h4>Mensagem Recebida</h4>
-                    <p id="mensagemConteudo"></p>
-                    <small id="mensagemData" style="display:block;margin-top:10px;color:#666;"></small>
-
-                    <div style="margin-top: 10px; text-align: right;">
-                        <button id="enviarResposta" style="margin-right: 10px;">Responder</button>
-                        <button id="fecharModal">OK</button>
+                <div id="listaDeMensagens">
                     </div>
-                </div>
             </div>
-            <!-- User Info -->
+        </div>
+       <div id="mensagemModal" class="mensagem-modal hidden" data-mensagem-id="">
+        <div class="mensagem-modal-conteudo">
+            <h4>Mensagem Recebida</h4>
+            <p id="mensagemConteudo"></p>
+            <small id="mensagemData" style="display:block;margin-top:10px;color:#666;"></small>
+
+            <div style="margin-top: 10px; text-align: right;">
+                <button id="enviarResposta" style="margin-right: 10px;">Responder</button>
+                <button id="fecharModal">OK</button>
+            </div>
+        </div>
+    </div>
+
             <div class="user-info-dropdown">
                 <div class="dropdown">
                     <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown">
@@ -146,7 +197,6 @@
        <div class="menu-block customscroll">
     <div class="sidebar-menu">
         <ul id="accordion-menu">
-            <!-- Dashboard (todos têm acesso) -->
             <li class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle">
                     <span class="micon bi bi-speedometer2"></span>
@@ -165,8 +215,7 @@
                 </ul>
             </li>
 
-            <!-- Consultas -->
-            @if(in_array(auth()->user()->role, ['admin', 'doutor', 'estagiario']))
+            
             <li class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle">
                     <span class="micon bi bi-calendar-check"></span>
@@ -176,9 +225,8 @@
                     <li><a href="{{ route('consulta') }}">Todas as Consultas</a></li>
                 </ul>
             </li>
-            @endif
+           
 
-            <!-- Médicos (apenas admin) -->
             @if(auth()->user()->role === 'admin')
             <li class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle">
@@ -191,7 +239,6 @@
             </li>
             @endif
 
-            <!-- Assistentes (apenas admin) -->
             @if(auth()->user()->role === 'admin')
             <li class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle">
@@ -204,7 +251,6 @@
             </li> 
             @endif
 
-            <!-- Vítimas (admin e médicos) -->
             @if(in_array(auth()->user()->role, ['admin', 'doutor']))
             <li class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle">
@@ -217,8 +263,6 @@
             </li>
             @endif
 
-            <!-- Grupos (admin, médicos e assistentes) -->
-        
             <li class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle">
                     <span class="micon bi bi-collection"></span>
@@ -237,13 +281,26 @@
             </li>
        
 
-            <!-- Chat (todos têm acesso) -->
             <li>
                 <a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
                     <span class="micon bi bi-chat-right-dots"></span>
                     <span class="mtext">Chat</span>
                 </a>
             </li>
+
+     
+<li>
+    <a href="{{ route('nao_suicidio') }}" class="dropdown-toggle no-arrow">
+        <span class="micon bi bi-heart-fill"></span>
+        <span class="mtext">NÃO AO SUICÍDIO</span>
+    </a>
+</li>
+<li>
+    <a href="{{ route('testemunhos') }}" class="dropdown-toggle no-arrow">
+        <span class="micon bi bi-chat-quote-fill"></span>
+        <span class="mtext">TESTEMUNHOS</span>
+    </a>
+</li>
         </ul>
     </div>
 </div>
@@ -252,7 +309,6 @@
     <div class="mobile-menu-overlay"></div>
     <div class="main-container">
         <div class="xs-pd-20-10 pd-ltr-20">
-            <!-- Cards principais -->
             <div class="row pb-10">
                 @foreach ([
                     ['count' => $pacientesCount, 'label' => 'Total de Pacientes', 'icon' => 'fa fa-users', 'color' => '#00eccf'], 
@@ -278,9 +334,7 @@
                 @endforeach
             </div>
             
-            <!-- Gráficos -->
             <div class="row mb-30">
-                <!-- Gráfico de distribuição de consultas -->
                 <div class="col-md-6 col-xl-6 mb-30">
                     <div class="card-box">
                         <h5 class="h5 text-dark mb-20 p-4">Distribuição de Consultas</h5>
@@ -290,7 +344,6 @@
                     </div>
                 </div>
                 
-                <!-- Gráfico de próximas consultas por dia -->
                 <div class="col-md-6 col-xl-6 mb-30">
                     <div class="card-box">
                         <h5 class="h5 text-dark mb-20 p-4">Próximas Consultas (7 dias)</h5>
@@ -301,7 +354,6 @@
                 </div>
             </div>
             
-            <!-- Lista de Próximas Consultas em Cards -->
             <div class="row mb-30">
                 <div class="col-md-12 col-xl-12 mb-30">
                     <div class="card-box">
@@ -327,7 +379,6 @@
                 </div>
             </div>
             
-            <!-- Lista de Pacientes em Cards -->
             <div class="row">
                 <div class="col-md-12 col-xl-12 mb-30">
                     <div class="card-box">
@@ -466,88 +517,143 @@
                 }
             });
             
-            // Código para mensagens SOS (mantido do original)
+            // Código para mensagens SOS
             let mensagensPendentes = [];
-            let carregamentoConcluido = false;
-            
+
             document.addEventListener('DOMContentLoaded', function() {
-                const userIdLogado = document.querySelector('meta[name="user-id"]').getAttribute('content');
-                
-                fetch('/mensagens_nao_lidas')
-                    .then(res => res.json())
-                    .then(dados => {
-                        if (dados && dados.length > 0) {
-                            mensagensPendentes = dados;
-                            atualizarAlerta();
-                        }
-                        carregamentoConcluido = true;
+                const mensagemAlerta = document.getElementById('mensagemAlerta');
+                const mensagemListModal = document.getElementById('mensagemListModal');
+                const listaDeMensagens = document.getElementById('listaDeMensagens');
+                const mensagemModal = document.getElementById('mensagemModal');
+                const enviarRespostaBtn = document.getElementById('enviarResposta');
+                const fecharModalBtn = document.getElementById('fecharModal');
+                const fecharListModalBtn = document.getElementById('fecharListModal');
+
+                 console.log('DOM carregado.');
+
+                if (mensagemAlerta) {
+                     console.log('Elemento mensagemAlerta encontrado.');
+                    fetchMensagens();
+
+                    if (!window.echoRegistered) {
+                           console.log('Registrando Echo Listener...');
+                        Echo.channel('mensagem_sos')
+                            .listen('.NovaMensagemSosEvent', (e) => {
+                                   console.log('Registrando Echo Listener...'); 
+                                const mensagem = {
+                                    id: e.id,
+                                    conteudo: e.conteudo,
+                                    data: e.data,
+                                    // Adicione outras propriedades relevantes, como 'vitima_nome'
+                                    vitima_nome: e.vitima_nome || 'Vítima Desconhecida'
+                                };
+                                mensagensPendentes.unshift(mensagem);
+                                atualizarAlerta();
+                            });
+                        window.echoRegistered = true;
+                    }
+
+                     mensagemAlerta.addEventListener('click', () => {
+                        console.log('Clique no alerta detectado. Tentando exibir lista de mensagens...');
+                        exibirListaDeMensagens();
                     });
-                
-                if (!window.echoRegistered) {
-                    Echo.channel('mensagem_sos')
-                        .listen('.NovaMensagemSosEvent', (e) => {
-                            
-                            const mensagem = {
-                                id: e.id,
-                                conteudo: e.conteudo,
-                                data: e.data
-                            };
-                            mensagensPendentes.unshift(mensagem);
-                            atualizarAlerta();
-                        });
-                    window.echoRegistered = true;
+                } else {
+                    console.error('Elemento #mensagemAlerta não encontrado. Verifique se o usuário tem permissão para vê-lo.');
                 }
                 
-                document.getElementById('mensagemAlerta').addEventListener('click', () => {
-                    mostrarProximaMensagem();
+              fecharListModalBtn.addEventListener('click', () => {
+                    console.log('Clique no botão fecharListModal detectado.');
+                    mensagemListModal.classList.add('hidden');
                 });
-                
-                document.getElementById('fecharModal').addEventListener('click', () => {
-                    const mensagemAtual = mensagensPendentes.shift();
-                    document.getElementById('mensagemModal').classList.add('hidden');
-                    
-                    fetch('/mensagem_lida', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify({
-                            id: mensagemAtual.id
-                        })
-                    });
-                    
-                    if (mensagensPendentes.length > 0) {
-                        setTimeout(() => mostrarProximaMensagem(), 300);
-                    } else {
-                        document.getElementById('mensagemAlerta').classList.add('hidden');
-                    }
-                    atualizarAlerta();
-                });
-                
-                function atualizarAlerta() {
-    const alerta = document.getElementById('mensagemAlerta');
-    const texto = document.getElementById('mensagemTextoCompleto');
 
-    if (mensagensPendentes.length > 0) {
-        alerta.classList.remove('hidden');
-        // Adicionar a classe para o efeito visual
-        alerta.classList.add('has-messages'); 
-        texto.textContent = `Nova mensagem (${mensagensPendentes.length})`;
-    } else {
-        alerta.classList.add('hidden');
-        // Remover a classe quando não houver mensagens
-        alerta.classList.remove('has-messages'); 
-        texto.textContent = '';
-    }
-}
-                
-                function mostrarProximaMensagem() {
-                    const mensagem = mensagensPendentes[0];
-                    if (!mensagem) return;
-                    
+                fecharModalBtn.addEventListener('click', () => {
+                    console.log('Clique no botão fecharModal detectado.');
+                    mensagemModal.classList.add('hidden');
+                });
+
+                 enviarRespostaBtn.addEventListener('click', () => {
+                    const mensagemId = mensagemModal.dataset.mensagemId;
+                    console.log('Clique no botão enviarResposta detectado. ID da mensagem:', mensagemId);
+                    if (mensagemId) {
+                        window.location.href = `/responder_mensagem_sos/${mensagemId}`;
+                    } else {
+                        console.error('ID da mensagem inválido para responder.');
+                        alert('Mensagem inválida para responder.');
+                    }
+                });
+
+                     function fetchMensagens() {
+                    console.log('Iniciando fetch para /mensagens_nao_lidas...');
+                    fetch('/mensagens_nao_lidas')
+                        .then(res => {
+                            console.log('Resposta do servidor recebida.');
+                            if (!res.ok) {
+                                console.error('Erro na resposta da rede:', res.statusText);
+                                throw new Error('Network response was not ok');
+                            }
+                            return res.json();
+                        })
+                        .then(dados => {
+                            console.log('Dados de mensagens recebidos:', dados);
+                            mensagensPendentes = dados;
+                            atualizarAlerta();
+                        })
+                        .catch(err => console.error("Erro ao buscar mensagens:", err));
+                }
+
+                  
+
+                  function atualizarAlerta() {
+                    const alerta = document.getElementById('mensagemAlerta');
+                    const texto = document.getElementById('mensagemTextoCompleto');
+                    if (!alerta || !texto) return;
+
+                    console.log('Atualizando alerta. Mensagens pendentes:', mensagensPendentes.length);
+                    if (mensagensPendentes.length > 0) {
+                        alerta.classList.remove('hidden');
+                        alerta.classList.add('has-messages');
+                        texto.textContent = `Nova mensagem (${mensagensPendentes.length})`;
+                    } else {
+                        alerta.classList.add('hidden');
+                        alerta.classList.remove('has-messages');
+                        texto.textContent = '';
+                    }
+                }
+
+                 function exibirListaDeMensagens() {
+                    console.log('Exibindo lista de mensagens. Mensagens pendentes:', mensagensPendentes.length);
+                    listaDeMensagens.innerHTML = '';
+                    if (mensagensPendentes.length === 0) {
+                        listaDeMensagens.innerHTML = '<p class="text-center text-muted">Não há novas mensagens.</p>';
+                    } else {
+                        mensagensPendentes.forEach(mensagem => {
+                            console.log('Criando item para a mensagem:', mensagem);
+                            const item = document.createElement('div');
+                            item.className = 'mensagem-list-item';
+                            item.innerHTML = `
+                                <div>
+                                    <h5>Mensagem de ${mensagem.vitima_nome || 'Vítima Desconhecida'}</h5>
+                                    <p>${mensagem.conteudo.substring(0, 50)}...</p>
+                                </div>
+                                <small>${formatarData(mensagem.data)}</small>
+                            `;
+                            item.addEventListener('click', () => {
+                                console.log('Clique em um item da lista. Mensagem selecionada:', mensagem);
+                                exibirMensagemIndividual(mensagem);
+                            });
+                            listaDeMensagens.appendChild(item);
+                        });
+                    }
+                    console.log('Mostrando o modal da lista.');
+                    mensagemListModal.classList.remove('hidden');
+                }
+
+                function exibirMensagemIndividual(mensagem) {
+                    console.log('Exibindo mensagem individual:', mensagem);
+                    mensagemListModal.classList.add('hidden');
                     document.getElementById('mensagemConteudo').textContent = mensagem.conteudo;
                     document.getElementById('mensagemData').textContent = formatarData(mensagem.data);
+                    document.getElementById('mensagemModal').dataset.mensagemId = mensagem.id;
                     document.getElementById('mensagemModal').classList.remove('hidden');
                 }
                 
@@ -560,26 +666,6 @@
                         hour: '2-digit',
                         minute: '2-digit'
                     });
-                }
-            });
-            
-            function abrirModalMensagem(mensagem) {
-                const modal = document.getElementById('mensagemModal');
-                const conteudo = document.getElementById('mensagemConteudo');
-                const data = document.getElementById('mensagemData');
-                
-                conteudo.textContent = mensagem.conteudo;
-                data.textContent = mensagem.data;
-                modal.dataset.mensagemId = mensagem.id;
-                modal.classList.remove('hidden');
-            }
-            
-            document.getElementById('enviarResposta').addEventListener('click', () => {
-                const mensagemAtual = mensagensPendentes[0];
-                if (mensagemAtual && mensagemAtual.id) {
-                    window.location.href = `/responder_mensagem_sos/${mensagemAtual.id}`;
-                } else {
-                    alert('Mensagem inválida para responder.');
                 }
             });
         </script>

@@ -106,3 +106,33 @@ Este projeto está licenciado sob os termos da licença MIT.
 
 Para dúvidas, sugestões ou apoio, entre em contato com os responsáveis pelo projeto através do GitHub:  
 [github.com/BernardoCCosta](https://github.com/BernardoCCosta)
+
+
+
+
+
+
+
+Rodar dev (local):
+
+APP_ENV=dev make up
+
+
+Rodar staging (teste remoto):
+
+APP_ENV=staging make up
+
+
+Rodar prod (produção):
+
+APP_ENV=prod make up
+
+
+Logs contínuos:
+
+make logs
+
+
+Reiniciar containers:
+
+make restart

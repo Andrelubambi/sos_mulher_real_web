@@ -89,14 +89,10 @@ Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->n
    Route::get('/grupos/{grupo}', [GrupoController::class, 'show'])->name('grupos.show');
    Route::get('/grupos/{grupo}/mensagens', [GrupoController::class, 'getMensagens'])->name('grupos.mensagens');
    
-
-    // Páginas de erro ou utilitários protegidos
-    Route::view('/video-player', 'video-player')->name('video-player');
-    Route::view('/calendar', 'calendar')->name('calendar');
+ 
 
 
-
-    Route::view('/profile', 'profile')->name('profile');
+    Route::view('/profile', 'profile')->name('profile'); 
 
 
     Route::get('/mensagem_sos',function(){
@@ -109,7 +105,14 @@ Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->n
     Route::get('/responder_mensagem_sos/{id}', [ChatController::class, 'responderMensagemSos'])->name('responder_mensagem_sos');
 
 
+// Rotas para as novas páginas
+Route::get('/nao-suicidio', function () {
+    return view('nao_suicidio');
+})->name('nao_suicidio');
 
+Route::get('/testemunhos', function () {
+    return view('testemunhos');
+})->name('testemunhos');
 
 
     // Rotas de dashboard, protegidas pelo middleware de role
