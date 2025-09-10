@@ -6,3 +6,4 @@ services:
 
   npm:
     command: sleep infinity
+ 

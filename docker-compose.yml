@@ -1,9 +1,11 @@
+version: "3.9"
+
 services:
   app:
     build: .
     container_name: laravel_app
     env_file:
-      - .env.${APP_ENV}
+      - .env.dev
     volumes:
       - .:/var/www
     networks:
@@ -14,10 +16,12 @@ services:
     restart: unless-stopped
     command: >
       sh -c "
-        if [ -z \"$$(grep APP_KEY= /var/www/.env | cut -d '=' -f2)\" ]; then
-          php artisan key:generate --force;
+        if [ ! -f /var/www/.env ]; then
+          cp /var/www/.env.dev /var/www/.env
         fi &&
-        php artisan optimize:clear &&
+        php artisan config:clear &&
+        php artisan cache:clear &&
+        php artisan config:cache &&
         php-fpm
       "
 
@@ -32,20 +36,22 @@ services:
     depends_on:
       - app
     restart: unless-stopped
+    ports:
+      - "8000:80"
 
   mysql:
     image: mysql:8
     container_name: laravel_mysql
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_USER: ${DB_USERNAME}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: laravel
       MYSQL_ROOT_PASSWORD: root123
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
       - laravel
     restart: unless-stopped
+    ports:
+      - "3306:3306"
 
   redis:
     image: redis:alpine
@@ -53,6 +59,8 @@ services:
     networks:
       - laravel
     restart: unless-stopped
+    ports:
+      - "6379:6379"
 
   queue:
     build: .

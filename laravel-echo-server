@@ -19,7 +19,7 @@
 	"port": "6001",
 	"protocol": "http",
 	"socketio": {},
-	"secureOptions": 67108864,
+	"secureOptions": 67108864, 
 	"sslCertPath": "",
 	"sslKeyPath": "",
 	"sslCertChainPath": "",
