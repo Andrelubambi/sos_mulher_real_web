@@ -46,7 +46,17 @@ jobs:
         run: npm ci
 
       - name: Run backend tests
+        env:
+          APP_KEY: ${{ secrets.APP_KEY }}
+          APP_ENV: ${{ github.ref_name }}  # opcional, para diferenciar dev/staging/main
+          APP_URL: ${{ secrets.APP_URL }}  # se você tiver
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          DB_DATABASE: ${{ secrets.DB_NAME }}
+          DB_USERNAME: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: php artisan test
+
 
       - name: Run frontend build
         run: |
