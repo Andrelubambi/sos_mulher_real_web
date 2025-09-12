@@ -259,3 +259,17 @@ Route::get('/debug-password', function() {
         'db_host' => env('DB_HOST')
     ]);
 });
+
+
+Route::get('/debug-all-env', function() {
+    $allEnv = getenv();
+    $relevantVars = [];
+    
+    foreach ($allEnv as $key => $value) {
+        if (strpos($key, 'MYSQL') !== false || strpos($key, 'DB') !== false || strpos($key, 'RAILWAY') !== false) {
+            $relevantVars[$key] = $value;
+        }
+    }
+    
+    return response()->json($relevantVars);
+});
