@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-
+ 
 <head>
     <meta charset="utf-8" />
     <title>Cadastro | SOS-MULHER</title>
@@ -14,7 +14,7 @@
 
 
 </head>
-
+ 
 <body class="login-page custom-background">
     <div class="login-header box-shadow">
         <div class="container-fluid d-flex justify-content-between align-items-center">

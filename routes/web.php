@@ -336,3 +336,12 @@ Route::get('/check-env', function() {
         })
     ]);
 });
+
+
+Route::post('/debug-form', function(Request $request) {
+    return response()->json([
+        'received_data' => $request->all(),
+        'csrf_token' => csrf_token(),
+        'session_id' => session()->getId()
+    ]);
+});
