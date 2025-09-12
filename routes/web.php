@@ -215,3 +215,25 @@ Route::get('/debug-mysql-vars', function() {
         'db_name' => env('DB_NAME')
     ]);
 });
+
+Route::get('/test-mysql-connection', function() {
+    $hosts_to_test = [
+        'mysql.railway.internal',
+        '127.0.0.1',
+        'localhost'
+    ];
+    
+    $results = [];
+    
+    foreach ($hosts_to_test as $host) {
+        try {
+            config(['database.connections.mysql.host' => $host]);
+            \DB::connection()->getPdo();
+            $results[$host] = '✅ CONECTADO';
+        } catch (\Exception $e) {
+            $results[$host] = '❌ ERRO: ' . $e->getMessage();
+        }
+    }
+    
+    return response()->json($results);
+});
