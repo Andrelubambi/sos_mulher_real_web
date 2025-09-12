@@ -30,11 +30,8 @@ RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
 RUN php artisan config:clear \
     && php artisan cache:clear
 
-# Expor porta do PHP-FPM
-EXPOSE 9000
+# Expor porta
+EXPOSE 8000
 
-# Comando que verifica APP_KEY e inicia o PHP-FPM
-CMD php artisan config:cache && \
-    php artisan route:cache && \
-    php artisan view:cache && \
-    php-fpm
+# Comando simplificado (sem route:cache que está falhando)
+CMD php artisan serve --host=0.0.0.0 --port=8000
