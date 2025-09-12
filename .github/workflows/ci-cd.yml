@@ -12,7 +12,7 @@ on:
       - staging
 
 env:
-  DOCKER_IMAGE: mydockerhubuser/myapp
+  DOCKER_IMAGE: lubambi01/myapp
 
 jobs:
   setup:
