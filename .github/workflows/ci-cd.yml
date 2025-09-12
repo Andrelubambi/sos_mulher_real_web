@@ -75,7 +75,7 @@ jobs:
 
       - name: Build Docker image with cache
         run: |
-          docker build --pull --cache-from ${DOCKER_IMAGE}:${GITHUB_REF_NAME} -t ${DOCKER_IMAGE}:${GITHUB_REF_NAME} ./docker
+          docker build -f ./docker/Dockerfile -t ${DOCKER_IMAGE}:${GITHUB_REF_NAME} ./docker
 
       - name: Push Docker image
         run: |
