@@ -199,3 +199,19 @@ Route::get('/debug-env', function() {
         'db_connection' => config('database.default')
     ]);
 });
+
+
+Route::get('/debug-mysql-vars', function() {
+    return response()->json([
+        'railway_mysql_host' => env('RAILWAY_MYSQL_HOST'),
+        'railway_mysql_port' => env('RAILWAY_MYSQL_PORT'),
+        'railway_mysql_user' => env('RAILWAY_MYSQL_USER'),
+        'railway_mysql_password' => env('RAILWAY_MYSQL_PASSWORD'),
+        'railway_mysql_database' => env('RAILWAY_MYSQL_DATABASE'),
+        'db_host' => env('DB_HOST'),
+        'db_port' => env('DB_PORT'),
+        'db_user' => env('DB_USER'),
+        'db_password' => env('DB_PASSWORD'),
+        'db_name' => env('DB_NAME')
+    ]);
+});
