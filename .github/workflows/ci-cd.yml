@@ -80,39 +80,37 @@ jobs:
           docker push ${DOCKER_IMAGE}:${GITHUB_REF_NAME}
 
   deploy:
-    runs-on: ubuntu-latest
-    needs: docker-build
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/staging'
-    steps:
-      - name: SSH Deploy
-        uses: appleboy/ssh-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            set -e
-            cd /var/www/myapp
-
-            # Backup do container atual para rollback
-            docker compose -f docker-compose.yml -f docker-compose.${GITHUB_REF_NAME}.yml down || true
-            BACKUP_TAG=laravel_app_backup_$(date +%Y%m%d%H%M)
-            docker tag laravel_app $BACKUP_TAG
-
-            # Pull ou rebuild da nova imagem
-            docker pull ${DOCKER_IMAGE}:${GITHUB_REF_NAME} || docker build -t ${DOCKER_IMAGE}:${GITHUB_REF_NAME} .
-
-            # Deploy
-            docker compose -f docker-compose.yml -f docker-compose.${GITHUB_REF_NAME}.yml up -d --build || {
-              echo "❌ Deploy falhou, revertendo..."
-              docker tag $BACKUP_TAG laravel_app
-              docker compose up -d
-              exit 1
-            }
-
-      - name: Notify Slack
-        uses: slackapi/slack-github-action@v1.25.0
-        with:
-          channel-id: ${{ secrets.SLACK_CHANNEL }}
-          slack-token: ${{ secrets.SLACK_TOKEN }}
-          text: "🚀 Deploy concluído: Branch ${{ github.ref_name }}"
+  runs-on: ubuntu-latest
+  needs: docker-build
+  if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/staging'
+  steps:
+    - name: SSH Deploy
+      uses: appleboy/ssh-action@v0.1.7
+      with:
+        host: ${{ secrets.SERVER_HOST }}
+        username: ${{ secrets.SERVER_USER }}
+        key: ${{ secrets.SERVER_SSH_KEY }}
+        script: |
+          set -e
+          cd /var/www/myapp
+          
+          # Definir variáveis no servidor
+          DOCKER_IMAGE="${{ env.DOCKER_IMAGE }}"
+          BRANCH_NAME="${{ github.ref_name }}"
+          
+          echo "🔄 Iniciando deploy para branch: $BRANCH_NAME"
+          
+          # Backup
+          docker compose down || true
+          BACKUP_TAG=laravel_app_backup_$(date +%Y%m%d%H%M%S)
+          docker tag laravel_app $BACKUP_TAG 2>/dev/null || echo "⚠️ Container atual não encontrado para backup"
+          
+          # Pull da nova imagem
+          echo "📦 Baixando imagem Docker..."
+          docker pull ${DOCKER_IMAGE}:${BRANCH_NAME}
+          
+          # Deploy
+          echo "🚀 Iniciando deploy..."
+          docker compose up -d
+          
+          echo "✅ Deploy concluído com sucesso!"
