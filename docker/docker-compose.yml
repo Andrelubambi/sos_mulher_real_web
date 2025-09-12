@@ -36,8 +36,9 @@ services:
     depends_on:
       - app
     restart: unless-stopped
-    ports:
-      - "8000:80"
+    # ⚠️ Não usar ports no Railway
+    expose:
+      - "80"
 
   mysql:
     image: mysql:8
@@ -45,13 +46,11 @@ services:
     environment:
       MYSQL_DATABASE: laravel
       MYSQL_ROOT_PASSWORD: root123
-    volumes:
-      - mysql_data:/var/lib/mysql
     networks:
       - laravel
     restart: unless-stopped
-    ports:
-      - "3306:3306"
+    expose:
+      - "3306"
 
   redis:
     image: redis:alpine
@@ -59,8 +58,8 @@ services:
     networks:
       - laravel
     restart: unless-stopped
-    ports:
-      - "6379:6379"
+    expose:
+      - "6379"
 
   queue:
     build: .
@@ -84,17 +83,14 @@ services:
     command: >
       sh -c "npm install -g laravel-echo-server &&
              laravel-echo-server start --config=/var/www/laravel-echo-server.json"
-    ports:
-      - "6001:6001"
     networks:
       - laravel
     depends_on:
       - redis
       - app
     restart: unless-stopped
-
-volumes:
-  mysql_data:
+    expose:
+      - "6001"
 
 networks:
   laravel:
