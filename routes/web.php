@@ -154,3 +154,48 @@ Route::get('/send', function () {
     dd('Event Run Successfully.');
 });
 
+
+
+
+
+
+Route::get('/debug-db', function() {
+    try {
+        \DB::connection()->getPdo();
+        return response()->json([
+            'status' => '✅ DB CONECTADO',
+            'database' => \DB::connection()->getDatabaseName(),
+            'tables' => \DB::select('SHOW TABLES'),
+            'app_key' => config('app.key'),
+            'app_env' => config('app.env')
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => '❌ ERRO DB',
+            'error' => $e->getMessage(),
+            'db_host' => env('DB_HOST'),
+            'db_database' => env('DB_NAME'),
+            'app_key' => config('app.key')
+        ], 500);
+    }
+});
+
+Route::get('/debug-migrations', function() {
+    try {
+        $migrations = \DB::table('migrations')->get();
+        return response()->json([
+            'migrations' => $migrations,
+            'users_count' => \App\Models\User::count()
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+});
+
+Route::get('/debug-storage', function() {
+    return response()->json([
+        'storage_writable' => is_writable(storage_path()),
+        'bootstrap_writable' => is_writable(base_path('bootstrap/cache')),
+        'app_key' => config('app.key')
+    ]);
+});
