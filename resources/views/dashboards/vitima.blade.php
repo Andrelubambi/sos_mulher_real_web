@@ -334,8 +334,12 @@
                                 <div class="col-md-3 mb-20">
                                     <div class="card-patient">
                                         <div class="patient-name">
-                                            {{ $consulta->medico->name ?? 'Médico Indisponível' }}
-                                        </div>
+    @if ($consulta->medico)
+        {{ $consulta->medico->name }}
+    @else
+        Médico Indisponível
+    @endif
+</div>
                                         <div class="patient-info">
                                             <p><strong>Data:</strong>
                                                 {{ \Carbon\Carbon::parse($consulta->data)->format('d/m/Y H:i') }}

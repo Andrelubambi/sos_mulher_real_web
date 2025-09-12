@@ -18,7 +18,7 @@ class VitimaDashboardController extends Controller
 
         $minhasConsultas = Consulta::with('medico')
             ->where('vitima_id', $user->id)
-            ->get();
+            ->get(); 
         
         
         $grupos = $user->grupos;
