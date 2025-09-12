@@ -20,18 +20,17 @@ COPY . .
 
 # Instalar dependências PHP e Node
 RUN composer install --no-dev --optimize-autoloader \
-    && npm ci
+    && npm ci && npm run build
 
 # Ajustar permissões
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
-# Limpar cache
-RUN php artisan config:clear \
-    && php artisan cache:clear
+# Limpar cache (para garantir que a nova configuração seja aplicada)
+RUN php artisan config:clear && php artisan cache:clear
 
-# Expor porta
+# Expor a porta do Docker (isso é apenas informativo)
 EXPOSE 8000
 
-# Comando simplificado (sem route:cache que está falhando)
-CMD php artisan serve --host=0.0.0.0 --port=8000
+# Comando para iniciar o servidor, usando a variável de ambiente $PORT do Railway
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port", "${PORT}"]
