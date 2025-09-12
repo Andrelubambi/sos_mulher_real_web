@@ -96,10 +96,11 @@ Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->n
 
 
 
-// ROTA GET - para visualizar (se necessário)
+/*/ ROTA GET - para visualizar (se necessário)
 Route::get('/mensagem_sos',function(){
     return redirect()->back();
 })->name('mensagem_sos.view');  // NOME ALTERADO
+*/
 
 // ROTA POST - para enviar mensagem
 Route::post('/mensagem_sos',[MensagemSosController::class,'enviarMensagemSos'])->name('mensagem_sos.send'); // NOME ALTERADO
@@ -272,4 +273,51 @@ Route::get('/debug-all-env', function() {
     }
     
     return response()->json($relevantVars);
+});
+
+Route::get('/check-connection', function() {
+    try {
+        \DB::connection()->getPdo();
+        return response()->json([
+            'status' => '✅ CONECTADO',
+            'host' => config('database.connections.mysql.host'),
+            'port' => config('database.connections.mysql.port'),
+            'database' => config('database.connections.mysql.database'),
+            'username' => config('database.connections.mysql.username')
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => '❌ ERRO',
+            'error' => $e->getMessage(),
+            'config' => [
+                'host' => config('database.connections.mysql.host'),
+                'port' => config('database.connections.mysql.port'),
+                'database' => config('database.connections.mysql.database'),
+                'username' => config('database.connections.mysql.username')
+            ]
+        ], 500);
+    }
+});
+
+
+
+Route::get('/health-check', function() {
+    try {
+        \DB::connection()->getPdo();
+        
+        return response()->json([
+            'status' => 'healthy',
+            'database' => '✅ connected',
+            'storage_writable' => is_writable(storage_path()),
+            'cache_writable' => is_writable(base_path('bootstrap/cache')),
+            'app_key' => config('app.key') ? '✅ set' : '❌ missing',
+            'environment' => config('app.env')
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error',
+            'database_error' => $e->getMessage(),
+            'app_key' => config('app.key')
+        ], 500);
+    }
 });
