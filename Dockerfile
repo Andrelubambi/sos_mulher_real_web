@@ -32,5 +32,5 @@ RUN php artisan config:clear && php artisan cache:clear
 # Expor a porta do Docker (isso é apenas informativo)
 EXPOSE 8000
 
-# Comando para iniciar o servidor, usando a variável de ambiente $PORT do Railway
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port", "${PORT}"]
+# Comando para iniciar o servidor, usando a porta 8000 fixa para evitar erros de tipo
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port", "8000"]
