@@ -15,7 +15,7 @@ COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
 # Definir diretório de trabalho
 WORKDIR /var/www
 
-# Copiar arquivos do projeto
+# Copiar todos os arquivos do projeto
 COPY . .
 
 # Instalar dependências PHP e Node

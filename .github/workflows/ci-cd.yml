@@ -30,7 +30,7 @@ jobs:
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.2
+          php-version: 8.1
           extensions: mbstring, bcmath, pdo_mysql
           ini-values: post_max_size=256M, upload_max_filesize=256M
 
@@ -75,7 +75,7 @@ jobs:
 
       - name: Build Docker image with cache
         run: |
-          docker build -f ./docker/Dockerfile -t ${DOCKER_IMAGE}:${GITHUB_REF_NAME} ./docker
+          docker build -t ${DOCKER_IMAGE}:${GITHUB_REF_NAME} .
 
       - name: Push Docker image
         run: |
