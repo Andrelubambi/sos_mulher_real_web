@@ -54,7 +54,7 @@
             @if (auth()->user()->role == 'vitima')
                 <!-- SOS Button -->
                 <div class="user-notification">
-                    <form action="{{ route('mensagem_sos') }}" method="POST" style="display:inline-block; margin-left: 10px;">
+                    <form action="{{ route('mensagem_sos.send') }}" method="POST" style="display:inline-block; margin-left: 10px;">
                         @csrf
                         <input type="hidden" name="mensagem" value="conteudo da mensagem sos">
                         <button type="submit" title="Enviar SOS" style="background:none; border:none; cursor:pointer;">

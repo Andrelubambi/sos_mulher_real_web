@@ -95,11 +95,14 @@ Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->n
     Route::view('/profile', 'profile')->name('profile'); 
 
 
-    Route::get('/mensagem_sos',function(){
-        return redirect()->back();
-    })->name('mensagem_sos');
 
-    Route::post('/mensagem_sos',[MensagemSosController::class,'enviarMensagemSos'])->name('mensagem_sos');
+// ROTA GET - para visualizar (se necessário)
+Route::get('/mensagem_sos',function(){
+    return redirect()->back();
+})->name('mensagem_sos.view');  // NOME ALTERADO
+
+// ROTA POST - para enviar mensagem
+Route::post('/mensagem_sos',[MensagemSosController::class,'enviarMensagemSos'])->name('mensagem_sos.send'); // NOME ALTERADO
     Route::post('/mensagem_lida',[MensagemSosController::class,'mensagemLida'])->name('mensagem_lida');
     Route::get('/mensagens_nao_lidas',[MensagemSosController::class,'pegarMensagensNaoLidas'])->name('mensagens_nao_lidas');
     Route::get('/responder_mensagem_sos/{id}', [ChatController::class, 'responderMensagemSos'])->name('responder_mensagem_sos');
