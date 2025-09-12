@@ -249,3 +249,13 @@ Route::get('/debug-current-db', function() {
         'env_db_port' => env('DB_PORT')
     ]);
 });
+
+
+Route::get('/debug-password', function() {
+    return response()->json([
+        'db_password_set' => !empty(env('DB_PASSWORD')),
+        'db_password_length' => strlen(env('DB_PASSWORD') ?? ''),
+        'db_username' => env('DB_USERNAME'),
+        'db_host' => env('DB_HOST')
+    ]);
+});
