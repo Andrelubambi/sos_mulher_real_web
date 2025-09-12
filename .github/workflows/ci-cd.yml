@@ -79,27 +79,22 @@ jobs:
         run: |
           docker push ${DOCKER_IMAGE}:${GITHUB_REF_NAME}
 
-  # Deploy simplificado - apenas notificação já que o Railway faz deploy automático
+  # Deploy simplificado - apenas notificação no console
   deploy-notify:
     runs-on: ubuntu-latest
     needs: docker-build
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/staging'
     steps:
-      - name: Notify Successful Build
+      - name: Notify Successful Build and Deploy
         run: |
+          echo "🎉 PIPELINE CONCLUÍDO COM SUCESSO!"
           echo "✅ Build Docker concluído com sucesso!"
           echo "📦 Imagem: $DOCKER_IMAGE:$GITHUB_REF_NAME"
-          echo "🌐 Deploy automático no Railway em andamento..."
-          echo "🚀 App disponível em: sosmulherrealweb-production.up.railway.app"
-
-      - name: Notify Slack
-        uses: slackapi/slack-github-action@v1.25.0
-        with:
-          channel-id: ${{ secrets.SLACK_CHANNEL }}
-          slack-token: ${{ secrets.SLACK_TOKEN }}
-          text: |
-            🚀 CI/CD Concluído!
-            • Branch: ${{ github.ref_name }}
-            • Imagem Docker: ${{ env.DOCKER_IMAGE }}:${{ github.ref_name }}
-            • Status: ✅ Sucesso
-            • App: https://sosmulherrealweb-production.up.railway.app
+          echo "🚀 Deploy automático no Railway em andamento..."
+          echo "🌐 App disponível em: https://sosmulherrealweb-production.up.railway.app"
+          echo ""
+          echo "📊 Resumo:"
+          echo "• Branch: $GITHUB_REF_NAME"
+          echo "• Commit: $GITHUB_SHA"
+          echo "• Trigger: $GITHUB_EVENT_NAME"
+          echo "• Status: ✅ Tudo funcionando perfeitamente!"
