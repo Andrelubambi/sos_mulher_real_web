@@ -237,3 +237,15 @@ Route::get('/test-mysql-connection', function() {
     
     return response()->json($results);
 });
+
+
+Route::get('/debug-current-db', function() {
+    return response()->json([
+        'current_db_host' => config('database.connections.mysql.host'),
+        'current_db_port' => config('database.connections.mysql.port'),
+        'current_db_database' => config('database.connections.mysql.database'),
+        'current_db_username' => config('database.connections.mysql.username'),
+        'env_db_host' => env('DB_HOST'),
+        'env_db_port' => env('DB_PORT')
+    ]);
+});
