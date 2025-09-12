@@ -321,3 +321,18 @@ Route::get('/health-check', function() {
         ], 500);
     }
 });
+
+Route::get('/check-env', function() {
+    return response()->json([
+        'app_name' => env('APP_NAME'),
+        'app_env' => env('APP_ENV'),
+        'app_key_set' => !empty(env('APP_KEY')),
+        'app_url' => env('APP_URL'),
+        'app_debug' => env('APP_DEBUG'),
+        'db_host' => env('DB_HOST'),
+        'db_port' => env('DB_PORT'),
+        'all_env' => collect($_ENV)->filter(function($value, $key) {
+            return in_array($key, ['APP_NAME', 'APP_ENV', 'APP_KEY', 'APP_DEBUG', 'APP_URL', 'DB_CONNECTION', 'DB_HOST', 'DB_PORT', 'DB_DATABASE', 'DB_USERNAME']);
+        })
+    ]);
+});
