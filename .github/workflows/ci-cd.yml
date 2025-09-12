@@ -62,7 +62,7 @@ jobs:
           if [ "${GITHUB_REF_NAME}" = "main" ]; then
             npm run build
           else
-            npm run dev -- --watch
+            npm run dev
           fi
 
   docker-build:
