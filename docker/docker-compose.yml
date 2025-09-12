@@ -35,8 +35,7 @@ services:
       - laravel
     depends_on:
       - app
-    restart: unless-stopped
-    # ⚠️ Não usar ports no Railway
+    restart: unless-stopped 
     expose:
       - "80"
 
