@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="vendors/styles/core.css" />
     <link rel="stylesheet" type="text/css" href="vendors/styles/icon-font.min.css" />
     <link rel="stylesheet" type="text/css" href="vendors/styles/style.css" />
+    <script src="vendors/scripts/process.js"></script>
 
 </head>
 
@@ -83,7 +84,6 @@
 
         </div>
     </div>
-    <script src="vendors/scripts/process.js"></script>
 </body>
 
 </html>
