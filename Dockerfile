@@ -26,8 +26,15 @@ RUN composer install --no-dev --optimize-autoloader \
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
+# Limpar cache
+RUN php artisan config:clear \
+    && php artisan cache:clear
+
 # Expor porta do PHP-FPM
 EXPOSE 9000
 
-# Comando padrão
-CMD ["php-fpm"]
+# Comando que verifica APP_KEY e inicia o PHP-FPM
+CMD php artisan config:cache && \
+    php artisan route:cache && \
+    php artisan view:cache && \
+    php-fpm
