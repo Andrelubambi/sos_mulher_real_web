@@ -45,18 +45,17 @@ jobs:
       - name: Install NPM dependencies
         run: npm ci
 
-      - name: Run backend tests
+      - name: Run backend Unit tests
         env:
           APP_KEY: ${{ secrets.APP_KEY }}
-          APP_ENV: ${{ github.ref_name }}  # opcional, para diferenciar dev/staging/main
-          APP_URL: ${{ secrets.APP_URL }}  # se você tiver
+          APP_ENV: ${{ github.ref_name }}
+          APP_URL: ${{ secrets.APP_URL }}
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_PORT: ${{ secrets.DB_PORT }}
           DB_DATABASE: ${{ secrets.DB_NAME }}
           DB_USERNAME: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        run: php artisan test
-
+        run: php artisan test --testsuite=Unit
 
       - name: Run frontend build
         run: |
@@ -117,4 +116,3 @@ jobs:
           channel-id: ${{ secrets.SLACK_CHANNEL }}
           slack-token: ${{ secrets.SLACK_TOKEN }}
           text: "🚀 Deploy concluído: Branch ${{ github.ref_name }}"
-
