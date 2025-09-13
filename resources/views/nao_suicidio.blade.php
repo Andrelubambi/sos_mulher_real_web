@@ -15,53 +15,16 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/icon-font.min.css') }}" />
     <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/dataTables.bootstrap4.min.css" />
     <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/responsive.bootstrap4.min.css" />
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}" />
-    <style>
-        .hope-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        .resources-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .resource-card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-        .resource-card:hover {
-            transform: translateY(-5px);
-        }
-        .emergency-contact {
-            background: #ff5b5b;
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .coping-strategies {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-        }
-        .strategy-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-left: 4px solid #667eea;
-            border-radius: 4px;
-        }
-    </style>
-    <!-- Restante dos scripts e estilos do código original -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/global.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/layout.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/components.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/utilities.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/pages.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/custom.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/chat.css') }}" />  
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/suicide-prevention.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/responsive.css') }}" />
+     <!-- Restante dos scripts e estilos do código original -->
 </head>
 <body>
     <!-- Inclua o pre-loader, header e sidebar do código original aqui -->

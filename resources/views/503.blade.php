@@ -42,7 +42,14 @@
 			type="text/css"
 			href="vendors/styles/icon-font.min.css"
 		/>
-		<link rel="stylesheet" type="text/css" href="vendors/styles/style.css" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/global.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/layout.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/components.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/utilities.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/pages.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/custom.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/chat.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/responsive.css') }}" />
 
 		<!-- Global site tag (gtag.js) - Google Analytics -->
 		<script

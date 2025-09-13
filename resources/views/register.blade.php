@@ -8,19 +8,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <link rel="icon" type="image/png" href="vendors/images/android-chrome-192x192.png" />
     <link rel="stylesheet" type="text/css" href="vendors/styles/core.css" />
+    <link rel="stylesheet" href="vendors/styles/core.css" />
+ 
+<link rel="stylesheet" href="vendors/styles/custom.css" />
+
     <link rel="stylesheet" type="text/css" href="vendors/styles/icon-font.min.css" />
-    <link rel="stylesheet" type="text/css" href="vendors/styles/style.css" />
+        <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/global.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/layout.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/components.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/utilities.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/pages.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/custom.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/chat.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/responsive.css') }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 
 </head>
  
-<body class="login-page custom-background">
+<body class="login-page custom-background">  
     <div class="login-header box-shadow">
         <div class="container-fluid d-flex justify-content-between align-items-center">
             <div class="brand-logo">
                 <a href="{{ route('login') }}">
-                    <img src="vendors/images/android-chrome-192x192.png" alt="" style="height: 60px;" />
+                   <img src="vendors/images/android-chrome-192x192.png" alt="Logo" class="logo-img" />
+
                 </a>
             </div>
             <div class="login-menu">

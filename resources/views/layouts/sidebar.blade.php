@@ -1,7 +1,8 @@
 <div class="left-side-bar">
     <div class="brand-logo">
         <a href="{{ route('admin.dashboard') }}">
-            <img src="{{ asset('vendors/images/android-chrome-192x192.png') }}" alt="Logo" style="height: 60px;" />
+           <img src="vendors/images/android-chrome-192x192.png" alt="Logo" class="logo-img" />
+
         </a>
         <div class="sidebar-close" data-toggle="left-side-bar-close">
             <i class="fas fa-times"></i>

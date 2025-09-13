@@ -1,0 +1,352 @@
+/* CUSTOM STYLES - SEUS ESTILOS PERSONALIZADOS */
+/* ##########################   mine ####################################  */
+
+/* User List Component */
+.user-list {
+    width: 30%;
+    background-color: #ffffff;
+    border-right: 1px solid #ddd;
+    display: flex;
+    flex-direction: column;
+}
+
+.user-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.user-item:hover {
+    background-color: #f1f1f1;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
+
+.user-info h5 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+}
+
+.user-info p {
+    margin: 0;
+    font-size: 12px;
+    color: #666;
+}
+
+/* Logo Responsivo */
+.logo-img {
+    height: 60px;
+    transition: height 0.3s ease;
+}
+
+/* SOS Button Styles */
+#btn-enviar-sos {
+    display: block;
+    width: 100%;
+    padding: 12px 0;
+    background-color: #d93025;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(217, 48, 37, 0.4);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    margin-top: 15px;
+}
+
+#btn-enviar-sos:hover {
+    background-color: #b1261d;
+    box-shadow: 0 6px 8px rgba(177, 38, 29, 0.6);
+}
+
+/* Modal Response Buttons */
+#enviarResposta {
+    background-color: #dc3545;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#enviarResposta:hover {
+    background-color: #c82333;
+}
+
+#fecharModal {
+    background-color: #6c757d;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#fecharModal:hover {
+    background-color: #5a6268;
+}
+
+/* Tab Buttons Custom */
+.tab-buttons button {
+    background-color: transparent;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    cursor: pointer;
+    color: #6c757d;
+    transition: all 0.2s ease-in-out;
+}
+
+.tab-buttons button.active {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* Sidebar Custom Colors */
+.left-side-bar li a,
+.left-side-bar li a .micon,
+.left-side-bar li a .mtext {
+    color: #000000 !important;
+    fill: #000000 !important;
+}
+
+.left-side-bar .bi {
+    color: #000000 !important;
+}
+
+.left-side-bar .submenu a {
+    color: #000000 !important;
+}
+
+.left-side-bar li a:hover,
+.left-side-bar .submenu a:hover {
+    background-color: #f0f0f0;
+    color: #000000 !important;
+}
+
+/* Custom Form Styles */
+.input-group.custom {
+    position: relative;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group.custom label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.input-group.custom .form-control {
+    padding-right: 45px;
+    height: 45px;
+    font-size: 16px;
+}
+
+.input-group-append.custom {
+    position: absolute;
+    top: 37px;
+    right: 10px;
+    transform: translateY(0%);
+    z-index: 2;
+    color: #888;
+    pointer-events: none;
+}
+
+/* Custom Alert Variations */
+.mensagem-alerta.sucesso {
+    background: #28a745;
+}
+
+.mensagem-alerta.erro {
+    background: #dc3545;
+}
+
+.mensagem-alerta.info {
+    background: #17a2b8;
+}
+
+/* Custom Table Styles */
+.table-custom thead th {
+    background-color: #e1e1f5;
+    font-weight: 600;
+    border-bottom: 2px solid #ddd;
+}
+
+.table-custom tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Custom Card Variations */
+.card-primary {
+    border-left: 4px solid #007bff;
+}
+
+.card-success {
+    border-left: 4px solid #28a745;
+}
+
+.card-danger {
+    border-left: 4px solid #dc3545;
+}
+
+.card-warning {
+    border-left: 4px solid #ffc107;
+}
+
+/* Loading States */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.loading::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Custom Scrollbar */
+.user-items::-webkit-scrollbar {
+    width: 6px;
+}
+
+.user-items::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.user-items::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.user-items::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Status Indicators */
+.status-online {
+    position: relative;
+}
+
+.status-online::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    background-color: #28a745;
+    border: 2px solid #fff;
+    border-radius: 50%;
+}
+
+.status-offline::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    background-color: #6c757d;
+    border: 2px solid #fff;
+    border-radius: 50%;
+}
+
+.status-busy::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    background-color: #dc3545;
+    border: 2px solid #fff;
+    border-radius: 50%;
+}
+
+/* Custom Transitions */
+.fade-in {
+    animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .user-item:hover {
+        background-color: #000;
+        color: #fff;
+    }
+    
+    .tab-buttons button.active {
+        border-bottom: 2px solid #000;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .loading::after {
+        animation: none;
+        border: 2px solid #ccc;
+        border-top-color: #999;
+    }
+}

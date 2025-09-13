@@ -1,26 +1,64 @@
 services:
-  nginx:
-    ports:
-      - "8000:80"
-
-  mysql:
-    ports:
-      - "3306:3306"
-
-  redis:
-    ports:
-      - "6379:6379"
-
-  npm:
-    image: node:18
-    container_name: laravel_npm
-    working_dir: /var/www
+  laravel_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_app
     volumes:
       - .:/var/www
-    ports:
-      - "5173:5173"
-    command: npm run dev 
     networks:
-      - laravel
+      - laravel_network
+    environment:
+      - APP_ENV=production
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=laravel
+      - DB_USERNAME=root
+      - DB_PASSWORD=secret
+      # Adicionando REDIS_HOST para o container do Laravel
+      - REDIS_HOST=redis
     depends_on:
-      - app
+      - db
+      - redis
+    command: ["php-fpm"]
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: laravel_nginx
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - laravel_network
+    depends_on:
+      - laravel_app
+
+  db:
+    image: mysql:8.0
+    container_name: laravel_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: root
+      MYSQL_PASSWORD: secret
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - laravel_network
+
+  redis:
+    image: redis:latest
+    container_name: laravel_redis
+    networks:
+      - laravel_network
+
+networks:
+  laravel_network:
+    driver: bridge
+
+volumes:
+  db_data:

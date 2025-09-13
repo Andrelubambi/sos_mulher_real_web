@@ -229,3 +229,13 @@ body {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--primary-color);
 }
+
+.logo-img {
+  height: 60px;
+}
+
+@media (max-width: 576px) {
+  .logo-img {
+    height: 40px; /* menor em telas pequenas */
+  }
+}

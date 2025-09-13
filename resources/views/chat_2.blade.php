@@ -8,7 +8,14 @@
 
     <!-- CSS -->
     <link rel="stylesheet" href="{{ asset('vendors/styles/core.css') }}">
-    <link rel="stylesheet" href="{{ asset('vendors/styles/style.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/global.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/layout.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/components.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/utilities.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/pages.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/custom.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/chat.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/responsive.css') }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.css" />
 
     <!-- jQuery -->
@@ -16,214 +23,8 @@
 
     <!-- Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="chat-styles.css">
 
-    <style>
-        /* Reset básico */
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .chat-area {
-            display: flex;
-            flex-direction: column;
-            height: 90vh;
-            max-width: 700px;
-            width: 100%;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            overflow: hidden;
-            border: 1px solid #ddd;
-        }
-
-        .chat-header {
-            padding: 18px 24px;
-            background-color: #dc3545;
-            color: #fff;
-            font-weight: 700;
-            font-size: 20px;
-            border-bottom: 1px solid #842029;
-            user-select: none;
-        }
-
-        .chat-messages {
-            flex-grow: 1;
-            padding: 20px 24px;
-            overflow-y: auto;
-            background-color: #f9fbff;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        /* Barra de rolagem estilizada */
-        .chat-messages::-webkit-scrollbar {
-            width: 8px;
-        }
-        .chat-messages::-webkit-scrollbar-thumb {
-            background-color: rgba(245, 137, 140, 0.3);
-            border-radius: 4px;
-        }
-        .chat-messages::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .message {
-            max-width: 70%;
-            padding: 14px 18px;
-            border-radius: 16px;
-            line-height: 1.4;
-            word-wrap: break-word;
-            font-size: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Mensagens enviadas */
-        .sent {
-            align-self: flex-end;
-            background: linear-gradient(135deg, #dc3545, #842029);
-            color: #fff;
-            border-bottom-right-radius: 4px;
-            animation: slideInRight 0.3s ease forwards;
-        }
-
-        /* Mensagens recebidas */
-        .received {
-            align-self: flex-start;
-            background-color: #e2e3e5;
-            color: #333;
-            border-bottom-left-radius: 4px;
-            animation: slideInLeft 0.3s ease forwards;
-        }
-
-        /* Nome remetente */
-        .message strong {
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        /* Conteúdo da mensagem */
-        .message .content {
-            white-space: pre-wrap;
-        }
-
-        /* Data/hora da mensagem */
-        .message .timestamp {
-            font-size: 11px;
-            margin-top: 8px;
-            opacity: 0.6;
-            align-self: flex-end;
-            user-select: none;
-        }
-
-        /* Formulário de envio */
-        .chat-input {
-            display: flex;
-            padding: 16px 20px;
-            border-top: 1px solid #ddd;
-            background-color: #fff;
-        }
-
-        .chat-input textarea {
-            flex-grow: 1;
-            resize: none;
-            border: 1.5px solid #ccc;
-            border-radius: 10px;
-            padding: 12px 16px;
-            font-size: 15px;
-            font-family: inherit;
-            transition: border-color 0.2s;
-            min-height: 60px;
-            max-height: 120px;
-        }
-
-        .chat-input textarea:focus {
-            outline: none;
-            border-color: #dc3545;
-            box-shadow: 0 0 6px rgba(247, 121, 121, 0.5);
-        }
-
-        .chat-input button {
-            margin-left: 14px;
-            padding: 0 28px;
-            background-color: #dc3545;
-            border: none;
-            border-radius: 10px;
-            color: #fff;
-            font-weight: 600;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-        }
-
-        .chat-input button:hover:not(:disabled) {
-            background-color: #842029;
-        }
-
-        .chat-input button:disabled {
-            background-color:rgb(243, 138, 148);
-            cursor: not-allowed;
-        }
-
-        /* Responsividade */
-        @media (max-width: 768px) {
-            .chat-area {
-                height: 100vh;
-                border-radius: 0;
-                max-width: 100%;
-            }
-
-            .chat-header {
-                font-size: 18px;
-                padding: 14px 18px;
-            }
-
-            .chat-messages {
-                padding: 16px 18px;
-                gap: 12px;
-            }
-
-            .chat-input {
-                padding: 12px 16px;
-            }
-        }
-
-        /* Animações */
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        @keyframes slideInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-    </style>
 </head>
 
 <body>

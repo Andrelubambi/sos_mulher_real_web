@@ -15,92 +15,23 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/icon-font.min.css') }}" />
     <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/dataTables.bootstrap4.min.css" />
     <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/responsive.bootstrap4.min.css" />
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}" />
-    <style>
-        .testimonial-hero {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            padding: 40px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        .testimonials-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .testimonial-card {
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            position: relative;
-        }
-        .testimonial-card:before {
-            content: '"';
-            font-size: 60px;
-            position: absolute;
-            top: 10px;
-            left: 15px;
-            opacity: 0.1;
-            font-family: Georgia, serif;
-        }
-        .testimonial-content {
-            font-style: italic;
-            margin-bottom: 15px;
-            line-height: 1.6;
-        }
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            margin-top: 15px;
-        }
-        .author-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: #667eea;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            margin-right: 15px;
-        }
-        .share-section {
-            background: #f8f9fa;
-            padding: 30px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-        }
-        .filter-buttons {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        .filter-btn {
-            padding: 8px 15px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            background: white;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .filter-btn.active, .filter-btn:hover {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
-    </style>
+       <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/global.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/layout.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/components.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/utilities.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/pages.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/custom.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/chat.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/testimonials.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/responsive.css') }}" />
+
+   
     <!-- Restante dos scripts e estilos do código original -->
 </head>
 <body>
     <!-- Inclua o pre-loader, header e sidebar do código original aqui -->
     
-    <div class="main-container">
+    <div class="main-container"> 
         <div class="xs-pd-20-10 pd-ltr-20">
             <div class="testimonial-hero">
                 <h1>Histórias de Superação</h1>
