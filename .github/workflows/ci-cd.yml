@@ -57,13 +57,14 @@ jobs:
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         run: php artisan test --testsuite=Unit || echo "⚠️ Unit tests failed, but continuing CI"
 
-      - name: Build frontend assets 
+      - name: Build frontend assets
         if: github.ref_name == 'main' || github.ref_name == 'staging'
         run: npm run build
 
   docker-build:
     runs-on: ubuntu-latest
     needs: build-test
+    if: github.event_name == 'push' && (github.ref_name == 'dev' || github.ref_name == 'staging' || github.ref_name == 'main')
     steps:
       - uses: actions/checkout@v3
 
@@ -79,7 +80,6 @@ jobs:
         run: |
           docker push ${DOCKER_IMAGE}:${GITHUB_REF_NAME}
 
-  # Deploy simplificado - apenas notificação no console
   deploy-notify:
     runs-on: ubuntu-latest
     needs: docker-build
