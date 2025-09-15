@@ -5,9 +5,9 @@
     "database": "redis",
     "databaseConfig": {
         "redis": {
-            "host": "redis.railway.internal",
-            "port": "6379",
-            "password": "DVFTZMFYoOgqyLnfmQJADlmQHwABjNSc",
+              "host": "${REDISHOST}",
+         "port": "${REDISPORT}",
+            "password": "${REDISPASSWORD}",
             "db": 0
         }
     },
