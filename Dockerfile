@@ -18,9 +18,9 @@ WORKDIR /var/www/html
 # Copiar arquivos do projeto
 COPY . .
 
-# Copiar configs
+# Copiar configs DA PASTA DOCKER ✅ (caminhos corrigidos)
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
-COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY docker/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 
 # Dar permissão
@@ -36,5 +36,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
-ENTRYPOINT ["entrypoint.sh"]
-CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisor.conf"]
