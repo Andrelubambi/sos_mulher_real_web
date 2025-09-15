@@ -18,18 +18,28 @@ WORKDIR /var/www/html
 # Copiar arquivos do projeto
 COPY . .
 
-# Copiar configs DA PASTA DOCKER ✅ (caminhos corrigidos)
+# Copiar configs DA PASTA DOCKER
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
 COPY docker/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY laravel-echo-server.json /var/www/html/laravel-echo-server.json
 
-# Dar permissão
+# Corrigir permissões
+RUN mkdir -p /var/log/php-fpm && \
+    chown -R www-data:www-data /var/log/php-fpm && \
+    chmod -R 755 /var/log && \
+    chown -R www-data:www-data /var/www/html/storage && \
+    chown -R www-data:www-data /var/www/html/bootstrap/cache && \
+    chmod -R 775 /var/www/html/storage && \
+    chmod -R 775 /var/www/html/bootstrap/cache
+
+# Dar permissão ao entrypoint
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Instalar pacotes Node.js (ex: Echo Server)
+# Instalar pacotes Node.js
 RUN npm install -g laravel-echo-server
 
-# Expor porta (Railway define $PORT, mas expomos 8000 como padrão)
+# Expor porta
 EXPOSE 8000
 
 # Healthcheck
