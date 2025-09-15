@@ -1,0 +1,12 @@
+{
+    "$schema": "https://railway.app/railway.schema.json",
+    "build": {
+        "builder": "nixpacks",
+        "buildCommand": "echo 'Building with Nixpacks'"
+    },
+    "deploy": {
+        "startCommand": "sh -c \"sed -i 's/listen 8000;/listen $PORT;/g' /etc/nginx/sites-available/default && /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisor.conf -n\"",
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 5
+    }
+}
