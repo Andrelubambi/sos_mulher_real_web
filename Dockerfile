@@ -19,9 +19,9 @@ WORKDIR /var/www/html
 COPY . .
 
 # Copiar configs
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 
 # Dar permissão
 RUN chmod +x /usr/local/bin/entrypoint.sh
