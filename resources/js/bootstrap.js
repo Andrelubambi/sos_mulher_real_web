@@ -5,7 +5,11 @@ window.io = io;
 
 window.Echo = new Echo({
     broadcaster: 'socket.io',
-    host: window.location.hostname + ':' + (window.laravel_echo_port || 6001),
+    host: window.location.hostname, // Mesmo domínio da app
+    port: window.location.port || (window.location.protocol === 'https:' ? 443 : 80),
+    path: '/socket.io',
+    transports: ['websocket', 'polling'],
+    withCredentials: true
 });
 
 console.log('Echo initialized', window.Echo);
