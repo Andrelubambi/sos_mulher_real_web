@@ -1,27 +1,27 @@
 {
-    "authHost": "https://sosmulherrealweb-production.up.railway.app",
+    "authHost": "http://localhost:8000",
     "authEndpoint": "/broadcasting/auth",
     "clients": [],
     "database": "redis",
-     "databaseConfig": {
+    "databaseConfig": {
         "redis": {
             "host": "127.0.0.1",
             "port": "6379",
-            "password": "null",
+            "password": null,
             "db": 0
         }
     },
-    "devMode": false,
-    "host": "0.0.0.0",
+    "devMode": true,
+    "host": "127.0.0.1",
     "port": "6001",
-    "protocol": "https",
+    "protocol": "http",
     "socketio": {},
     "sslCertPath": "",
     "sslKeyPath": "",
     "sslCertChainPath": "",
     "sslPassphrase": "",
     "subscribers": {
-        "https": true,
+        "http": true,
         "redis": true
     },
     "apiOriginAllow": {
