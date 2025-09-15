@@ -131,7 +131,7 @@
             </li>
 
             <!-- Consultas -->
-            @if(in_array(auth()->user()->role, ['admin', 'doutor', 'estagiario']))
+            @if(in_array(auth()->user()->role, ['admin', 'doutor', 'estagiario','vitima']))
             <li class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle">
                     <span class="micon bi bi-calendar-check"></span>

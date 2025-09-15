@@ -100,7 +100,7 @@
             animation: slideInRight 0.3s ease forwards;
         }
 
-        /* Mensagens recebidas */
+        /* Mensagens recebidas */ 
         .received {
             align-self: flex-start;
             background-color: #e2e3e5;
