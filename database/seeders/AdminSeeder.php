@@ -14,12 +14,14 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        // Cria um utilizador com a role 'admin'
-        User::create([
-            'name' => 'Admin User',
-            'telefone' => '953478961',
-            'password' => Hash::make('password'),
-            'role' => 'admin',
-        ]);
+        // Encontra o usuário pelo telefone, ou o cria se ele não existir
+        User::firstOrCreate(
+            ['telefone' => '999888777'], // Critério de busca: telefone
+            [
+                'name' => 'Admin User',
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+            ]
+        );
     }
 }
