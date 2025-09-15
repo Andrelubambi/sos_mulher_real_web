@@ -18,6 +18,9 @@ WORKDIR /var/www/html
 # Copiar arquivos do projeto
 COPY . .
 
+# ✅ EXECUTAR COMPOSER PARA INSTALAR DEPENDÊNCIAS (LINHA NOVA)
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
 # Copiar configs DA PASTA DOCKER
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
 COPY docker/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
