@@ -21,4 +21,15 @@ chmod -R 775 /var/www/html/bootstrap/cache
 # Rodar migrations
 php artisan migrate --force || true
 
+echo "Starting PHP-FPM directly to test..."
+docker-php-entrypoint php-fpm &
+sleep 3  # Aguarda o PHP-FPM iniciar
+
+# No entrypoint.sh, antes do exec "$@"
+echo "Checking if PHP-FPM is alive..."
+curl -f http://localhost:9000/ping || echo "PHP-FPM not responding"
+
+echo "Checking if Nginx is alive..."
+curl -f http://localhost:8000/health || echo "Nginx not responding"
+
 exec "$@"
