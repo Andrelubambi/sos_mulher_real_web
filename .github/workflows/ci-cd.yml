@@ -5,7 +5,7 @@ on:
     branches:
       - dev
       - staging
-      - main # O deploy de produção é disparado por este push do merge do PR
+      - main
   pull_request:
     branches:
       - main
@@ -102,9 +102,22 @@ jobs:
         run: |
           echo "Simulando deploy para o ambiente de staging..."
           docker pull ${{ env.DOCKER_IMAGE }}:${{ github.ref_name }}
-          docker run --rm ${{ env.DOCKER_IMAGE }}:${{ github.ref_name }} php artisan migrate --force
-          docker run --rm ${{ env.DOCKER_IMAGE }}:${{ github.ref_name }} php artisan db:seed --class=AdminSeeder
+          docker run --rm \
+            -e DB_HOST=${{ secrets.DB_HOST_STAGING }} \
+            -e DB_PORT=${{ secrets.DB_PORT_STAGING }} \
+            -e DB_DATABASE=${{ secrets.DB_DATABASE_STAGING }} \
+            -e DB_USERNAME=${{ secrets.DB_USERNAME_STAGING }} \
+            -e DB_PASSWORD=${{ secrets.DB_PASSWORD_STAGING }} \
+            ${{ env.DOCKER_IMAGE }}:${{ github.ref_name }} php artisan migrate --force
 
+          docker run --rm \
+            -e DB_HOST=${{ secrets.DB_HOST_STAGING }} \
+            -e DB_PORT=${{ secrets.DB_PORT_STAGING }} \
+            -e DB_DATABASE=${{ secrets.DB_DATABASE_STAGING }} \
+            -e DB_USERNAME=${{ secrets.DB_USERNAME_STAGING }} \
+            -e DB_PASSWORD=${{ secrets.DB_PASSWORD_STAGING }} \
+            ${{ env.DOCKER_IMAGE }}:${{ github.ref_name }} php artisan db:seed --class=AdminSeeder
+            
   deploy-production:
     runs-on: ubuntu-latest
     needs: [docker-build]
@@ -118,9 +131,22 @@ jobs:
         run: |
           echo "Simulando deploy para o ambiente de produção..."
           docker pull ${{ env.DOCKER_IMAGE }}:${{ github.ref_name }}
-          docker run --rm ${{ env.DOCKER_IMAGE }}:${{ github.ref_name }} php artisan migrate --force
-          docker run --rm ${{ env.DOCKER_IMAGE }}:${{ github.ref_name }} php artisan db:seed --class=AdminSeeder
+          docker run --rm \
+            -e DB_HOST=${{ secrets.DB_HOST }} \
+            -e DB_PORT=${{ secrets.DB_PORT }} \
+            -e DB_DATABASE=${{ secrets.DB_DATABASE }} \
+            -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            ${{ env.DOCKER_IMAGE }}:${{ github.ref_name }} php artisan migrate --force
 
+          docker run --rm \
+            -e DB_HOST=${{ secrets.DB_HOST }} \
+            -e DB_PORT=${{ secrets.DB_PORT }} \
+            -e DB_DATABASE=${{ secrets.DB_DATABASE }} \
+            -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+            -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            ${{ env.DOCKER_IMAGE }}:${{ github.ref_name }} php artisan db:seed --class=AdminSeeder
+            
   deploy-notify:
     runs-on: ubuntu-latest
     needs: [build-test, docker-build, deploy-staging, deploy-production]
