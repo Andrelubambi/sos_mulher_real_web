@@ -1,10 +1,11 @@
 # Base PHP 8.2 FPM
 FROM php:8.2-fpm
 
-# Instalar dependências do sistema
+# Instalar dependências do sistema e ferramentas
 RUN apt-get update && apt-get install -y \
     git curl libpng-dev libonig-dev libxml2-dev zip unzip \
     gnupg ca-certificates build-essential \
+    supervisor \
     && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
     && apt-get install -y nodejs \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
@@ -13,24 +14,28 @@ RUN apt-get update && apt-get install -y \
 COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
 
 # Definir diretório de trabalho
-WORKDIR /var/www
+WORKDIR /var/www/html
 
-# Copiar todos os arquivos do projeto
+# Copiar os arquivos do projeto
 COPY . .
 
-# Instalar dependências PHP e Node
+# Instalar dependências PHP e Node.js
 RUN composer install --no-dev --optimize-autoloader \
     && npm ci && npm run build
 
+# Configurar Supervisor para gerenciar os processos
+COPY supervisor.conf /etc/supervisor/conf.d/supervisor.conf
+
 # Ajustar permissões
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
-    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Limpar cache (para garantir que a nova configuração seja aplicada)
-RUN php artisan config:clear && php artisan cache:clear
+# Limpar cache e otimizar
+RUN php artisan config:clear && php artisan cache:clear && php artisan optimize
 
-# Expor a porta do Docker (isso é apenas informativo)
+# Expor a porta 8000 para a aplicação web e 6001 para o Laravel Echo Server
 EXPOSE 8000
+EXPOSE 6001
 
-# Comando para iniciar o servidor, usando a porta 8000 fixa para evitar erros de tipo
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port", "8000"]
+# Comando principal: Iniciar o Supervisor
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisor.conf", "-n"]
