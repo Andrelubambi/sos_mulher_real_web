@@ -10,3 +10,4 @@ fi
 php artisan migrate --force || true
 
 exec "$@"
+ 
