@@ -59,6 +59,7 @@ services:
     restart: always
     volumes:
       - .:/app
+      - ./wait-for-it.sh:/wait-for-it.sh 
     command: npx laravel-echo-server start
     ports:
       - "6001:6001"
