@@ -12,7 +12,10 @@ services:
     networks:
       - laravel
     depends_on:
-      - redis
+      redis:
+        condition: service_started
+      mysql:
+        condition: service_started
     env_file:
       - .env
 
@@ -22,7 +25,6 @@ services:
       dockerfile: Dockerfile
     container_name: laravel_queue
     restart: always
-    # Define o diretório de trabalho para que o 'artisan' seja encontrado
     working_dir: /var/www
     command: php artisan queue:work
     volumes:
@@ -30,7 +32,10 @@ services:
     networks:
       - laravel
     depends_on:
-      - redis
+      redis:
+        condition: service_started
+      mysql:
+        condition: service_started
 
   nginx:
     image: nginx:alpine
@@ -45,7 +50,8 @@ services:
     networks:
       - laravel
     depends_on:
-      - app
+      app:
+        condition: service_started
 
   redis:
     image: redis:alpine
@@ -55,21 +61,34 @@ services:
       - laravel
 
   echo:
-  image: node:18-alpine
-  container_name: laravel_echo
-  working_dir: /var/www
-  restart: always
-  volumes:
-    - .:/var/www
-    - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
-  # A sintaxe do comando foi corrigida para usar o script de espera corretamente
-  command: /bin/sh -c "/usr/local/bin/wait-for-it.sh laravel_redis:6379 -- npx laravel-echo-server start"
-  ports:
-    - "6001:6001"
-  networks:
-    - laravel
-  depends_on:
-    - redis
+    image: node:18-alpine
+    container_name: laravel_echo
+    working_dir: /var/www
+    restart: always
+    volumes:
+      - .:/var/www
+      - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
+    command: /bin/sh -c "/usr/local/bin/wait-for-it.sh laravel_redis:6379 -- npx laravel-echo-server start"
+    ports:
+      - "6001:6001"
+    networks:
+      - laravel
+    depends_on:
+      redis:
+        condition: service_started
+
+  mysql:
+    image: mysql:8.0
+    container_name: laravel_mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    env_file:
+      - .env
+    volumes:
+      - ./docker/mysql:/var/lib/mysql
+    networks:
+      - laravel
 
 networks:
   laravel:
