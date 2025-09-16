@@ -55,23 +55,21 @@ services:
       - laravel
 
   echo:
-    image: node:18-alpine
-    container_name: laravel_echo
-    # Define o diretório de trabalho da aplicação
-    working_dir: /var/www
-    restart: always
-    volumes:
-      - .:/var/www
-      # Mapeia o script para um local acessível dentro do contêiner
-      - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
-    # A sintaxe do comando foi corrigida para garantir que o script e o Echo Server sejam executados
-    command: /bin/sh -c "/usr/local/bin/wait-for-it.sh laravel_redis:6379 --timeout=30 -- npx laravel-echo-server start"
-    ports:
-      - "6001:6001"
-    networks:
-      - laravel
-    depends_on:
-      - redis
+  image: node:18-alpine
+  container_name: laravel_echo
+  working_dir: /var/www
+  restart: always
+  volumes:
+    - .:/var/www
+    - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
+  # A sintaxe do comando foi corrigida para usar o script de espera corretamente
+  command: /bin/sh -c "/usr/local/bin/wait-for-it.sh laravel_redis:6379 -- npx laravel-echo-server start"
+  ports:
+    - "6001:6001"
+  networks:
+    - laravel
+  depends_on:
+    - redis
 
 networks:
   laravel:
