@@ -68,7 +68,7 @@ services:
     volumes:
       - .:/var/www
       - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
-    command: /bin/sh -c "/usr/local/bin/wait-for-it.sh laravel_redis:6379 -- npx laravel-echo-server start"
+    command: ["/usr/local/bin/wait-for-it.sh", "laravel_redis:6379", "--", "npx", "laravel-echo-server", "start"]
     ports:
       - "6001:6001"
     networks:

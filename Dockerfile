@@ -5,7 +5,8 @@ FROM php:8.2-fpm-alpine
 RUN apk add --no-cache \
     oniguruma-dev libxml2-dev build-base \
     freetype-dev libpng-dev libjpeg-turbo-dev \
-    nodejs npm
+    nodejs npm \
+    netcat-openbsd
 
 # Instalar extensões PHP (inclui GD com JPEG/Freetype)
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
@@ -28,16 +29,10 @@ RUN mkdir -p /var/log/php-fpm \
  && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/log/php-fpm \
  && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
- 
-COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
-COPY docker/nginx.conf /etc/nginx/nginx.conf
-
-
 # Laravel Echo Server
 RUN npm install -g laravel-echo-server
+# Copiar o arquivo de configuração para o diretório de trabalho correto
 COPY laravel-echo-server.json /var/www/html/laravel-echo-server.json
 
 # Porta do Nginx
-EXPOSE 8000
- 
- 
+EXPOSE 80
