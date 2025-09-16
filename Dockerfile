@@ -1,15 +1,18 @@
-FROM php:8.2-fpm
+# Use uma imagem base Alpine (mais leve)
+FROM php:8.2-fpm-alpine
 
-# Instalar dependências do sistema e extensões PHP
-RUN apt-get update && apt-get install -y \
-    git curl libpng-dev libonig-dev libxml2-dev zip unzip \
-    gnupg ca-certificates build-essential supervisor nginx \
-    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+# Dependências do sistema e build
+RUN apk add --no-cache \
+    git curl zip unzip supervisor nginx bash \
+    oniguruma-dev libxml2-dev build-base \
+    freetype-dev libpng-dev libjpeg-turbo-dev \
+    nodejs npm
 
-# Instalar Composer
+# Instalar extensões PHP (inclui GD com JPEG/Freetype)
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+ && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+
+# Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Diretório de trabalho
@@ -18,46 +21,28 @@ WORKDIR /var/www/html
 # Copiar arquivos do projeto
 COPY . .
 
-# ✅ EXECUTAR COMPOSER PARA INSTALAR DEPENDÊNCIAS (LINHA NOVA)
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# Instalar dependências PHP
+RUN composer install --no-dev --optimize-autoloader
 
-# Copiar configs DA PASTA DOCKER
+# Ajustar permissões
+RUN mkdir -p /var/log/php-fpm \
+ && chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/log/php-fpm \
+ && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Configurações Nginx, Supervisor e Entrypoint
 COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
+COPY docker/nginx.main.conf /etc/nginx/nginx.conf
 COPY docker/supervisor.conf /etc/supervisor/conf.d/supervisor.conf
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
-COPY laravel-echo-server.json /var/www/html/laravel-echo-server.json
-
-# Corrigir permissões
-RUN mkdir -p /var/log/php-fpm && \
-    chown -R www-data:www-data /var/log/php-fpm && \
-    chmod -R 755 /var/log && \
-    chown -R www-data:www-data /var/www/html/storage && \
-    chown -R www-data:www-data /var/www/html/bootstrap/cache && \
-    chmod -R 775 /var/www/html/storage && \
-    chmod -R 775 /var/www/html/bootstrap/cache
-
-# Dar permissão ao entrypoint
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Instalar pacotes Node.js
+# Laravel Echo Server
 RUN npm install -g laravel-echo-server
+COPY laravel-echo-server.json /var/www/html/laravel-echo-server.json
 
-# ...existing code...
-RUN apt-get update && apt-get install -y \
-    git curl libpng-dev libonig-dev libxml2-dev zip unzip \
-    gnupg ca-certificates build-essential supervisor nginx redis-server \
-    && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-    && apt-get install -y nodejs \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
-# ...existing code...
-
-# Expor porta
+# Porta do Nginx
 EXPOSE 8000
 
-# Healthcheck
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
-
+# Entrypoint + processo principal (supervisord gerencia nginx/php-fpm/queues)
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisor.conf"]
