@@ -67,8 +67,7 @@ services:
     restart: always
     volumes:
       - .:/var/www
-      - ./wait-for-it.sh:/usr/local/bin/wait-for-it.sh
-    command: ["/bin/sh", "-c", "chmod +x /usr/local/bin/wait-for-it.sh && /usr/local/bin/wait-for-it.sh laravel_redis:6379 -- npx laravel-echo-server start"]
+    command: ["/bin/sh", "-c", "apk add --no-cache netcat-openbsd && while ! nc -z laravel_redis 6379; do echo 'Waiting for Redis...'; sleep 2; done && echo 'Redis is ready!' && npx laravel-echo-server start"]
     ports:
       - "6001:6001"
     networks:
