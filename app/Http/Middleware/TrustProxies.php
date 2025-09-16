@@ -12,7 +12,7 @@ class TrustProxies extends Middleware
      *
      * @var array<int, string>|string|null
      */
-    // Confiar em proxies (Railway/Ingress)
+ 
     protected $proxies = '*';
 
     /**
