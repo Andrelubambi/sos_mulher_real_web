@@ -46,3 +46,6 @@ auth.json
 # Sistema
 .DS_Store
 Thumbs.db
+
+# Laravel Echo Server lock
+/laravel-echo-server.lock
