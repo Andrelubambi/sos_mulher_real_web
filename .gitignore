@@ -49,3 +49,24 @@ Thumbs.db
 
 # Laravel Echo Server lock
 /laravel-echo-server.lock
+
+# Logs adicionais
+*.log
+
+# Cache do Laravel (se criar outros)
+bootstrap/cache/*.php
+
+# Arquivos de build de pacotes JS
+/package-lock.json
+/yarn.lock
+/pnpm-lock.yaml
+
+# Docker
+.env.prod
+.env.staging
+.env.dev
+docker-compose.override.yml
+
+# Laravel Echo Server configs locais
+laravel-echo-server.lock
+laravel-echo-server.log
