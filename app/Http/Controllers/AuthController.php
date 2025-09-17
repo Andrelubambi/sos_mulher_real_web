@@ -25,9 +25,7 @@ class AuthController extends Controller
  
     
         // 2. Tenta autenticar o usuário
-    //   if (Auth::attempt(['telefone' => $credentials['telefone'], 'password' => $credentials['password']])) {
-
-       if (Auth::attempt(['telefone' => $credentials['telefone']])) {
+       if (Auth::attempt(['telefone' => $credentials['telefone'], 'password' => $credentials['password']])) {
             $request->session()->regenerate();
             $user = Auth::user();
 
