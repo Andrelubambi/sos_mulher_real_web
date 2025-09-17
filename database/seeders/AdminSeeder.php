@@ -9,47 +9,63 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     { 
-        // Criar usuário Admin
-        User::firstOrCreate(
-            ['telefone' => '999888777'],  
+        // Usuário Admin
+        User::updateOrCreate(
+            ['telefone' => '999990000'],
             [
-                'name' => 'Administrador',
-                 
-                'password' => Hash::make('Admin@123'),
+                'name' => 'Admin Master',
+                'telefone' => '999990000',
+                'password' => Hash::make('Master@2024'),
                 'role' => 'admin',
-                 
             ]
         );
 
-        // Criar usuário Estagiário
-        User::firstOrCreate(
-            ['telefone' => '999888666'],  
+        // Usuário Estagiário
+        User::updateOrCreate(
+            ['telefone' => '999992222'],
             [
-                'name' => 'Estagiário',
-                 
-                'password' => Hash::make('Estagiario@123'),
+                'name' => 'Carlos Estagiário',
+                'telefone' => '999992222',
+                'password' => Hash::make('Estagio@2024'),
                 'role' => 'estagiario',
-                 
             ]
         );
 
-        // Criar usuário Doutor
-        User::firstOrCreate(
-            ['telefone' => '999888555'],  
+        // Usuário Doutor 1
+        User::updateOrCreate(
+            ['telefone' => '999994444'],
             [
-                'name' => 'Dr. João Silva',
-                
-                'password' => Hash::make('Doutor@123'),
+                'name' => 'Dra. Maria Santos',
+                'telefone' => '999994444',
+                'password' => Hash::make('DraMaria@2024'),
                 'role' => 'doutor',
-                 
             ]
         );
 
-        $this->command->info('✅ Usuários criados com sucesso!');
+        // Usuário Doutor 2
+        User::updateOrCreate(
+            ['telefone' => '999995555'],
+            [
+                'name' => 'Dr. Pedro Costa',
+                'telefone' => '999995555',
+                'password' => Hash::make('DrPedro@2024'),
+                'role' => 'doutor',
+            ]
+        );
+
+        // Usuário Vítima
+        User::updateOrCreate(
+            ['telefone' => '999996666'],
+            [
+                'name' => 'João Silva',
+                'telefone' => '999996666',
+                'password' => Hash::make('Vitima@2024'),
+                'role' => 'vitima',
+            ]
+        );
+
+        $this->command->info('✅ Usuários criados/atualizados com sucesso!');
     }
 }
