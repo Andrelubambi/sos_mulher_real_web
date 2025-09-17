@@ -13,10 +13,9 @@ class AdminSeeder extends Seeder
      * Run the database seeds.
      */
     public function run(): void
-    {
-        // Encontra o usuário pelo telefone, ou o cria se ele não existir
+    { 
         User::firstOrCreate(
-            ['telefone' => '999888777'], // Critério de busca: telefone
+            ['telefone' => '999888777'],  
             [
                 'name' => 'Admin User',
                 'password' => Hash::make('password'),

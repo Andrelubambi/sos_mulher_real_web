@@ -24,6 +24,10 @@ COPY . .
 # Instalar dependências PHP
 RUN composer install --no-dev --optimize-autoloader
 
+# NOVAS LINHAS PARA RESOLVER O VITE:
+RUN npm install
+RUN npm run build
+
 # Ajustar permissões (corrigido para /var/www)
 RUN mkdir -p /var/log/php-fpm \
  && chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/log/php-fpm \
