@@ -54,7 +54,7 @@ services:
 
   nginx:
     image: nginx:alpine
-    container_name: laravel_nginx
+    container_name: laravel_nginx  
     restart: always
     ports:
       - "80:80"

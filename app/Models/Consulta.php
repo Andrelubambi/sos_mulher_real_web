@@ -23,7 +23,7 @@ class Consulta extends Model
     public function criador()
     {
         return $this->belongsTo(User::class, 'criada_por');
-    }
+    } 
 
     public function medico()
     {

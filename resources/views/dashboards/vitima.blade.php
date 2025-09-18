@@ -84,7 +84,7 @@
                 </div>
             @endif
 
-             <div id="mensagemAlerta" class="mensagem-alerta hidden" style="cursor:pointer;">
+             <div id="mensagemAlerta" class="mensagem-alerta hidden" style="cursor:pointer;">     
                 <span class="mensagem-icone"><i class="fa fa-envelope"></i></span>
                 <span id="mensagemTextoCompleto" class="mensagem-texto"></span>
             </div>
@@ -237,7 +237,7 @@
                         <div class="d-flex flex-wrap">
                             <div class="widget-data">
                                 <div class="weight-700 font-24 text-dark">
-                                    {{ $minhasConsultas->where('status', 'Marcada')->count() }}
+                                    {{ $minhasConsultas->where('status', 'pendente')->count() }}
                                 </div>
                                 <div class="font-14 text-secondary weight-500">
                                     Consultas Marcadas
@@ -301,28 +301,7 @@
                     </div>
                 </div>
                 
-                 <div class="col-md-12 col-xl-6 mb-30">
-                     <div class="card-box">
-                        <h5 class="h5 text-dark mb-20 p-4">Minhas Próximas Consultas</h5>
-                         <div class="row pl-20 pr-20">
-                            @forelse($minhasConsultas->where('status', 'Marcada') as $consulta)
-                                <div class="col-md-6 mb-20">
-                                     <div class="card-patient">
-                                         <div class="patient-name">{{ $consulta->medico->name ?? 'Médico Indisponível' }}</div>
-                                         <div class="patient-info">
-                                             <p><strong>Data:</strong> {{ \Carbon\Carbon::parse($consulta->data)->format('d/m/Y H:i') }}</p>
-                                             <p><strong>Status:</strong> {{ $consulta->status }}</p>
-                                         </div>
-                                     </div>
-                                </div>
-                            @empty
-                                <div class="col-12 text-center p-4">
-                                     <p>Não há consultas marcadas no momento.</p>
-                                </div>
-                            @endforelse
-                         </div>
-                    </div>
-                </div>
+                 
             </div>
             
             <div class="row">
@@ -371,19 +350,21 @@
             const consultasChart = new Chart(ctx1, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Realizadas', 'Marcadas', 'Canceladas'],
+                    labels: ['Pendentes', 'Marcadas', 'Realizadas', 'Canceladas'],
                     datasets: [{
                         label: 'Minhas Consultas',
-                        data: [
-                            {{ $minhasConsultas->where('status', 'Realizada')->count() }},
-                            {{ $minhasConsultas->where('status', 'Marcada')->count() }},
-                            {{ $minhasConsultas->where('status', 'Cancelada')->count() }}
-                        ],
-                        backgroundColor: [
-                            '#0d6efd',
-                            '#09cc06',
-                            '#ff5b5b'
-                        ],
+                         data: [
+                {{ $minhasConsultas->where('status', 'pendente')->count() }},
+                {{ $minhasConsultas->where('status', 'marcada')->count() }},
+                {{ $minhasConsultas->where('status', 'realizada')->count() }},
+                {{ $minhasConsultas->where('status', 'cancelada')->count() }}
+            ],
+                         backgroundColor: [
+                '#ffc107', // Pendentes - amarelo
+                '#00eccf', // Marcadas - verde claro
+                '#0d6efd', // Realizadas - azul
+                '#ff5b5b'  // Canceladas - vermelho
+            ],
                         hoverOffset: 4
                     }]
                 },

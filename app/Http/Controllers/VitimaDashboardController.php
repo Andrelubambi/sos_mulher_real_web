@@ -25,6 +25,6 @@ class VitimaDashboardController extends Controller
         
          
 
-        return view('dashboards.vitima', compact('minhasConsultas', 'grupos'));
+        return view('dashboards.vitima', compact('minhasConsultas', 'grupos'));   
     }
 }
