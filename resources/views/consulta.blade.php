@@ -252,6 +252,8 @@
                             @if(auth()->user()->role == 'admin' || auth()->user()->role == 'criador' || auth()->user()->role == 'vitima' || auth()->user()->role == 'medico')
                             <th>Ações</th>
                             @endif
+                            <th>Status</th>
+<th>Ações de Status</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -282,6 +284,21 @@
                                         @endif
                                     </div>
                                 </td>
+
+                                <td>
+    <span class="badge badge-{{ getStatusBadgeClass($consulta->status) }}">
+        {{ ucfirst($consulta->status) }}
+    </span>
+</td>
+<td>
+    @if(auth()->user()->role == 'admin' || auth()->user()->id == $consulta->medico_id)
+        <button type="button" class="btn btn-sm btn-outline-primary" 
+                data-toggle="modal" data-target="#statusModal"
+                onclick="carregarDadosStatus({{ $consulta->id }})">
+            Alterar Status
+        </button>
+    @endif
+</td>
                             </tr>
                         @empty
                             <tr>

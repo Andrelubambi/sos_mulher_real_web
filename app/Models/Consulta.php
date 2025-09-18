@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\ConsultaStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,6 +21,15 @@ class Consulta extends Model
         'vitima_id',
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'status' => ConsultaStatus::class,
+    ];
+
     public function criador()
     {
         return $this->belongsTo(User::class, 'criada_por');
@@ -30,7 +40,7 @@ class Consulta extends Model
         return $this->belongsTo(User::class, 'medico_id');
     }
 
-      public function vitima()
+    public function vitima()
     {
         return $this->belongsTo(User::class, 'vitima_id');
     }

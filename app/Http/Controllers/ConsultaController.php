@@ -122,4 +122,37 @@ class ConsultaController extends Controller
         $consulta->delete();
         return redirect()->back()->with('success', 'Consulta deletada com sucesso!');
     }
+
+   public function updateStatus(Request $request, $id)
+    {
+  
+        $consulta = Consulta::findOrFail($id);
+
+   
+    ulta.
+        if (Auth::user()->id !== $consulta->medico_id) {
+    
+            return redirect()->back()->with('error', 'Você não tem permissão para alterar o estado desta consulta.');
+        }
+ 
+        $request->validate([
+            'status' => 'required|in:confirmada,cancelada,realizada',
+        ]);
+ 
+        try {
+            $consulta->status = $request->input('status');
+            $consulta->save();
+            return redirect()->back()->with('success', 'Estado da consulta atualizado com sucesso!');
+        } catch (\Exception $e) { 
+            return redirect()->back()->with('error', 'Falha ao atualizar o estado da consulta: ' . $e->getMessage());
+        }
+    }
+
+
+
+       public function getConsultaData($id)
+    {
+        $consulta = Consulta::with(['medico', 'criador', 'vitima'])->findOrFail($id);
+        return response()->json($consulta);
+    }
 }

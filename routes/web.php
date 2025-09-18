@@ -69,6 +69,13 @@ Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->n
     Route::delete('/consultas/{id}', [ConsultaController::class, 'destroy'])->name('consulta.destroy');
     Route::put('/consultas/{id}', [ConsultaController::class, 'update'])->name('consulta.update');
     Route::get('/consultas/{id}/edit', [ConsultaController::class, 'edit'])->name('consulta.edit');
+    Route::post('/consultas/{id}/alterar-status', [ConsultaController::class, 'alterarStatus'])
+    ->name('consultas.alterarStatus');
+    
+Route::get('/consultas/{id}/dados', [ConsultaController::class, 'getConsultaData'])
+    ->name('consultas.dados');
+
+    
 
   // chat
   Route::get('/chat', [ChatController::class, 'index'])->name('chat');

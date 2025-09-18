@@ -1,4 +1,4 @@
-version: "3.8"
+
 
 services:
   app:
@@ -9,46 +9,43 @@ services:
     working_dir: /var/www
     volumes:
       - .:/var/www
-    networks:
-      - laravel
+    ports:
+      - "8080:8080"   # Laravel (app) → localhost:8080
     depends_on:
       - mysql
+      - redis
     env_file:
       - .env.dev
-
-  nginx:
-    image: nginx:alpine
-    container_name: laravel_nginx_dev
-    ports:
-      - "8080:80"   # acessa em http://localhost:8080
-    volumes:
-      - .:/var/www
-      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
-    networks:
-      - laravel
-    depends_on:
-      - app
+    command: php artisan serve --host=0.0.0.0 --port=8080
 
   mysql:
     image: mysql:8.0
-    container_name: laravel_mysql
-    restart: always
-    ports:
-      - "3303:3303" # evitar conflito com mysql local
+    container_name: laravel_mysql_dev
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=laravel
       - MYSQL_USER=laravel
       - MYSQL_PASSWORD=laravel
+    ports:
+      - "3309:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
-    networks:
-      - laravel
+      - mysql_data_dev:/var/lib/mysql
 
-networks:
-  laravel:
-    driver: bridge
+  redis:
+    image: redis:alpine
+    container_name: laravel_redis_dev
+    ports:
+      - "6380:6379"   # Redis acessível em localhost:6380 (se quiseres testar fora do container)
+
+  node:
+    image: node:20
+    container_name: laravel_node_dev
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - "5175:5175"   # Vite dev server → localhost:5175
 
 volumes:
-  mysql_data:
-    driver: local
+  mysql_data_dev:
