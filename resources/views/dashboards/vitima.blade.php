@@ -132,7 +132,97 @@
        <div class="menu-block customscroll">
     <div class="sidebar-menu">
         <ul id="accordion-menu">
-            <!-- menus iguais ao original -->
+            <li class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle">
+                    <span class="micon bi bi-speedometer2"></span>
+                    <span class="mtext">Dashboard</span>
+                </a>
+                <ul class="submenu">
+                    @if(auth()->user()->role === 'admin')
+                        <li><a href="{{ route('admin.dashboard') }}">Dashboard Admin</a></li>
+                    @elseif(auth()->user()->role === 'doutor')
+                        <li><a href="{{ route('doutor.dashboard') }}">Dashboard Médico</a></li>
+                    @elseif(auth()->user()->role === 'estagiario')
+                        <li><a href="{{ route('estagiario.dashboard') }}">Dashboard Assistente</a></li>
+                    @elseif(auth()->user()->role === 'vitima')
+                        <li><a href="{{ route('vitima.dashboard') }}">Dashboard Vítima</a></li>
+                    @endif
+                </ul>
+            </li>
+
+            @if(in_array(auth()->user()->role, ['admin', 'doutor', 'estagiario','vitima']))
+            <li class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle">
+                    <span class="micon bi bi-calendar-check"></span>
+                    <span class="mtext">Consultas</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="{{ route('consulta') }}">Todas as Consultas</a></li>
+                </ul>
+            </li>
+            @endif
+
+            @if(auth()->user()->role === 'admin')
+            <li class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle">
+                    <span class="micon bi bi-person-badge"></span>
+                    <span class="mtext">Médico</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="{{ route('users.doutor') }}">Lista de Médicos</a></li>
+                </ul>
+            </li>
+            @endif
+
+            @if(auth()->user()->role === 'admin')
+            <li class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle">
+                    <span class="micon bi bi-person-workspace"></span>
+                    <span class="mtext">Lista de Assistentes</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="{{ route('users.estagiario') }}">Assistentes</a></li>
+                </ul>
+            </li> 
+            @endif
+
+            @if(in_array(auth()->user()->role, ['admin', 'doutor']))
+            <li class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle">
+                    <span class="micon bi bi-people"></span>
+                    <span class="mtext">Vítimas</span>
+                </a>
+                <ul class="submenu">
+                    <li><a href="{{ route('users.vitima') }}">Lista de Vítimas</a></li>
+                </ul>
+            </li>
+            @endif
+
+        
+            <li class="dropdown">
+                <a href="javascript:;" class="dropdown-toggle">
+                    <span class="micon bi bi-collection"></span>
+                    <span class="mtext">Grupos</span>
+                </a>
+                <ul class="submenu">
+                    @if(auth()->user()->role === 'admin')
+                       <li><a href="{{ route('grupos.create') }}">Criar Grupo</a></li>
+                    @endif
+                    @foreach ($grupos as $grupo)
+                        <li>
+                            <a href="{{ route('grupos.show', $grupo->id) }}">{{ $grupo->nome }}</a>
+                        </li>
+                    @endforeach
+                </ul>
+            </li>
+           
+
+            <li>
+                <a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
+                    <span class="micon bi bi-chat-right-dots"></span>
+                    <span class="mtext">Chat</span>
+                </a>
+            </li>
         </ul>
     </div>
 </div>
@@ -202,7 +292,7 @@
             </div>
             
             <div class="row mb-30">
-                <div class="col-md-12 col-xl-6 mb-30">
+                <div class="col-md-12 col-xl-12 mb-30">
                     <div class="card-box">
                         <h5 class="h5 text-dark mb-20 p-4">Minha Distribuição de Consultas</h5>
                         <div class="p-4">
@@ -253,16 +343,17 @@
         <script src="{{ asset('vendors/scripts/process.js') }}"></script>
         <script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
         <script>
+            // Gráfico de Donut para distribuição de consultas da vítima
             const ctx1 = document.getElementById('consultasChart').getContext('2d');
             const consultasChart = new Chart(ctx1, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Realizadas', 'Pendente', 'Canceladas'],
+                    labels: ['Realizadas', 'Pendentes', 'Canceladas'],
                     datasets: [{
                         label: 'Minhas Consultas',
                         data: [
                             {{ $minhasConsultas->where('status', 'Realizada')->count() }},
-                            {{ $minhasConsultas->where('status', 'Pendente')->count() }},
+                            {{ $minhasConsultas->where('status', 'pendente')->count() }},
                             {{ $minhasConsultas->where('status', 'Cancelada')->count() }}
                         ],
                         backgroundColor: [
@@ -288,7 +379,7 @@
                 }
             });
 
-            // Código para mensagens SOS mantido igual
+            // Código para mensagens SOS (mantido do original)
             let mensagensPendentes = [];
             let carregamentoConcluido = false;
             
