@@ -973,23 +973,36 @@
     </style>
 
 <!-- Laravel Echo -->
-<script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.15.0/dist/echo.iife.js"></script>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js" integrity="sha384-my6JkS7z1+r4r8eYg2l8v9d1a+C5U+G7wF7G7r2zFz5uG8d1b+F6oGz7C2o+B5G" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.15.0/dist/echo.min.js"></script>
 
 <!-- Configuração do Echo para Laravel Echo Server com Redis -->
 <script>
-    window.Echo = new Echo({
-        broadcaster: 'pusher',
-        key: 'app-key',
-        wsHost: window.location.hostname,
-        wsPort: 6001,
-        wssPort: 6001,
-        forceTLS: false,
-        encrypted: false,
-        disableStats: true,
-        enabledTransports: ['ws', 'wss'],
-    });
-    
-    console.log('Echo configurado com sucesso para Laravel Echo Server');
+    console.log('Verificando Echo...');
+    setTimeout(() => {
+        if (typeof Echo !== 'undefined' && typeof io !== 'undefined') {
+            // Configura o objeto Echo com o broadcaster Socket.IO
+            window.Echo = new Echo({
+                broadcaster: 'socket.io',
+                host: window.location.hostname + ':6001'
+            });
+
+            console.log('Echo configurado com sucesso para Laravel Echo Server com Socket.IO');
+
+            try {
+                Echo.channel('test-channel')
+                    .listen('TestEvent', (e) => {
+                        console.log('Recebido TestEvent:', e);
+                    });
+                console.log('Echo conectado');
+            } catch (error) {
+                console.error('Erro na conexão Echo:', error);
+            }
+        } else {
+            console.error('Echo ou Socket.IO não foram carregados corretamente.');
+        }
+    }, 100);
 </script>
 
 </head>
