@@ -971,13 +971,15 @@
             }
         }
     </style>
+
+<!-- Laravel Echo -->
 <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.15.0/dist/echo.iife.js"></script>
 
 <!-- Configuração do Echo para Laravel Echo Server com Redis -->
 <script>
     window.Echo = new Echo({
         broadcaster: 'pusher',
-        key: 'app-key', // Chave padrão do Laravel Echo Server
+        key: 'app-key',
         wsHost: window.location.hostname,
         wsPort: 6001,
         wssPort: 6001,
@@ -989,6 +991,7 @@
     
     console.log('Echo configurado com sucesso para Laravel Echo Server');
 </script>
+
 </head>
 
 <body>
