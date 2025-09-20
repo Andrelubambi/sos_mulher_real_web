@@ -147,17 +147,20 @@
             </li>
 
             <!-- Consultas -->
-            @if(in_array(auth()->user()->role, ['admin', 'doutor', 'estagiario','vitima']))
-            <li class="dropdown">
-                <a href="javascript:;" class="dropdown-toggle">
-                    <span class="micon bi bi-calendar-check"></span>
-                    <span class="mtext">Consultas</span>
-                </a>
-                <ul class="submenu">
-                    <li><a href="{{ route('consulta') }}">Todas as Consultas</a></li>
-                </ul>
-            </li>
-            @endif
+           @if(in_array(auth()->user()->role, ['admin', 'doutor', 'vitima']))
+                <li class="dropdown">
+                    <a href="javascript:;" class="dropdown-toggle">
+                        <span class="micon"><i class="fas fa-calendar-check"></i></span>
+                        <span class="mtext">Consultas</span>
+                    </a>
+                    <ul class="submenu">
+                        <li><a href="{{ route('consulta') }}">Todas as Consultas</a></li>
+                    @if(in_array(auth()->user()->role, ['admin', 'doutor', 'estagiario,vitima']))
+                        <li><a href="{{ route('minhas.consultas') }}">Minhas Consultas</a></li>
+                        @endif
+                    </ul>
+                </li>
+                @endif
 
             <!-- Médicos (apenas admin) -->
             @if(auth()->user()->role === 'admin')

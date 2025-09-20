@@ -482,6 +482,150 @@
             margin-bottom: 15px;
             opacity: 0.5;
         }
+
+        /* Botão de videochamada no header do chat */
+        .video-call-btn {
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-left: 15px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-call-btn:hover {
+            background-color: #218838;
+            transform: scale(1.05);
+        }
+
+        .video-call-btn:disabled {
+            background-color: var(--text-light);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Modal de videochamada */
+        .video-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .video-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .video-modal-content {
+            width: 95%;
+            height: 90%;
+            max-width: 1200px;
+            max-height: 800px;
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-modal-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .video-modal-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+        }
+
+        .close-video-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .close-video-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .video-frame-container {
+            width: 100%;
+            height: calc(100% - 70px);
+        }
+
+        .video-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Indicador de chamada ativa */
+        .call-indicator {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background-color: var(--success-color);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            box-shadow: var(--shadow);
+            z-index: 1001;
+            display: none;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        /* Responsividade para modal de vídeo */
+        @media (max-width: 768px) {
+            .video-modal-content {
+                width: 100%;
+                height: 100%;
+                border-radius: 0;
+            }
+            
+            .video-call-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+                margin-left: 10px;
+            }
+        }
     </style>
 </head>
 
@@ -563,6 +707,12 @@
                         <small id="userStatus" class="text-muted">Disponível</small>
                     </div>
                 </div>
+
+                  <!-- Botão de videochamada -->
+                    <button class="video-call-btn" id="videoCallBtn" title="Iniciar videochamada" disabled>
+                        <i class="fa fa-video-camera"></i>
+                    </button>
+                </div>
             </div>
 
             <div id="messages" class="chat-messages">
@@ -580,6 +730,29 @@
                 </button>
             </form>
         </div>
+
+
+
+
+         <div class="video-modal" id="videoModal">
+        <div class="video-modal-content">
+            <div class="video-modal-header">
+                <h3 id="videoCallTitle">Videochamada - Carregando...</h3>
+                <button class="close-video-btn" id="closeVideoBtn" title="Fechar videochamada">
+                    ×
+                </button>
+            </div>
+            <div class="video-frame-container">
+                <iframe id="jitsiFrame" class="video-frame" allow="camera; microphone; display-capture">
+                </iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicador de chamada ativa -->
+    <div class="call-indicator" id="callIndicator">
+        <i class="fa fa-video-camera"></i> Videochamada ativa
+    </div>
     </div>
 
     <!-- Notificação -->

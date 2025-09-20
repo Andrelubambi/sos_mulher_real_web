@@ -48,6 +48,10 @@
             align-items: center;
             z-index: 1000;
         }
+        /* CORREÇÃO AQUI: Sem espaço entre o nome da classe e .hidden */
+        .mensagem-list-modal.hidden {
+            display: none;
+        }
         .mensagem-list-conteudo {
             background: white;
             padding: 20px;
@@ -86,21 +90,18 @@
             font-size: 12px;
             color: #999;
         }
+
+        .mensagem-alerta.has-messages .mensagem-icone {
+            color: #ff5b5b; /* Mudar a cor para um vermelho vibrante */
+            animation: pulse 1.5s infinite; /* Aplicar a animação */
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
     </style>
-    <style>
-    /* ... seu CSS existente ... */
-
-    .mensagem-alerta.has-messages .mensagem-icone {
-        color: #ff5b5b; /* Mudar a cor para um vermelho vibrante */
-        animation: pulse 1.5s infinite; /* Aplicar a animação */
-    }
-
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.1); }
-        100% { transform: scale(1); }
-    }
-</style>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
@@ -527,24 +528,23 @@
                 const mensagemModal = document.getElementById('mensagemModal');
                 const enviarRespostaBtn = document.getElementById('enviarResposta');
                 const fecharModalBtn = document.getElementById('fecharModal');
-                const fecharListModalBtn = document.getElementById('fecharListModal');
+                const fecharListModalBtn = document.getElementById('fecharListModal'); // Variável já declarada aqui
 
-                 console.log('DOM carregado.');
+                console.log('DOM carregado.');
 
                 if (mensagemAlerta) {
-                     console.log('Elemento mensagemAlerta encontrado.');
+                    console.log('Elemento mensagemAlerta encontrado.');
                     fetchMensagens();
 
                     if (!window.echoRegistered) {
-                           console.log('Registrando Echo Listener...');
+                        console.log('Registrando Echo Listener...');
                         Echo.channel('mensagem_sos')
                             .listen('.NovaMensagemSosEvent', (e) => {
-                                   console.log('Registrando Echo Listener...'); 
+                                console.log('Nova mensagem SOS recebida via Echo.');
                                 const mensagem = {
                                     id: e.id,
                                     conteudo: e.conteudo,
                                     data: e.data,
-                                    // Adicione outras propriedades relevantes, como 'vitima_nome'
                                     vitima_nome: e.vitima_nome || 'Vítima Desconhecida'
                                 };
                                 mensagensPendentes.unshift(mensagem);
@@ -553,7 +553,7 @@
                         window.echoRegistered = true;
                     }
 
-                     mensagemAlerta.addEventListener('click', () => {
+                    mensagemAlerta.addEventListener('click', () => {
                         console.log('Clique no alerta detectado. Tentando exibir lista de mensagens...');
                         exibirListaDeMensagens();
                     });
@@ -561,7 +561,8 @@
                     console.error('Elemento #mensagemAlerta não encontrado. Verifique se o usuário tem permissão para vê-lo.');
                 }
                 
-              fecharListModalBtn.addEventListener('click', () => {
+                // Lógica dos botões de fechar e responder
+                fecharListModalBtn.addEventListener('click', () => {
                     console.log('Clique no botão fecharListModal detectado.');
                     mensagemListModal.classList.add('hidden');
                 });
@@ -571,7 +572,7 @@
                     mensagemModal.classList.add('hidden');
                 });
 
-                 enviarRespostaBtn.addEventListener('click', () => {
+                enviarRespostaBtn.addEventListener('click', () => {
                     const mensagemId = mensagemModal.dataset.mensagemId;
                     console.log('Clique no botão enviarResposta detectado. ID da mensagem:', mensagemId);
                     if (mensagemId) {
@@ -582,7 +583,8 @@
                     }
                 });
 
-                     function fetchMensagens() {
+                // Funções auxiliares
+                function fetchMensagens() {
                     console.log('Iniciando fetch para /mensagens_nao_lidas...');
                     fetch('/mensagens_nao_lidas')
                         .then(res => {
@@ -601,9 +603,7 @@
                         .catch(err => console.error("Erro ao buscar mensagens:", err));
                 }
 
-                  
-
-                  function atualizarAlerta() {
+                function atualizarAlerta() {
                     const alerta = document.getElementById('mensagemAlerta');
                     const texto = document.getElementById('mensagemTextoCompleto');
                     if (!alerta || !texto) return;
@@ -620,7 +620,7 @@
                     }
                 }
 
-                 function exibirListaDeMensagens() {
+                function exibirListaDeMensagens() {
                     console.log('Exibindo lista de mensagens. Mensagens pendentes:', mensagensPendentes.length);
                     listaDeMensagens.innerHTML = '';
                     if (mensagensPendentes.length === 0) {

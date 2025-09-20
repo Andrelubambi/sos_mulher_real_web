@@ -20,6 +20,7 @@
                 </li>
 
                 <!-- Consultas -->
+            @if(in_array(auth()->user()->role, ['admin', 'doutor', 'vitima']))
                 <li class="dropdown">
                     <a href="javascript:;" class="dropdown-toggle">
                         <span class="micon"><i class="fas fa-calendar-check"></i></span>
@@ -32,6 +33,7 @@
                         @endif
                     </ul>
                 </li>
+                @endif
 
                 <!-- Médicos -->
                 @if(in_array(auth()->user()->role, ['admin', 'estagiario']))
