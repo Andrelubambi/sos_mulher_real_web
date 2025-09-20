@@ -111,8 +111,9 @@ services:
       - laravel
 
 # ----------------- NOVO - SERVIÇOS JITSI MEET -----------------
+  # ----------------- JITSI MEET SERVICES -----------------
   web:
-    image: jitsi/web:stable-6421
+    image: jitsi/web:stable
     restart: always
     networks:
       jitsi:
@@ -130,7 +131,7 @@ services:
       - jicofo
 
   jvb:
-    image: jitsi/jitsi-videobridge2:stable-6421
+    image: jitsi/jitsi-videobridge2:stable
     restart: always
     networks:
       jitsi:
@@ -150,7 +151,7 @@ services:
       - jicofo
 
   prosody:
-    image: jitsi/prosody:stable-6421
+    image: jitsi/prosody:stable
     restart: always
     networks:
       jitsi:
@@ -160,10 +161,9 @@ services:
       - ./jitsi/prosody/config:/config:Z
     environment:
       - JITSI_DOMAIN=jitsi.sosmulherreal.com
-    # dependecy on jicofo has been removed
 
   jicofo:
-    image: jitsi/jicofo:stable-6421
+    image: jitsi/jicofo:stable
     restart: always
     networks:
       jitsi:
