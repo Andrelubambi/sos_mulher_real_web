@@ -971,20 +971,23 @@
             }
         }
     </style>
-    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
-
-<!-- Laravel Echo -->
 <script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.15.0/dist/echo.iife.js"></script>
 
-<!-- Configuração do Echo para Socket.IO -->
+<!-- Configuração do Echo para Laravel Echo Server com Redis -->
 <script>
     window.Echo = new Echo({
-        broadcaster: 'socket.io',
-        host: window.location.hostname + ':6001', // Usando o container laravel_echo na porta 6001
-        transports: ['websocket', 'polling'],
-        upgrade: true,
-        rememberUpgrade: false,
+        broadcaster: 'pusher',
+        key: 'app-key', // Chave padrão do Laravel Echo Server
+        wsHost: window.location.hostname,
+        wsPort: 6001,
+        wssPort: 6001,
+        forceTLS: false,
+        encrypted: false,
+        disableStats: true,
+        enabledTransports: ['ws', 'wss'],
     });
+    
+    console.log('Echo configurado com sucesso para Laravel Echo Server');
 </script>
 </head>
 
@@ -1148,7 +1151,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script>
        // Add this JavaScript code to replace your existing <script> section in chat.blade.php
-
 document.addEventListener('DOMContentLoaded', function() {
     // Elementos da interface
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
@@ -1165,8 +1167,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatHeader = document.getElementById('chatHeader');
     const currentUserAvatar = document.getElementById('currentUserAvatar');
     const userStatus = document.getElementById('userStatus');
-    const notificationAlert = document.getElementById('mensagemAlerta');
-    const mensagemModal = document.getElementById('mensagemModal');
     
     // Video call elements
     const videoCallBtn = document.getElementById('videoCallBtn');
@@ -1184,15 +1184,24 @@ document.addEventListener('DOMContentLoaded', function() {
     let usuarioAtualId = null;
     let currentChannel = null;
 
-    // Verificar se Echo está disponível
-    if (typeof Echo === 'undefined') {
-        console.error('Laravel Echo não está carregado. Verifique os scripts.');
-        alert('Sistema de mensagens em tempo real não está funcionando. Por favor, recarregue a página.');
-    } else {
-        console.log('Laravel Echo carregado com sucesso');
-    }
+    // Verificar se Echo está funcionando
+    console.log('Verificando Echo...');
+    setTimeout(() => {
+        if (typeof Echo !== 'undefined') {
+            console.log('Echo carregado com sucesso');
+            // Testar conexão
+            try {
+                Echo.channel('test-channel');
+                console.log('Echo conectado');
+            } catch (error) {
+                console.error('Erro na conexão Echo:', error);
+            }
+        } else {
+            console.error('Echo não foi carregado');
+        }
+    }, 1000);
 
-    // Enable/disable video call button based on selected user
+    // Enable/disable video call button
     function updateVideoCallButton() {
         if (usuarioAtualId && usuarioAtualId != usuarioLogadoId) {
             videoCallBtn.disabled = false;
@@ -1205,18 +1214,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Start video call
+    // Video call functionality
     videoCallBtn.addEventListener('click', function() {
         if (!usuarioAtualId || usuarioAtualId == usuarioLogadoId) {
             alert('Selecione um usuário para iniciar a videochamada');
             return;
         }
         
-        // Show loading state
         videoCallBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
         videoCallBtn.disabled = true;
         
-        // Get room URL from backend
         fetch(`/video-call/room/${usuarioAtualId}`, {
             method: 'GET',
             headers: {
@@ -1243,89 +1250,49 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Erro ao iniciar videochamada: ' + error.message);
         })
         .finally(() => {
-            // Restore button state
             videoCallBtn.innerHTML = '<i class="fa fa-video-camera"></i>';
             updateVideoCallButton();
         });
     });
 
     function startVideoCall(roomUrl, roomId) {
-        // Update modal title
-        videoCallTitle.textContent = `Videochamada - Sala: ${roomId}`;
-        
-        // Configure Jitsi iframe
+        videoCallTitle.textContent = `Videochamada - ${chatHeader.textContent}`;
         jitsiFrame.src = roomUrl;
-        
-        // Show modal
         videoModal.classList.add('show');
         document.body.style.overflow = 'hidden';
-        
-        // Show call indicator
         callIndicator.style.display = 'block';
         isCallActive = true;
-        
-        // Update video button state
         videoCallBtn.innerHTML = '<i class="fa fa-phone"></i>';
-        videoCallBtn.title = 'Chamada ativa - Clique para voltar';
+        videoCallBtn.title = 'Chamada ativa';
         videoCallBtn.classList.add('active');
-        
-        // Listen for iframe events (optional)
-        window.addEventListener('message', handleJitsiEvents);
     }
 
     function endVideoCall() {
-        // Hide modal
         videoModal.classList.remove('show');
         document.body.style.overflow = 'auto';
-        
-        // Clear iframe
         jitsiFrame.src = 'about:blank';
-        
-        // Hide call indicator
         callIndicator.style.display = 'none';
         isCallActive = false;
         currentRoomUrl = null;
-        
-        // Reset button state
         videoCallBtn.classList.remove('active');
         updateVideoCallButton();
-        
-        // Remove event listener
-        window.removeEventListener('message', handleJitsiEvents);
     }
 
-    // Close video call
     closeVideoBtn.addEventListener('click', endVideoCall);
 
-    // Handle Jitsi events (optional)
-    function handleJitsiEvents(event) {
-        if (event.data && typeof event.data === 'object') {
-            switch (event.data.type) {
-                case 'video-conference-left':
-                    endVideoCall();
-                    break;
-                case 'video-conference-joined':
-                    console.log('Usuário entrou na videochamada');
-                    break;
-            }
-        }
-    }
-
-    // Close modal when clicking outside
     videoModal.addEventListener('click', function(e) {
         if (e.target === videoModal) {
             endVideoCall();
         }
     });
 
-    // Handle escape key
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && videoModal.classList.contains('show')) {
             endVideoCall();
         }
     });
 
-    // Alternar sidebar no mobile
+    // Interface controls
     mobileMenuBtn.addEventListener('click', () => {
         sidebar.classList.add('active');
     });
@@ -1334,13 +1301,11 @@ document.addEventListener('DOMContentLoaded', function() {
         sidebar.classList.remove('active');
     });
 
-    // Botão voltar no mobile
     backButton.addEventListener('click', () => {
         document.querySelector('.chat-area').style.display = 'none';
         document.querySelector('.sidebar').style.display = 'flex';
     });
 
-    // Alternar entre abas
     tabMensagens.addEventListener('click', () => {
         mensagensRecentes.style.display = 'block';
         listaUsuarios.style.display = 'none';
@@ -1357,7 +1322,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Função para adicionar mensagem ao chat
     function appendMessage(message, sentByMe = false) {
-        // Remover estado vazio se existir
         const emptyState = messagesDiv.querySelector('.empty-state');
         if (emptyState) emptyState.remove();
         
@@ -1375,21 +1339,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // Escutar mensagens em tempo real
     function escutarMensagens(usuarioId) {
         if (typeof Echo === 'undefined') {
-            console.error('Echo não está disponível');
+            console.log('Echo não disponível, usando polling');
             return;
         }
 
-        const minId = Math.min(usuarioLogadoId, usuarioId);
-        const maxId = Math.max(usuarioLogadoId, usuarioId);
-        const canal = `chat.${minId}-${maxId}`;
-
         try {
-            // Deixar canal anterior se existir
+            const minId = Math.min(usuarioLogadoId, usuarioId);
+            const maxId = Math.max(usuarioLogadoId, usuarioId);
+            const canal = `chat.${minId}-${maxId}`;
+
             if (currentChannel) {
                 Echo.leave(currentChannel);
             }
             
             currentChannel = canal;
+            
+            console.log('Conectando ao canal:', canal);
 
             Echo.private(canal)
                 .listen('MessageSent', (e) => {
@@ -1401,6 +1366,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .error((error) => {
                     console.error('Erro no canal:', error);
                 });
+                
         } catch (error) {
             console.error('Erro ao escutar mensagens:', error);
         }
@@ -1412,22 +1378,17 @@ document.addEventListener('DOMContentLoaded', function() {
             usuarioAtualId = item.dataset.userId;
             const userName = item.dataset.userName;
             
-            // Atualizar header do chat
             chatHeader.textContent = userName;
             currentUserAvatar.textContent = userName.charAt(0);
             userStatus.textContent = 'Online';
-            
-            // Update video call button state
             updateVideoCallButton();
             
-            // Esconder sidebar e mostrar área de chat no mobile
             if (window.innerWidth < 992) {
                 sidebar.classList.remove('active');
                 document.querySelector('.sidebar').style.display = 'none';
                 document.querySelector('.chat-area').style.display = 'flex';
             }
             
-            // Limpar e carregar mensagens
             messagesDiv.innerHTML = '';
             sendMessageForm.style.display = 'flex';
 
@@ -1453,7 +1414,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.error('Erro ao carregar mensagens:', error);
                 });
 
-            // Iniciar escuta de mensagens em tempo real
             escutarMensagens(usuarioAtualId);
         });
     });
@@ -1487,56 +1447,26 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     });
 
-    // Ajustar altura do textarea automaticamente
     conteudoInput.addEventListener('input', function() {
         this.style.height = 'auto';
         this.style.height = (this.scrollHeight) + 'px';
     });
 
-    // Notificações SOS em tempo real
+    // Notificações SOS simplificadas
     let mensagensPendentes = [];
-    let carregamentoConcluido = false;
-
-    const userIdLogado = document.querySelector('meta[name="user-id"]').getAttribute('content');
     
-    fetch('/mensagens_nao_lidas')
-        .then(res => res.json())
-        .then(dados => {
-            if (dados && dados.length > 0) {
-                mensagensPendentes = dados;
-                atualizarAlerta();
-            }
-            carregamentoConcluido = true;
-        })
-        .catch(error => {
-            console.error('Erro ao carregar mensagens SOS:', error);
-        });
-
-    // Escutar mensagens SOS em tempo real
-    if (typeof Echo !== 'undefined' && !window.echoRegistered) {
-        try {
-            Echo.channel('mensagem_sos')
-                .listen('.NovaMensagemSosEvent', (e) => {
-                    console.log('Nova mensagem SOS recebida:', e);
-                    if (String(e.user_id) !== userIdLogado) {
-                        return;
-                    }
-                    const mensagem = {
-                        id: e.id,
-                        conteudo: e.conteudo,
-                        data: e.data
-                    };
-                    mensagensPendentes.unshift(mensagem);
+    function carregarMensagensSOS() {
+        fetch('/mensagens_nao_lidas')
+            .then(res => res.json())
+            .then(dados => {
+                if (dados && dados.length > 0) {
+                    mensagensPendentes = dados;
                     atualizarAlerta();
-                })
-                .error((error) => {
-                    console.error('Erro no canal SOS:', error);
-                });
-            
-            window.echoRegistered = true;
-        } catch (error) {
-            console.error('Erro ao registrar canal SOS:', error);
-        }
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao carregar mensagens SOS:', error);
+            });
     }
 
     function atualizarAlerta() {
@@ -1552,11 +1482,12 @@ document.addEventListener('DOMContentLoaded', function() {
         } 
     }
 
-    document.getElementById('fecharNotificacao').addEventListener('click', () => {
-        notificationAlert.classList.remove('show');
+    // Eventos para notificações
+    document.getElementById('fecharNotificacao')?.addEventListener('click', () => {
+        document.getElementById('mensagemAlerta').classList.remove('show');
     });
 
-    document.getElementById('enviarResposta').addEventListener('click', () => {
+    document.getElementById('enviarResposta')?.addEventListener('click', () => {
         const mensagemAtual = mensagensPendentes[0];
         if (mensagemAtual && mensagemAtual.id) {
             window.location.href = `/responder_mensagem_sos/${mensagemAtual.id}`;
@@ -1565,19 +1496,54 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    document.getElementById('fecharModal').addEventListener('click', () => {
-        mensagemModal.classList.remove('show');
+    document.getElementById('fecharModal')?.addEventListener('click', () => {
+        document.getElementById('mensagemModal').classList.remove('show');
     });
 
-    // Initialize video button state on page load
+    // Configurar notificações SOS com Echo
+    if (typeof Echo !== 'undefined') {
+        setTimeout(() => {
+            try {
+                const userIdLogado = document.querySelector('meta[name="user-id"]').getAttribute('content');
+                
+                Echo.channel('mensagem_sos')
+                    .listen('.NovaMensagemSosEvent', (e) => {
+                        console.log('Nova mensagem SOS:', e);
+                        if (String(e.user_id) === userIdLogado) {
+                            const mensagem = {
+                                id: e.id,
+                                conteudo: e.conteudo,
+                                data: e.data
+                            };
+                            mensagensPendentes.unshift(mensagem);
+                            atualizarAlerta();
+                        }
+                    })
+                    .error((error) => {
+                        console.error('Erro no canal SOS:', error);
+                    });
+                    
+                console.log('Canal SOS configurado');
+            } catch (error) {
+                console.error('Erro ao configurar canal SOS:', error);
+            }
+        }, 2000);
+    }
+
+    // Carregar mensagens SOS iniciais
+    carregarMensagensSOS();
+    
+    // Polling de backup para SOS a cada 30 segundos
+    setInterval(carregarMensagensSOS, 30000);
+
+    // Initialize
     updateVideoCallButton();
 
-    // Handle page unload to clean up video call
+    // Cleanup
     window.addEventListener('beforeunload', function() {
         if (isCallActive) {
             endVideoCall();
         }
-        // Limpar canais Echo
         if (currentChannel && typeof Echo !== 'undefined') {
             Echo.leave(currentChannel);
         }
