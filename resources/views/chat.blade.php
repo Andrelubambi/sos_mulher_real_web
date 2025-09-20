@@ -971,6 +971,21 @@
             }
         }
     </style>
+    <script src="https://cdn.socket.io/4.5.0/socket.io.min.js"></script>
+
+<!-- Laravel Echo -->
+<script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.15.0/dist/echo.iife.js"></script>
+
+<!-- Configuração do Echo para Socket.IO -->
+<script>
+    window.Echo = new Echo({
+        broadcaster: 'socket.io',
+        host: window.location.hostname + ':6001', // Usando o container laravel_echo na porta 6001
+        transports: ['websocket', 'polling'],
+        upgrade: true,
+        rememberUpgrade: false,
+    });
+</script>
 </head>
 
 <body>
@@ -1169,6 +1184,14 @@ document.addEventListener('DOMContentLoaded', function() {
     let usuarioAtualId = null;
     let currentChannel = null;
 
+    // Verificar se Echo está disponível
+    if (typeof Echo === 'undefined') {
+        console.error('Laravel Echo não está carregado. Verifique os scripts.');
+        alert('Sistema de mensagens em tempo real não está funcionando. Por favor, recarregue a página.');
+    } else {
+        console.log('Laravel Echo carregado com sucesso');
+    }
+
     // Enable/disable video call button based on selected user
     function updateVideoCallButton() {
         if (usuarioAtualId && usuarioAtualId != usuarioLogadoId) {
@@ -1276,7 +1299,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle Jitsi events (optional)
     function handleJitsiEvents(event) {
-        // Handle messages from Jitsi iframe if needed
         if (event.data && typeof event.data === 'object') {
             switch (event.data.type) {
                 case 'video-conference-left':
@@ -1352,20 +1374,36 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Escutar mensagens em tempo real
     function escutarMensagens(usuarioId) {
+        if (typeof Echo === 'undefined') {
+            console.error('Echo não está disponível');
+            return;
+        }
+
         const minId = Math.min(usuarioLogadoId, usuarioId);
         const maxId = Math.max(usuarioLogadoId, usuarioId);
         const canal = `chat.${minId}-${maxId}`;
 
-        if (currentChannel) Echo.leave(currentChannel);
-        currentChannel = canal;
+        try {
+            // Deixar canal anterior se existir
+            if (currentChannel) {
+                Echo.leave(currentChannel);
+            }
+            
+            currentChannel = canal;
 
-        Echo.private(canal)
-            .listen('MessageSent', (e) => {
-                console.log('Nova mensagem recebida:', e);
-                if (e.de !== usuarioLogadoId) {
-                    appendMessage(e, false);
-                }
-            });
+            Echo.private(canal)
+                .listen('MessageSent', (e) => {
+                    console.log('Nova mensagem recebida:', e);
+                    if (e.de !== usuarioLogadoId) {
+                        appendMessage(e, false);
+                    }
+                })
+                .error((error) => {
+                    console.error('Erro no canal:', error);
+                });
+        } catch (error) {
+            console.error('Erro ao escutar mensagens:', error);
+        }
     }
 
     // Selecionar usuário para conversa
@@ -1410,6 +1448,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         });
                     }
                     messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar mensagens:', error);
                 });
 
             // Iniciar escuta de mensagens em tempo real
@@ -1452,7 +1493,7 @@ document.addEventListener('DOMContentLoaded', function() {
         this.style.height = (this.scrollHeight) + 'px';
     });
 
-    // Notificações (código existente adaptado)
+    // Notificações SOS em tempo real
     let mensagensPendentes = [];
     let carregamentoConcluido = false;
 
@@ -1466,23 +1507,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 atualizarAlerta();
             }
             carregamentoConcluido = true;
+        })
+        .catch(error => {
+            console.error('Erro ao carregar mensagens SOS:', error);
         });
 
-    if (!window.echoRegistered) {
-        Echo.channel('mensagem_sos')
-            .listen('.NovaMensagemSosEvent', (e) => {
-                if (String(e.user_id) !== userIdLogado) {
-                    return;
-                }
-                const mensagem = {
-                    id: e.id,
-                    conteudo: e.conteudo,
-                    data: e.data
-                };
-                mensagensPendentes.unshift(mensagem);
-                atualizarAlerta();
-            });
-        window.echoRegistered = true;
+    // Escutar mensagens SOS em tempo real
+    if (typeof Echo !== 'undefined' && !window.echoRegistered) {
+        try {
+            Echo.channel('mensagem_sos')
+                .listen('.NovaMensagemSosEvent', (e) => {
+                    console.log('Nova mensagem SOS recebida:', e);
+                    if (String(e.user_id) !== userIdLogado) {
+                        return;
+                    }
+                    const mensagem = {
+                        id: e.id,
+                        conteudo: e.conteudo,
+                        data: e.data
+                    };
+                    mensagensPendentes.unshift(mensagem);
+                    atualizarAlerta();
+                })
+                .error((error) => {
+                    console.error('Erro no canal SOS:', error);
+                });
+            
+            window.echoRegistered = true;
+        } catch (error) {
+            console.error('Erro ao registrar canal SOS:', error);
+        }
     }
 
     function atualizarAlerta() {
@@ -1522,6 +1576,10 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('beforeunload', function() {
         if (isCallActive) {
             endVideoCall();
+        }
+        // Limpar canais Echo
+        if (currentChannel && typeof Echo !== 'undefined') {
+            Echo.leave(currentChannel);
         }
     });
 });
