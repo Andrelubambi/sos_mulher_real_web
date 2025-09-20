@@ -9,8 +9,9 @@ use App\Http\Controllers\GrupoController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\MensagemSosController;
 use App\Http\Controllers\DoutorDashboardController;
-use App\Http\Controllers\EstagiarioDashboardController;
+use App\Http\Controllers\EstagiarioDashboardController;      
 use App\Http\Controllers\VitimaDashboardController; 
+use App\Http\Controllers\VideoCallController; 
   
 
 /*Route::middleware('auth:web')->group(function () {
@@ -74,7 +75,10 @@ Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->n
   Route::get('/chat', [ChatController::class, 'index'])->name('chat');
   Route::get('/chat/messages/{usuarioId}', [ChatController::class, 'getMessages'])->name('chat.getMessages');
   Route::post('/chat/send/{usuarioId}', [ChatController::class, 'sendMessage'])->name('chat.sendMessage');
-  Route::get('/video-call/room/{userId}', [VideoCallController::class, 'generateRoomUrl'])->middleware('auth')->name('video.call.room');
+
+  Route::get('/video-call/room/{userId}', [VideoCallController::class, 'generateRoomUrl'])
+    ->middleware('auth')
+    ->name('video.call.room');
 
   // Grupos
    Route::get('/grupos', [GrupoController::class, 'index'])->name('grupos.index');
