@@ -131,7 +131,7 @@ services:
       - jicofo
 
   jvb:
-    image: jitsi/jitsi-videobridge2:stable
+    image: jitsi/jvb:stable
     restart: always
     networks:
       jitsi:
