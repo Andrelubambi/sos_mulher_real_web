@@ -127,6 +127,9 @@ services:
       - DOCKER_HOST_ADDRESS=72.60.184.186
       - JVB_HOSTNAME=jitsi.sosmulherreal.com
       - JICOFO_HOSTNAME=jitsi.sosmulherreal.com
+      - JICOFO_AUTH_PASSWORD=jitsi_jicofo_auth_2024_secure
+      - JVB_AUTH_PASSWORD=jitsi_jvb_auth_2024_secure
+      - JIGASI_XMPP_PASSWORD=jitsi_jigasi_auth_2024_secure
     depends_on:
       - jicofo
 
@@ -147,6 +150,9 @@ services:
       - JVB_HOSTNAME=jitsi.sosmulherreal.com
       - JICOFO_HOSTNAME=jitsi.sosmulherreal.com
       - JITSI_DOMAIN=jitsi.sosmulherreal.com
+      - JICOFO_AUTH_PASSWORD=jitsi_jicofo_auth_2024_secure
+      - JVB_AUTH_PASSWORD=jitsi_jvb_auth_2024_secure
+      - JIGASI_XMPP_PASSWORD=jitsi_jigasi_auth_2024_secure
     depends_on:
       - jicofo
 
@@ -161,6 +167,9 @@ services:
       - ./jitsi/prosody/config:/config:Z
     environment:
       - JITSI_DOMAIN=jitsi.sosmulherreal.com
+      - JICOFO_AUTH_PASSWORD=jitsi_jicofo_auth_2024_secure
+      - JVB_AUTH_PASSWORD=jitsi_jvb_auth_2024_secure
+      - JIGASI_XMPP_PASSWORD=jitsi_jigasi_auth_2024_secure
 
   jicofo:
     image: jitsi/jicofo:stable
@@ -173,6 +182,9 @@ services:
       - ./jitsi/jicofo/config:/config:Z
     environment:
       - JITSI_DOMAIN=jitsi.sosmulherreal.com
+      - JICOFO_AUTH_PASSWORD=jitsi_jicofo_auth_2024_secure
+      - JVB_AUTH_PASSWORD=jitsi_jvb_auth_2024_secure
+      - JIGASI_XMPP_PASSWORD=jitsi_jigasi_auth_2024_secure
     depends_on:
       - prosody
 
