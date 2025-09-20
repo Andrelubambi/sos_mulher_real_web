@@ -127,7 +127,7 @@ services:
       - JVB_HOSTNAME=jitsi.sosmulherreal.com
       - JICOFO_HOSTNAME=jitsi.sosmulherreal.com
     depends_on:
-      - jvb
+      - jicofo
 
   jvb:
     image: jitsi/jitsi-videobridge2:stable-6421
@@ -146,6 +146,8 @@ services:
       - JVB_HOSTNAME=jitsi.sosmulherreal.com
       - JICOFO_HOSTNAME=jitsi.sosmulherreal.com
       - JITSI_DOMAIN=jitsi.sosmulherreal.com
+    depends_on:
+      - jicofo
 
   prosody:
     image: jitsi/prosody:stable-6421
@@ -158,8 +160,7 @@ services:
       - ./jitsi/prosody/config:/config:Z
     environment:
       - JITSI_DOMAIN=jitsi.sosmulherreal.com
-    depends_on:
-      - jicofo
+    # dependecy on jicofo has been removed
 
   jicofo:
     image: jitsi/jicofo:stable-6421
