@@ -76,10 +76,21 @@ Route::get('/users/nao-doutores', [UserController::class, 'listNaoDoutores'])->n
   Route::get('/chat/messages/{usuarioId}', [ChatController::class, 'getMessages'])->name('chat.getMessages');
   Route::post('/chat/send/{usuarioId}', [ChatController::class, 'sendMessage'])->name('chat.sendMessage');
 
-  Route::get('/video-call/room/{userId}', [VideoCallController::class, 'generateRoomUrl'])
-    ->middleware('auth')
-    ->name('video.call.room');
 
+
+ Route::get('/video-call/room/{userId}', [VideoCallController::class, 'generateRoomUrl'])
+        ->name('video.call.room');
+    
+    Route::post('/video-call/end', [VideoCallController::class, 'endCall'])
+        ->name('video.call.end');
+    
+    Route::get('/video-call/status', [VideoCallController::class, 'checkJitsiStatus'])
+        ->name('video.call.status');
+
+
+
+
+        
   // Grupos
    Route::get('/grupos', [GrupoController::class, 'index'])->name('grupos.index');
    Route::get('/grupos/criar', [GrupoController::class, 'create'])->name('grupos.create');

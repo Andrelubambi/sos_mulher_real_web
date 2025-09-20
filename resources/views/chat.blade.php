@@ -20,6 +20,350 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
+        /* Add this CSS to your existing styles in chat.blade.php */
+
+/* Enhanced video call button states */
+.video-call-btn {
+    background-color: var(--success-color);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-left: 15px;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.video-call-btn:hover:not(:disabled) {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+.video-call-btn:disabled {
+    background-color: var(--text-light);
+    cursor: not-allowed;
+    transform: none;
+    opacity: 0.5;
+}
+
+.video-call-btn.calling {
+    background-color: #fd7e14;
+    animation: pulse 1.5s infinite;
+}
+
+.video-call-btn.active {
+    background-color: #dc3545;
+}
+
+/* Loading spinner for video button */
+.video-call-btn .fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Enhanced video modal */
+.video-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition);
+    backdrop-filter: blur(5px);
+}
+
+.video-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.video-modal-content {
+    width: 95%;
+    height: 90%;
+    max-width: 1400px;
+    max-height: 900px;
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.video-modal-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+}
+
+.video-modal-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.video-modal-header::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+}
+
+.close-video-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.close-video-btn:hover {
+    background-color: rgba(220, 53, 69, 0.8);
+    border-color: #dc3545;
+    transform: rotate(90deg);
+}
+
+.video-frame-container {
+    width: 100%;
+    height: calc(100% - 70px);
+    background-color: #000;
+    position: relative;
+    overflow: hidden;
+}
+
+.video-frame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    background-color: #000;
+}
+
+/* Enhanced call indicator */
+.call-indicator {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    background: linear-gradient(135deg, var(--success-color), #20c997);
+    color: white;
+    padding: 12px 18px;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 4px 20px rgba(40, 167, 69, 0.4);
+    z-index: 1001;
+    display: none;
+    animation: slideInFromRight 0.3s ease-out, pulse 2s infinite;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@keyframes slideInFromRight {
+    0% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.call-indicator i {
+    margin-right: 8px;
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.5; }
+}
+
+/* Connection status indicator */
+.connection-status {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.connection-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--success-color);
+    animation: connectionPulse 2s infinite;
+}
+
+@keyframes connectionPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* Video call controls overlay */
+.video-controls {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+    z-index: 20;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.video-modal-content:hover .video-controls {
+    opacity: 1;
+}
+
+.video-control-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.video-control-btn.mute {
+    background-color: rgba(108, 117, 125, 0.8);
+}
+
+.video-control-btn.camera {
+    background-color: rgba(23, 162, 184, 0.8);
+}
+
+.video-control-btn.end-call {
+    background-color: rgba(220, 53, 69, 0.8);
+}
+
+.video-control-btn:hover {
+    transform: scale(1.1);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    .video-modal-content {
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+    }
+    
+    .video-call-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+        margin-left: 10px;
+    }
+    
+    .call-indicator {
+        top: 70px;
+        right: 10px;
+        padding: 10px 14px;
+        font-size: 0.8rem;
+    }
+    
+    .video-controls {
+        bottom: 10px;
+        gap: 10px;
+    }
+    
+    .video-control-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+    }
+}
+
+/* Error states */
+.video-error {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    background: rgba(220, 53, 69, 0.9);
+    padding: 20px;
+    border-radius: 8px;
+    z-index: 100;
+}
+
+/* Loading state */
+.video-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    z-index: 100;
+}
+
+.video-loading .spinner {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-top: 3px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+}
         :root {
             --primary-color: #8e44ad;
             --primary-dark: #7d3c98;
