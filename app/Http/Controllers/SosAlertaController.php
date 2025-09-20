@@ -4,10 +4,6 @@ namespace App\Http\Controllers;
 use App\Models\SosAlerta;
 use Illuminate\Http\Request;
 use App\Events\SosAlertaCriado;
- 
- 
- 
-
 
 class SosAlertaController extends Controller
 {

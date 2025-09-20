@@ -258,105 +258,105 @@
         <script src="{{ asset('vendors/scripts/process.js') }}"></script>
         <script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
         <script>
-            let mensagensPendentes = [];
-            let carregamentoConcluido = false;
-            document.addEventListener('DOMContentLoaded', function() {
-                const userIdLogado = document.querySelector('meta[name="user-id"]').getAttribute('content');
-                fetch('/mensagens_nao_lidas')
-                    .then(res => res.json())
-                    .then(dados => {
-                        if (dados && dados.length > 0) {
-                            mensagensPendentes = dados;
-                            atualizarAlerta();
-                        }
-                        carregamentoConcluido = true;
-                    });
-                if (!window.echoRegistered) {
-                    Echo.channel('mensagem_sos')
-                        .listen('.NovaMensagemSosEvent', (e) => {
-                            if (String(e.user_id) !== userIdLogado) {
-                                return;
-                            }
-                            const mensagem = {
-                                id: e.id,
-                                conteudo: e.conteudo,
-                                data: e.data
-                            };
-                            mensagensPendentes.unshift(mensagem);
-                            atualizarAlerta();
-                        });
-                    window.echoRegistered = true;
+    let mensagensPendentes = [];
+    document.addEventListener('DOMContentLoaded', function() {
+        const userIdLogado = document.querySelector('meta[name="user-id"]').getAttribute('content');
+
+        // Buscar mensagens não lidas
+        fetch('/mensagens_nao_lidas')
+            .then(res => res.json())
+            .then(dados => {
+                if (dados && dados.length > 0) {
+                    mensagensPendentes = dados;
+                    atualizarAlerta();
                 }
-                document.getElementById('mensagemAlerta').addEventListener('click', () => {
-                    mostrarProximaMensagem();
-                });
-                document.getElementById('fecharModal').addEventListener('click', () => {
-                    const mensagemAtual = mensagensPendentes.shift();
-                    document.getElementById('mensagemModal').classList.add('hidden');
-                    fetch('/mensagem_lida', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        },
-                        body: JSON.stringify({
-                            id: mensagemAtual.id
-                        })
+            });
+
+        // Escutar eventos em tempo real (todos os usuários conectados)
+        if (!window.echoRegistered) {
+            Echo.channel('mensagem_sos')
+                .listen('.MensagemSosEvent', (e) => {
+                    // 🔹 Removido filtro de user_id
+                    mensagensPendentes.unshift({
+                        id: e.id,
+                        conteudo: e.conteudo,
+                        data: e.data
                     });
-                    if (mensagensPendentes.length > 0) {
-                        setTimeout(() => mostrarProximaMensagem(), 300);
-                    } else {
-                        document.getElementById('mensagemAlerta').classList.add('hidden');
-                    }
                     atualizarAlerta();
                 });
-                function atualizarAlerta() {
-                    const alerta = document.getElementById('mensagemAlerta');
-                    const texto = document.getElementById('mensagemTextoCompleto');
-                    if (mensagensPendentes.length > 0) {
-                        alerta.classList.remove('hidden');
-                        texto.textContent = `Nova mensagem (${mensagensPendentes.length})`;
-                    } else {
-                        alerta.classList.add('hidden');
-                        texto.textContent = '';
-                    }
-                }
-                function mostrarProximaMensagem() {
-                    const mensagem = mensagensPendentes[0];
-                    if (!mensagem) return;
-                    document.getElementById('mensagemConteudo').textContent = mensagem.conteudo;
-                    document.getElementById('mensagemData').textContent = formatarData(mensagem.data);
-                    document.getElementById('mensagemModal').classList.remove('hidden');
-                }
-                function formatarData(dataString) {
-                    const data = new Date(dataString);
-                    return data.toLocaleString('pt-PT', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    });
-                }
+            window.echoRegistered = true;
+        }
+
+        // Mostrar próxima mensagem no modal
+        document.getElementById('mensagemAlerta').addEventListener('click', () => {
+            mostrarProximaMensagem();
+        });
+
+        // Fechar modal e marcar mensagem como lida
+        document.getElementById('fecharModal').addEventListener('click', () => {
+            const mensagemAtual = mensagensPendentes.shift();
+            document.getElementById('mensagemModal').classList.add('hidden');
+
+            fetch('/mensagem_lida', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ id: mensagemAtual.id })
             });
-            function abrirModalMensagem(mensagem) {
-                const modal = document.getElementById('mensagemModal');
-                const conteudo = document.getElementById('mensagemConteudo');
-                const data = document.getElementById('mensagemData');
-                conteudo.textContent = mensagem.conteudo;
-                data.textContent = mensagem.data;
-                modal.dataset.mensagemId = mensagem.id;
-                modal.classList.remove('hidden');
+
+            if (mensagensPendentes.length > 0) {
+                setTimeout(() => mostrarProximaMensagem(), 300);
+            } else {
+                document.getElementById('mensagemAlerta').classList.add('hidden');
             }
-            document.getElementById('enviarResposta').addEventListener('click', () => {
-                const mensagemAtual = mensagensPendentes[0];
-                if (mensagemAtual && mensagemAtual.id) {
-                    window.location.href = `/responder_mensagem_sos/${mensagemAtual.id}`;
-                } else {
-                    alert('Mensagem inválida para responder.');
-                }
+            atualizarAlerta();
+        });
+
+        // Botão Responder
+        document.getElementById('enviarResposta').addEventListener('click', () => {
+            const mensagemAtual = mensagensPendentes[0];
+            if (mensagemAtual && mensagemAtual.id) {
+                window.location.href = `/responder_mensagem_sos/${mensagemAtual.id}`;
+            } else {
+                alert('Mensagem inválida para responder.');
+            }
+        });
+
+        // Funções auxiliares
+        function atualizarAlerta() {
+            const alerta = document.getElementById('mensagemAlerta');
+            const texto = document.getElementById('mensagemTextoCompleto');
+            if (mensagensPendentes.length > 0) {
+                alerta.classList.remove('hidden');
+                texto.textContent = `Nova mensagem (${mensagensPendentes.length})`;
+            } else {
+                alerta.classList.add('hidden');
+                texto.textContent = '';
+            }
+        }
+
+        function mostrarProximaMensagem() {
+            const mensagem = mensagensPendentes[0];
+            if (!mensagem) return;
+            document.getElementById('mensagemConteudo').textContent = mensagem.conteudo;
+            document.getElementById('mensagemData').textContent = formatarData(mensagem.data);
+            document.getElementById('mensagemModal').classList.remove('hidden');
+        }
+
+        function formatarData(dataString) {
+            const data = new Date(dataString);
+            return data.toLocaleString('pt-PT', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
             });
-        </script>
+        }
+    });
+    </script>
     </div>
 </body>
 </html>
