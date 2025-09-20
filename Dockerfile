@@ -18,7 +18,7 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Diretório de trabalho (alinhado com docker-compose)
 WORKDIR /var/www
 
-# Copiar arquivos do projeto
+# Copiar arquivos do projeto    
 COPY . .
 
 # Instalar dependências PHP
