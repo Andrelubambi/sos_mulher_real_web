@@ -1132,239 +1132,399 @@
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Elementos da interface
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            const closeSidebar = document.getElementById('closeSidebar');
-            const sidebar = document.getElementById('sidebar');
-            const backButton = document.getElementById('backButton');
-            const tabMensagens = document.getElementById('tabMensagens');
-            const tabUsuarios = document.getElementById('tabUsuarios');
-            const mensagensRecentes = document.getElementById('mensagensRecentes');
-            const listaUsuarios = document.getElementById('listaUsuarios');
-            const messagesDiv = document.getElementById('messages');
-            const sendMessageForm = document.getElementById('sendMessageForm');
-            const conteudoInput = document.getElementById('conteudo');
-            const chatHeader = document.getElementById('chatHeader');
-            const currentUserAvatar = document.getElementById('currentUserAvatar');
-            const userStatus = document.getElementById('userStatus');
-            const notificationAlert = document.getElementById('mensagemAlerta');
-            const mensagemModal = document.getElementById('mensagemModal');
-            
-            // IDs de usuário
-            const usuarioLogadoId = {{ auth()->id() }};
-            let usuarioAtualId = null;
-            let currentChannel = null;
+       // Add this JavaScript code to replace your existing <script> section in chat.blade.php
 
-            // Alternar sidebar no mobile
-            mobileMenuBtn.addEventListener('click', () => {
-                sidebar.classList.add('active');
-            });
+document.addEventListener('DOMContentLoaded', function() {
+    // Elementos da interface
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const closeSidebar = document.getElementById('closeSidebar');
+    const sidebar = document.getElementById('sidebar');
+    const backButton = document.getElementById('backButton');
+    const tabMensagens = document.getElementById('tabMensagens');
+    const tabUsuarios = document.getElementById('tabUsuarios');
+    const mensagensRecentes = document.getElementById('mensagensRecentes');
+    const listaUsuarios = document.getElementById('listaUsuarios');
+    const messagesDiv = document.getElementById('messages');
+    const sendMessageForm = document.getElementById('sendMessageForm');
+    const conteudoInput = document.getElementById('conteudo');
+    const chatHeader = document.getElementById('chatHeader');
+    const currentUserAvatar = document.getElementById('currentUserAvatar');
+    const userStatus = document.getElementById('userStatus');
+    const notificationAlert = document.getElementById('mensagemAlerta');
+    const mensagemModal = document.getElementById('mensagemModal');
+    
+    // Video call elements
+    const videoCallBtn = document.getElementById('videoCallBtn');
+    const videoModal = document.getElementById('videoModal');
+    const closeVideoBtn = document.getElementById('closeVideoBtn');
+    const jitsiFrame = document.getElementById('jitsiFrame');
+    const videoCallTitle = document.getElementById('videoCallTitle');
+    const callIndicator = document.getElementById('callIndicator');
 
-            closeSidebar.addEventListener('click', () => {
-                sidebar.classList.remove('active');
-            });
+    let isCallActive = false;
+    let currentRoomUrl = null;
+    
+    // IDs de usuário
+    const usuarioLogadoId = {{ auth()->id() }};
+    let usuarioAtualId = null;
+    let currentChannel = null;
 
-            // Botão voltar no mobile
-            backButton.addEventListener('click', () => {
-                document.querySelector('.chat-area').style.display = 'none';
-                document.querySelector('.sidebar').style.display = 'flex';
-            });
+    // Enable/disable video call button based on selected user
+    function updateVideoCallButton() {
+        if (usuarioAtualId && usuarioAtualId != usuarioLogadoId) {
+            videoCallBtn.disabled = false;
+            videoCallBtn.style.opacity = '1';
+            videoCallBtn.title = 'Iniciar videochamada';
+        } else {
+            videoCallBtn.disabled = true;
+            videoCallBtn.style.opacity = '0.5';
+            videoCallBtn.title = 'Selecione um usuário para iniciar videochamada';
+        }
+    }
 
-            // Alternar entre abas
-            tabMensagens.addEventListener('click', () => {
-                mensagensRecentes.style.display = 'block';
-                listaUsuarios.style.display = 'none';
-                tabMensagens.classList.add('active');
-                tabUsuarios.classList.remove('active');
-            });
-
-            tabUsuarios.addEventListener('click', () => {
-                mensagensRecentes.style.display = 'none';
-                listaUsuarios.style.display = 'block';
-                tabMensagens.classList.remove('active');
-                tabUsuarios.classList.add('active');
-            });
-
-            // Função para adicionar mensagem ao chat
-            function appendMessage(message, sentByMe = false) {
-                // Remover estado vazio se existir
-                const emptyState = messagesDiv.querySelector('.empty-state');
-                if (emptyState) emptyState.remove();
-                
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message', sentByMe ? 'sent' : 'received');
-                messageDiv.innerHTML = `<div class="message-content">
-                    <strong>${sentByMe ? 'Você' : message.remetente.name}:</strong><br>
-                    ${message.conteudo.replace(/\n/g, '<br>')}<br>
-                    <div class="message-time">${new Date(message.created_at).toLocaleString()}</div>
-                </div>`;
-                messagesDiv.appendChild(messageDiv);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    // Start video call
+    videoCallBtn.addEventListener('click', function() {
+        if (!usuarioAtualId || usuarioAtualId == usuarioLogadoId) {
+            alert('Selecione um usuário para iniciar a videochamada');
+            return;
+        }
+        
+        // Show loading state
+        videoCallBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+        videoCallBtn.disabled = true;
+        
+        // Get room URL from backend
+        fetch(`/video-call/room/${usuarioAtualId}`, {
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'Accept': 'application/json'
             }
-
-            // Escutar mensagens em tempo real
-            function escutarMensagens(usuarioId) {
-                const minId = Math.min(usuarioLogadoId, usuarioId);
-                const maxId = Math.max(usuarioLogadoId, usuarioId);
-                const canal = `chat.${minId}-${maxId}`;
-
-                if (currentChannel) Echo.leave(currentChannel);
-                currentChannel = canal;
-
-                Echo.private(canal)
-                    .listen('MessageSent', (e) => {
-                        console.log('Nova mensagem recebida:', e);
-                        if (e.de !== usuarioLogadoId) {
-                            appendMessage(e, false);
-                        }
-                    });
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-
-            // Selecionar usuário para conversa
-            document.querySelectorAll('.user-item, .chat-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    usuarioAtualId = item.dataset.userId;
-                    const userName = item.dataset.userName;
-                    
-                    // Atualizar header do chat
-                    chatHeader.textContent = userName;
-                    currentUserAvatar.textContent = userName.charAt(0);
-                    userStatus.textContent = 'Online';
-                    
-                    // Esconder sidebar e mostrar área de chat no mobile
-                    if (window.innerWidth < 992) {
-                        sidebar.classList.remove('active');
-                        document.querySelector('.sidebar').style.display = 'none';
-                        document.querySelector('.chat-area').style.display = 'flex';
-                    }
-                    
-                    // Limpar e carregar mensagens
-                    messagesDiv.innerHTML = '';
-                    sendMessageForm.style.display = 'flex';
-
-                    fetch(`/chat/messages/${usuarioAtualId}`)
-                        .then(res => res.json())
-                        .then(messages => {
-                            if (messages.length === 0) {
-                                messagesDiv.innerHTML = `
-                                    <div class="empty-state">
-                                        <i class="fa fa-comment"></i>
-                                        <p>Nenhuma mensagem ainda</p>
-                                        <small>Envie uma mensagem para iniciar a conversa</small>
-                                    </div>
-                                `;
-                            } else {
-                                messages.forEach(msg => {
-                                    appendMessage(msg, msg.de == usuarioLogadoId);
-                                });
-                            }
-                            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-                        });
-
-                    // Iniciar escuta de mensagens em tempo real
-                    escutarMensagens(usuarioAtualId);
-                });
-            });
-
-            // Enviar mensagem
-            sendMessageForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                const conteudo = conteudoInput.value.trim();
-                if (!conteudo || !usuarioAtualId) return;
-
-                fetch(`/chat/send/${usuarioAtualId}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
-                                .getAttribute('content'),
-                        },
-                        body: JSON.stringify({
-                            conteudo
-                        }),
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        appendMessage(data, true);
-                        conteudoInput.value = '';
-                    })
-                    .catch(err => {
-                        console.error('Erro ao enviar mensagem:', err);
-                        alert('Erro ao enviar mensagem.');
-                    });
-            });
-
-            // Ajustar altura do textarea automaticamente
-            conteudoInput.addEventListener('input', function() {
-                this.style.height = 'auto';
-                this.style.height = (this.scrollHeight) + 'px';
-            });
-
-            // Notificações (código existente adaptado)
-            let mensagensPendentes = [];
-            let carregamentoConcluido = false;
-
-            const userIdLogado = document.querySelector('meta[name="user-id"]').getAttribute('content');
-            
-            fetch('/mensagens_nao_lidas')
-                .then(res => res.json())
-                .then(dados => {
-                    if (dados && dados.length > 0) {
-                        mensagensPendentes = dados;
-                        atualizarAlerta();
-                    }
-                    carregamentoConcluido = true;
-                });
-
-            if (!window.echoRegistered) {
-                Echo.channel('mensagem_sos')
-                    .listen('.NovaMensagemSosEvent', (e) => {
-                        if (String(e.user_id) !== userIdLogado) {
-                            return;
-                        }
-                        const mensagem = {
-                            id: e.id,
-                            conteudo: e.conteudo,
-                            data: e.data
-                        };
-                        mensagensPendentes.unshift(mensagem);
-                        atualizarAlerta();
-                    });
-                window.echoRegistered = true;
+            return response.json();
+        })
+        .then(data => {
+            if (data.success && data.room_url) {
+                currentRoomUrl = data.room_url;
+                startVideoCall(data.room_url, data.room_id);
+            } else {
+                throw new Error(data.error || 'Erro desconhecido ao iniciar videochamada');
             }
+        })
+        .catch(error => {
+            console.error('Erro ao iniciar videochamada:', error);
+            alert('Erro ao iniciar videochamada: ' + error.message);
+        })
+        .finally(() => {
+            // Restore button state
+            videoCallBtn.innerHTML = '<i class="fa fa-video-camera"></i>';
+            updateVideoCallButton();
+        });
+    });
 
-            function atualizarAlerta() {
-                const alerta = document.getElementById('mensagemAlerta');
-                const texto = document.getElementById('mensagemTextoCompleto');
+    function startVideoCall(roomUrl, roomId) {
+        // Update modal title
+        videoCallTitle.textContent = `Videochamada - Sala: ${roomId}`;
+        
+        // Configure Jitsi iframe
+        jitsiFrame.src = roomUrl;
+        
+        // Show modal
+        videoModal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        
+        // Show call indicator
+        callIndicator.style.display = 'block';
+        isCallActive = true;
+        
+        // Update video button state
+        videoCallBtn.innerHTML = '<i class="fa fa-phone"></i>';
+        videoCallBtn.title = 'Chamada ativa - Clique para voltar';
+        videoCallBtn.classList.add('active');
+        
+        // Listen for iframe events (optional)
+        window.addEventListener('message', handleJitsiEvents);
+    }
 
-                if (mensagensPendentes.length > 0) { 
-                    alerta.classList.add('show');
-                    texto.textContent = `Você tem ${mensagensPendentes.length} mensagem(ns) não lida(s)`;
-                } else {
-                    alerta.classList.remove('show');
-                    texto.textContent = '';
-                } 
+    function endVideoCall() {
+        // Hide modal
+        videoModal.classList.remove('show');
+        document.body.style.overflow = 'auto';
+        
+        // Clear iframe
+        jitsiFrame.src = 'about:blank';
+        
+        // Hide call indicator
+        callIndicator.style.display = 'none';
+        isCallActive = false;
+        currentRoomUrl = null;
+        
+        // Reset button state
+        videoCallBtn.classList.remove('active');
+        updateVideoCallButton();
+        
+        // Remove event listener
+        window.removeEventListener('message', handleJitsiEvents);
+    }
+
+    // Close video call
+    closeVideoBtn.addEventListener('click', endVideoCall);
+
+    // Handle Jitsi events (optional)
+    function handleJitsiEvents(event) {
+        // Handle messages from Jitsi iframe if needed
+        if (event.data && typeof event.data === 'object') {
+            switch (event.data.type) {
+                case 'video-conference-left':
+                    endVideoCall();
+                    break;
+                case 'video-conference-joined':
+                    console.log('Usuário entrou na videochamada');
+                    break;
             }
+        }
+    }
 
-            document.getElementById('fecharNotificacao').addEventListener('click', () => {
-                notificationAlert.classList.remove('show');
-            });
+    // Close modal when clicking outside
+    videoModal.addEventListener('click', function(e) {
+        if (e.target === videoModal) {
+            endVideoCall();
+        }
+    });
 
-            document.getElementById('enviarResposta').addEventListener('click', () => {
-                const mensagemAtual = mensagensPendentes[0];
-                if (mensagemAtual && mensagemAtual.id) {
-                    window.location.href = `/responder_mensagem_sos/${mensagemAtual.id}`;
-                } else {
-                    alert('Mensagem inválida para responder.');
+    // Handle escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && videoModal.classList.contains('show')) {
+            endVideoCall();
+        }
+    });
+
+    // Alternar sidebar no mobile
+    mobileMenuBtn.addEventListener('click', () => {
+        sidebar.classList.add('active');
+    });
+
+    closeSidebar.addEventListener('click', () => {
+        sidebar.classList.remove('active');
+    });
+
+    // Botão voltar no mobile
+    backButton.addEventListener('click', () => {
+        document.querySelector('.chat-area').style.display = 'none';
+        document.querySelector('.sidebar').style.display = 'flex';
+    });
+
+    // Alternar entre abas
+    tabMensagens.addEventListener('click', () => {
+        mensagensRecentes.style.display = 'block';
+        listaUsuarios.style.display = 'none';
+        tabMensagens.classList.add('active');
+        tabUsuarios.classList.remove('active');
+    });
+
+    tabUsuarios.addEventListener('click', () => {
+        mensagensRecentes.style.display = 'none';
+        listaUsuarios.style.display = 'block';
+        tabMensagens.classList.remove('active');
+        tabUsuarios.classList.add('active');
+    });
+
+    // Função para adicionar mensagem ao chat
+    function appendMessage(message, sentByMe = false) {
+        // Remover estado vazio se existir
+        const emptyState = messagesDiv.querySelector('.empty-state');
+        if (emptyState) emptyState.remove();
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', sentByMe ? 'sent' : 'received');
+        messageDiv.innerHTML = `<div class="message-content">
+            <strong>${sentByMe ? 'Você' : message.remetente.name}:</strong><br>
+            ${message.conteudo.replace(/\n/g, '<br>')}<br>
+            <div class="message-time">${new Date(message.created_at).toLocaleString()}</div>
+        </div>`;
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // Escutar mensagens em tempo real
+    function escutarMensagens(usuarioId) {
+        const minId = Math.min(usuarioLogadoId, usuarioId);
+        const maxId = Math.max(usuarioLogadoId, usuarioId);
+        const canal = `chat.${minId}-${maxId}`;
+
+        if (currentChannel) Echo.leave(currentChannel);
+        currentChannel = canal;
+
+        Echo.private(canal)
+            .listen('MessageSent', (e) => {
+                console.log('Nova mensagem recebida:', e);
+                if (e.de !== usuarioLogadoId) {
+                    appendMessage(e, false);
                 }
             });
+    }
 
-            document.getElementById('fecharModal').addEventListener('click', () => {
-                mensagemModal.classList.remove('show');
-            });
+    // Selecionar usuário para conversa
+    document.querySelectorAll('.user-item, .chat-item').forEach(item => {
+        item.addEventListener('click', () => {
+            usuarioAtualId = item.dataset.userId;
+            const userName = item.dataset.userName;
+            
+            // Atualizar header do chat
+            chatHeader.textContent = userName;
+            currentUserAvatar.textContent = userName.charAt(0);
+            userStatus.textContent = 'Online';
+            
+            // Update video call button state
+            updateVideoCallButton();
+            
+            // Esconder sidebar e mostrar área de chat no mobile
+            if (window.innerWidth < 992) {
+                sidebar.classList.remove('active');
+                document.querySelector('.sidebar').style.display = 'none';
+                document.querySelector('.chat-area').style.display = 'flex';
+            }
+            
+            // Limpar e carregar mensagens
+            messagesDiv.innerHTML = '';
+            sendMessageForm.style.display = 'flex';
+
+            fetch(`/chat/messages/${usuarioAtualId}`)
+                .then(res => res.json())
+                .then(messages => {
+                    if (messages.length === 0) {
+                        messagesDiv.innerHTML = `
+                            <div class="empty-state">
+                                <i class="fa fa-comment"></i>
+                                <p>Nenhuma mensagem ainda</p>
+                                <small>Envie uma mensagem para iniciar a conversa</small>
+                            </div>
+                        `;
+                    } else {
+                        messages.forEach(msg => {
+                            appendMessage(msg, msg.de == usuarioLogadoId);
+                        });
+                    }
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                });
+
+            // Iniciar escuta de mensagens em tempo real
+            escutarMensagens(usuarioAtualId);
         });
+    });
+
+    // Enviar mensagem
+    sendMessageForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const conteudo = conteudoInput.value.trim();
+        if (!conteudo || !usuarioAtualId) return;
+
+        fetch(`/chat/send/${usuarioAtualId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                        .getAttribute('content'),
+                },
+                body: JSON.stringify({
+                    conteudo
+                }),
+            })
+            .then(res => res.json())
+            .then(data => {
+                appendMessage(data, true);
+                conteudoInput.value = '';
+            })
+            .catch(err => {
+                console.error('Erro ao enviar mensagem:', err);
+                alert('Erro ao enviar mensagem.');
+            });
+    });
+
+    // Ajustar altura do textarea automaticamente
+    conteudoInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+    });
+
+    // Notificações (código existente adaptado)
+    let mensagensPendentes = [];
+    let carregamentoConcluido = false;
+
+    const userIdLogado = document.querySelector('meta[name="user-id"]').getAttribute('content');
+    
+    fetch('/mensagens_nao_lidas')
+        .then(res => res.json())
+        .then(dados => {
+            if (dados && dados.length > 0) {
+                mensagensPendentes = dados;
+                atualizarAlerta();
+            }
+            carregamentoConcluido = true;
+        });
+
+    if (!window.echoRegistered) {
+        Echo.channel('mensagem_sos')
+            .listen('.NovaMensagemSosEvent', (e) => {
+                if (String(e.user_id) !== userIdLogado) {
+                    return;
+                }
+                const mensagem = {
+                    id: e.id,
+                    conteudo: e.conteudo,
+                    data: e.data
+                };
+                mensagensPendentes.unshift(mensagem);
+                atualizarAlerta();
+            });
+        window.echoRegistered = true;
+    }
+
+    function atualizarAlerta() {
+        const alerta = document.getElementById('mensagemAlerta');
+        const texto = document.getElementById('mensagemTextoCompleto');
+
+        if (mensagensPendentes.length > 0) { 
+            alerta.classList.add('show');
+            texto.textContent = `Você tem ${mensagensPendentes.length} mensagem(ns) não lida(s)`;
+        } else {
+            alerta.classList.remove('show');
+            texto.textContent = '';
+        } 
+    }
+
+    document.getElementById('fecharNotificacao').addEventListener('click', () => {
+        notificationAlert.classList.remove('show');
+    });
+
+    document.getElementById('enviarResposta').addEventListener('click', () => {
+        const mensagemAtual = mensagensPendentes[0];
+        if (mensagemAtual && mensagemAtual.id) {
+            window.location.href = `/responder_mensagem_sos/${mensagemAtual.id}`;
+        } else {
+            alert('Mensagem inválida para responder.');
+        }
+    });
+
+    document.getElementById('fecharModal').addEventListener('click', () => {
+        mensagemModal.classList.remove('show');
+    });
+
+    // Initialize video button state on page load
+    updateVideoCallButton();
+
+    // Handle page unload to clean up video call
+    window.addEventListener('beforeunload', function() {
+        if (isCallActive) {
+            endVideoCall();
+        }
+    });
+});
     </script>
 </body>
 
