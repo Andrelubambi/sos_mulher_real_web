@@ -194,8 +194,6 @@ class VideoCallController extends Controller
     public function getCallHistory()
     {
         try {
-            // Aqui você pode implementar lógica para buscar histórico
-            // Por exemplo, se você tiver uma tabela de logs de chamadas
             
             return response()->json([
                 'success' => true,
