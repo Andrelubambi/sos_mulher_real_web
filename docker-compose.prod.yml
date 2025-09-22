@@ -15,13 +15,7 @@ services:
         condition: service_started
       mysql:
         condition: service_started
-    environment:
-      - DB_CONNECTION=mysql
-      - DB_HOST=laravel_mysql
-      - DB_PORT=3306
-      - DB_DATABASE=laravel
-      - DB_USERNAME=laravel
-      - DB_PASSWORD=laravel
+    # Variáveis lidas do .env
     env_file:
       - .env
 
@@ -42,13 +36,7 @@ services:
         condition: service_started
       mysql:
         condition: service_started
-    environment:
-      - DB_CONNECTION=mysql
-      - DB_HOST=laravel_mysql
-      - DB_PORT=3306
-      - DB_DATABASE=laravel
-      - DB_USERNAME=laravel
-      - DB_PASSWORD=laravel
+    # Variáveis lidas do .env
     env_file:
       - .env
 
@@ -62,12 +50,22 @@ services:
     volumes:
       - .:/var/www
       - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./docker/certbot/www:/var/www/certbot
+      - ./docker/certbot/conf:/etc/letsencrypt
     networks:
       - laravel
       - jitsi
     depends_on:
       app:
         condition: service_started
+
+  certbot:
+    image: certbot/certbot:latest
+    container_name: certbot
+    volumes:
+      - ./docker/certbot/www:/var/www/certbot
+      - ./docker/certbot/conf:/etc/letsencrypt
+    entrypoint: /bin/sh -c "trap exit TERM; while :; do certbot renew --webroot -w /var/www/certbot --quiet; sleep 12h & wait $!; done"
 
   redis:
     image: redis:alpine
@@ -76,7 +74,7 @@ services:
     networks:
       - laravel
 
-  echo:
+  laravel_echo: # <-- O nome do serviço foi alterado aqui
     image: node:18-alpine
     container_name: laravel_echo
     working_dir: /var/www
@@ -98,13 +96,11 @@ services:
     image: mysql:8.0
     container_name: laravel_mysql
     restart: always
-    ports:
-      - "3306:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=sua_senha_secreta
-      - MYSQL_DATABASE=laravel
-      - MYSQL_USER=laravel
-      - MYSQL_PASSWORD=laravel
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
@@ -123,7 +119,7 @@ services:
       - ./jitsi/web/config:/config:Z
     environment:
       - JITSI_DOMAIN=jitsi.sosmulherreal.com
-      - ENABLE_HTTPS=1
+      - ENABLE_HTTPS=0
       - DOCKER_HOST_ADDRESS=72.60.184.186
       - JVB_HOSTNAME=jitsi.sosmulherreal.com
       - JICOFO_HOSTNAME=jitsi.sosmulherreal.com
