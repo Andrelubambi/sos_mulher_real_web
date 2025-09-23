@@ -1,4 +1,5 @@
 export function setupChat() {
+    console.log('[setupChat] Iniciado');
     const messagesDiv = document.getElementById('messages');
     const sendMessageForm = document.getElementById('sendMessageForm');
     const conteudoInput = document.getElementById('conteudo');
@@ -7,6 +8,17 @@ export function setupChat() {
     const userStatus = document.getElementById('userStatus');
     const videoCallBtn = document.getElementById('videoCallBtn');
     const usuarioLogadoId = document.querySelector('meta[name="user-id"]').getAttribute('content');
+
+    console.log('[setupChat] Elementos capturados:', {
+        messagesDiv,
+        sendMessageForm,
+        conteudoInput,
+        chatHeader,
+        currentUserAvatar,
+        userStatus,
+        videoCallBtn,
+        usuarioLogadoId
+    });
 
     window.usuarioAtualId = null;
     window.currentChannel = null;
@@ -29,6 +41,8 @@ export function setupChat() {
     }
 
     function escutarMensagens(usuarioId) {
+        console.log('[Echo] Escutando mensagens para usuário:', usuarioId);
+        console.log('[Echo] Echo disponível:', window.Echo);
         if (!window.Echo) {
             console.log('Echo não disponível');
             return;
@@ -66,7 +80,9 @@ export function setupChat() {
 
     document.querySelectorAll('.user-item, .chat-item').forEach(item => {
         item.addEventListener('click', () => {
+            console.log('[User Click] Usuário selecionado:', item.dataset.userName);
             window.usuarioAtualId = item.dataset.userId;
+            console.log('[User Click] ID do usuário atual:', window.usuarioAtualId);
             const userName = item.dataset.userName;
             
             chatHeader.textContent = userName;
@@ -81,6 +97,7 @@ export function setupChat() {
             
             messagesDiv.innerHTML = '';
             sendMessageForm.classList.remove('hidden');
+            console.log('[User Click] Caixa de mensagem exibida');
 
 
 
@@ -114,6 +131,7 @@ export function setupChat() {
         e.preventDefault();
 
         const conteudo = conteudoInput.value.trim();
+        console.log('[Submit] Conteúdo digitado:', conteudo);
         if (!conteudo || !window.usuarioAtualId) return;
 
         fetch(`/chat/send/${window.usuarioAtualId}`, {
