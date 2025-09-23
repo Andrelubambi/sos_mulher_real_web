@@ -13,7 +13,7 @@ export default defineConfig({
                 'resources/js/chat/ui.js',
                 'resources/js/chat/chat.js',
                 'resources/js/chat/video.js',
-                'resources/vendors/styles/modern-chat.css'
+                '../vendors/styles/modern-chat.css'
             ],
             refresh: true,
         }),
