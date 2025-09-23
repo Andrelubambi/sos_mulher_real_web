@@ -3,14 +3,12 @@ import { setupUI } from './ui.js';
 import { setupChat } from './chat.js';
 import { setupVideoCall } from './video.js';
 
-// Inicializar o aplicativo
 document.addEventListener('DOMContentLoaded', () => {
     initializeEcho();
     setupUI();
     setupChat();
     setupVideoCall();
 
-    // Cleanup ao fechar a página
     window.addEventListener('beforeunload', () => {
         if (window.isCallActive) {
             window.endVideoCall();
@@ -20,7 +18,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Tentar reconectar a cada 10 segundos se desconectado
     setInterval(() => {
         if (!window.echoConnected && window.Echo) {
             console.log('Tentando reconectar...');

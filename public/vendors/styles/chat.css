@@ -1,6 +1,6 @@
 :root {
-    --primary-color: #8e44ad;
-    --primary-dark: #7d3c98;
+    --primary-color: #dc3545;
+    --primary-dark: #dc3545;
     --secondary-color: #f39c12;
     --light-bg: #f8f9fa;
     --dark-bg: #343a40;
@@ -286,12 +286,17 @@ body {
 .chat-input {
     padding: 15px 20px;
     border-top: 1px solid var(--border-color);
-    display: none;
     background-color: white;
     align-items: flex-end;
     gap: 10px;
     min-height: 70px;
+    /*display: flex;  ← opcional se JS controla */
 }
+
+.chat-input.hidden {
+    display: none;
+}
+
 
 .chat-input textarea {
     flex: 1;
@@ -499,9 +504,7 @@ body {
         max-width: 85%;
     }
 
-    .chat-input {
-        padding: 10px;
-    }
+     
 
     .video-call-btn {
         width: 40px;

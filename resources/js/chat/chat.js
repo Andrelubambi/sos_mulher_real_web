@@ -81,6 +81,8 @@ export function setupChat() {
             
             messagesDiv.innerHTML = '';
             sendMessageForm.style.display = 'flex';
+            sendMessageForm.classList.remove('hidden');
+
 
             fetch(`/chat/messages/${window.usuarioAtualId}`)
                 .then(res => res.json())
@@ -161,19 +163,19 @@ export function setupChat() {
     }
 
     window.appendMessageToChat = function (data) {
-        const messagesContainer = document.getElementById('messages');
-        const messageElement = document.createElement('div');
-        messageElement.classList.add('message');
-    
-        messageElement.innerHTML = `
-            <div class="message-bubble">
-                <strong>${data.remetente.name}:</strong> ${data.conteudo}
-                <span class="timestamp">${new Date(data.created_at).toLocaleTimeString()}</span>
-            </div>
-        `;
-    
-        messagesContainer.appendChild(messageElement);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    };
-    
+    const messagesContainer = document.getElementById('messages');
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message');
+
+    messageElement.innerHTML = `
+        <div class="message-bubble">
+            <strong>${data.remetente.name}:</strong> ${data.conteudo}
+            <span class="timestamp">${new Date(data.created_at).toLocaleTimeString()}</span>
+        </div>
+    `;
+
+    messagesContainer.appendChild(messageElement);
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+};
+
 }
