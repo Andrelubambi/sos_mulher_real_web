@@ -23,3 +23,8 @@ Broadcast::channel('chat.{minId}-{maxId}', function ($user, $minId, $maxId) {
     $userId = $user->id;
     return $userId == $minId || $userId == $maxId;
 });
+
+
+Broadcast::channel('test-channel', function ($user) {
+    return true; // Todos os usuários autenticados podem acessar
+});
