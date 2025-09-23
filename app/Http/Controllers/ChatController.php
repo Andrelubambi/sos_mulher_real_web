@@ -4,16 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Mensagem;
-use App\Models\MensagemSos;
 use App\Events\MessageSent;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
 use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
-
     public function index()
     {
         $userId = auth()->id();
@@ -31,7 +28,7 @@ class ChatController extends Controller
                 END as user_id,
                 MAX(created_at) as ultima_data,
                 MAX(conteudo) as ultima_mensagem
-            ', [$userId]) // <-- aqui o parâmetro é passado corretamente
+            ', [$userId])
             ->where('de', $userId)
             ->orWhere('para', $userId)
             ->groupBy('user_id')
@@ -41,14 +38,14 @@ class ChatController extends Controller
         // Obter os dados do usuário com quem ele conversou
         $chatsRecentes = [];
         foreach ($conversas as $conversa) {
-            $ultimoMsg = \App\Models\Mensagem::where(function ($query) use ($userId, $conversa) {
+            $ultimoMsg = Mensagem::where(function ($query) use ($userId, $conversa) {
                     $query->where('de', $userId)->where('para', $conversa->user_id)
                         ->orWhere('de', $conversa->user_id)->where('para', $userId);
                 })
                 ->orderByDesc('created_at')
                 ->first();
 
-            $user = \App\Models\User::find($conversa->user_id);
+            $user = User::find($conversa->user_id);
             if ($user && $ultimoMsg) {
                 $chatsRecentes[] = [
                     'user' => $user,
@@ -57,47 +54,9 @@ class ChatController extends Controller
             }
         }
 
-        return view('chat', compact('usuariosNaoDoutores', 'chatsRecentes'))->with('mensagens', $chatsRecentes);
-
+        return view('chat', compact('usuariosNaoDoutores', 'chatsRecentes'));
     }
 
-   public function responderMensagemSos($id)
-{
-    // O ID do estagiário que está a responder (usuário logado)
-    $estagiarioId = Auth::id();
-
-    // Encontra a mensagem de SOS para obter o ID da vítima
-    $mensagemSos = MensagemSos::findOrFail($id);
-    $vitimaId = $mensagemSos->enviado_por;
-
-    // 1. Crie a mensagem corretamente, do estagiário para a vítima.
-    $mensagem = Mensagem::create([
-        'de' => $estagiarioId,
-        'para' => $vitimaId,
-        'conteudo' => $mensagemSos->conteudo,
-    ]);
-
-    // 2. DISPARE O EVENTO DE BROADCAST AQUI!
-    // Para que a vítima seja notificada em tempo real.
-    $minId = min($estagiarioId, $vitimaId);
-    $maxId = max($estagiarioId, $vitimaId);
-    event(new MessageSent($mensagem, $minId, $maxId));
-
-    // O restante do seu código pode permanecer para a view.
-    $mensagens = Mensagem::where(function ($query) use ($estagiarioId, $vitimaId) {
-        $query->where('de', $estagiarioId)->where('para', $vitimaId);
-    })->orWhere(function ($query) use ($estagiarioId, $vitimaId) {
-        $query->where('de', $vitimaId)->where('para', $estagiarioId);
-    })->with('remetente')->orderBy('created_at')->get();
-
-    $mensagemSos->status = 'lido';
-    $mensagemSos->save();
-
-    return view('chat_2', [
-        'mensagens' => $mensagens,
-        'remetente' => User::find($vitimaId), // Agora o remetente na view é a vítima
-    ]);
-}
     public function getMessages($usuarioId)
     {
         $usuario = User::find($usuarioId);
@@ -107,7 +66,6 @@ class ChatController extends Controller
         }
 
         $usuarioLogado = auth()->user();
-
 
         $messages = Mensagem::where(function ($query) use ($usuarioLogado, $usuario) {
                 $query->where('de', $usuarioLogado->id)
@@ -123,33 +81,9 @@ class ChatController extends Controller
 
         return response()->json($messages);
     }
-    
-    public function showChatWithUser($usuarioId)
+
+    public function sendMessage(Request $request, $usuarioId)
     {
-   
-    $usuario = User::find($usuarioId);
-
-    
-    if (!$usuario) {
-        abort(404, 'Usuário não encontrado');
-    } 
-    $usuarioLogado = auth()->user();  
-    $messages = Mensagem::where(function ($query) use ($usuarioLogado, $usuario) {
-            $query->where('de', $usuarioLogado->id)
-                  ->where('para', $usuario->id);
-        })
-        ->orWhere(function ($query) use ($usuarioLogado, $usuario) {
-            $query->where('de', $usuario->id)
-                  ->where('para', $usuarioLogado->id);
-        })
-        ->orderBy('created_at', 'asc') 
-        ->get();
- 
-    return view('chat', compact('usuario', 'messages'));
-    }
-
-
-    public function sendMessage(Request $request, $usuarioId)   {
         $request->validate([
             'conteudo' => 'required|string|max:1000',
         ]);
@@ -165,36 +99,16 @@ class ChatController extends Controller
             'conteudo' => $request->conteudo,  
         ]);
 
+        // Carregar o relacionamento remetente
+        $mensagem->load('remetente');
 
-    $minId = min(auth()->user()->id, $usuario->id);
+        // Determinar o canal correto para o broadcast
+        $minId = min(auth()->user()->id, $usuario->id);
         $maxId = max(auth()->user()->id, $usuario->id);
         
+        // Disparar evento para Laravel Echo
         event(new MessageSent($mensagem, $minId, $maxId));
- 
-    return response()->json($mensagem);
-}
-
-
-
-
-public function sendToInterns(Request $request)
-{
-    $request->validate([
-        'conteudo' => 'required|string|max:1000',
-    ]);
-
-    $estagiarios = User::where('role', 'estagiario')->get();
-
-    foreach ($estagiarios as $estagiario) {
-        $mensagem = Mensagem::create([
-            'de' => auth()->id(),
-            'para' => $estagiario->id,
-            'conteudo' => $request->conteudo,
-        ]);
-
-        event(new MessageSent($mensagem));
+        
+        return response()->json($mensagem);
     }
-
-    return response()->json(['success' => true, 'message' => 'Mensagem enviada para todos os estagiários.']);
-}
 }

@@ -1,53 +1,67 @@
 <?php
+
 namespace App\Events;
 
 use App\Models\Mensagem;
 use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log; 
 
 class MessageSent implements ShouldBroadcast
 {
-    use SerializesModels;
+    use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $mensagem;
+    public $minId;
+    public $maxId;
 
-    public function __construct(Mensagem $mensagem)
+    /**
+     * Create a new event instance.
+     */
+    public function __construct(Mensagem $mensagem, $minId, $maxId)
     {
-        $this->mensagem = $mensagem->load('remetente');
-        Log::info('MessageSent evento disparado', [
-            'remetente' => $this->mensagem->remetente,
-            'conteudo' => $this->mensagem->conteudo
-        ]);
-    }
- 
-    public function broadcastOn()
-    {
-        $minId = min($this->mensagem->de, $this->mensagem->para);
-        $maxId = max($this->mensagem->de, $this->mensagem->para);
-
-        return new PrivateChannel("chat.{$minId}-{$maxId}");
+        $this->mensagem = $mensagem;
+        $this->minId = $minId;
+        $this->maxId = $maxId;
     }
 
-    public function broadcastWith()
+    /**
+     * Get the channels the event should broadcast on.
+     */
+    public function broadcastOn(): array
     {
-        
-        $data = [
+        return [
+            new PrivateChannel("chat.{$this->minId}-{$this->maxId}")
+        ];
+    }
+
+    /**
+     * Get the data to broadcast.
+     */
+    public function broadcastWith(): array
+    {
+        return [
             'id' => $this->mensagem->id,
-            'conteudo' => $this->mensagem->conteudo,
             'de' => $this->mensagem->de,
             'para' => $this->mensagem->para,
-            'created_at' => $this->mensagem->created_at->toDateTimeString(),
+            'conteudo' => $this->mensagem->conteudo,
+            'created_at' => $this->mensagem->created_at,
             'remetente' => [
                 'id' => $this->mensagem->remetente->id,
                 'name' => $this->mensagem->remetente->name,
-            ],
+            ]
         ];
-        Log::info('Dados para o Broadcast:', $data); 
-    
-        return $data;
     }
-    
+
+    /**
+     * The event's broadcast name.
+     */
+    public function broadcastAs(): string
+    {
+        return 'MessageSent';
+    }
 }

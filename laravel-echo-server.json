@@ -1,21 +1,28 @@
 {
-    "authHost": "http://localhost:8000",
+    "authHost": "https://sosmulherreal.com",
     "authEndpoint": "/broadcasting/auth",
-    "clients": [],
+    "clients": [
+        {
+            "appId": "sos-mulher-app",
+            "key": "sos-mulher-key-2024"
+        }
+    ],
     "database": "redis",
     "databaseConfig": {
         "redis": {
             "host": "laravel_redis",
             "port": "6379",
-            "password": null,
-            "db": 0
+            "password": "",
+            "keyPrefix": "",
+            "options": {}
         }
     },
     "devMode": false,
-    "host": "0.0.0.0",
+    "host": null,
     "port": "6001",
     "protocol": "http",
     "socketio": {},
+    "secureOptions": {},
     "sslCertPath": "",
     "sslKeyPath": "",
     "sslCertChainPath": "",
@@ -27,7 +34,7 @@
     "apiOriginAllow": {
         "allowCors": true,
         "allowOrigin": "*",
-        "allowMethods": "GET, POST",
+        "allowMethods": "GET,POST",
         "allowHeaders": "Origin, Content-Type, X-Auth-Token, X-Requested-With, Accept, Authorization, X-CSRF-TOKEN, X-Socket-Id"
     }
 }

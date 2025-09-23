@@ -13,18 +13,13 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel('chat.{min}-{max}', function ($user, $min, $max) {
-    return $user->id == $min || $user->id == $max;
+Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
+    return (int) $user->id === (int) $id;
 });
 
-
-
-use App\Models\Grupo;
-
-Broadcast::channel('grupo.{grupoId}', function ($user, $grupoId){
-    $grupo = Grupo::find($grupoId);
-    //return $grupo && $grupo->users->contains($user->id);
-    
-    
-    return true;
+// Canal para chat privado entre dois usuários
+Broadcast::channel('chat.{minId}-{maxId}', function ($user, $minId, $maxId) {
+    // Verificar se o usuário autenticado é um dos participantes do chat
+    $userId = $user->id;
+    return $userId == $minId || $userId == $maxId;
 });

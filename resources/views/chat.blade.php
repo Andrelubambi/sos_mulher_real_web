@@ -14,356 +14,12 @@
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('vendors/images/favicon-16x16.png') }}" />
     
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
-        /* Add this CSS to your existing styles in chat.blade.php */
-
-/* Enhanced video call button states */
-.video-call-btn {
-    background-color: var(--success-color);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 45px;
-    height: 45px;
-    cursor: pointer;
-    transition: var(--transition);
-    margin-left: 15px;
-    font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-
-.video-call-btn:hover:not(:disabled) {
-    background-color: #218838;
-    transform: scale(1.05);
-}
-
-.video-call-btn:disabled {
-    background-color: var(--text-light);
-    cursor: not-allowed;
-    transform: none;
-    opacity: 0.5;
-}
-
-.video-call-btn.calling {
-    background-color: #fd7e14;
-    animation: pulse 1.5s infinite;
-}
-
-.video-call-btn.active {
-    background-color: #dc3545;
-}
-
-/* Loading spinner for video button */
-.video-call-btn .fa-spinner {
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Enhanced video modal */
-.video-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.95);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 3000;
-    opacity: 0;
-    visibility: hidden;
-    transition: var(--transition);
-    backdrop-filter: blur(5px);
-}
-
-.video-modal.show {
-    opacity: 1;
-    visibility: visible;
-}
-
-.video-modal-content {
-    width: 95%;
-    height: 90%;
-    max-width: 1400px;
-    max-height: 900px;
-    background-color: #1a1a1a;
-    border-radius: 12px;
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    animation: modalSlideIn 0.3s ease-out;
-}
-
-@keyframes modalSlideIn {
-    0% {
-        opacity: 0;
-        transform: scale(0.9) translateY(-20px);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
-}
-
-.video-modal-header {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 15px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-}
-
-.video-modal-header h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-}
-
-.video-modal-header::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-}
-
-.close-video-btn {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: white;
-    font-size: 1.5rem;
-    cursor: pointer;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: var(--transition);
-}
-
-.close-video-btn:hover {
-    background-color: rgba(220, 53, 69, 0.8);
-    border-color: #dc3545;
-    transform: rotate(90deg);
-}
-
-.video-frame-container {
-    width: 100%;
-    height: calc(100% - 70px);
-    background-color: #000;
-    position: relative;
-    overflow: hidden;
-}
-
-.video-frame {
-    width: 100%;
-    height: 100%;
-    border: none;
-    background-color: #000;
-}
-
-/* Enhanced call indicator */
-.call-indicator {
-    position: fixed;
-    top: 80px;
-    right: 20px;
-    background: linear-gradient(135deg, var(--success-color), #20c997);
-    color: white;
-    padding: 12px 18px;
-    border-radius: 25px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    box-shadow: 0 4px 20px rgba(40, 167, 69, 0.4);
-    z-index: 1001;
-    display: none;
-    animation: slideInFromRight 0.3s ease-out, pulse 2s infinite;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-@keyframes slideInFromRight {
-    0% {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    100% {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-.call-indicator i {
-    margin-right: 8px;
-    animation: blink 1.5s infinite;
-}
-
-@keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0.5; }
-}
-
-/* Connection status indicator */
-.connection-status {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.connection-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background-color: var(--success-color);
-    animation: connectionPulse 2s infinite;
-}
-
-@keyframes connectionPulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-}
-
-/* Video call controls overlay */
-.video-controls {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 15px;
-    z-index: 20;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.video-modal-content:hover .video-controls {
-    opacity: 1;
-}
-
-.video-control-btn {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: none;
-    color: white;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: var(--transition);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.video-control-btn.mute {
-    background-color: rgba(108, 117, 125, 0.8);
-}
-
-.video-control-btn.camera {
-    background-color: rgba(23, 162, 184, 0.8);
-}
-
-.video-control-btn.end-call {
-    background-color: rgba(220, 53, 69, 0.8);
-}
-
-.video-control-btn:hover {
-    transform: scale(1.1);
-}
-
-/* Mobile optimizations */
-@media (max-width: 768px) {
-    .video-modal-content {
-        width: 100%;
-        height: 100%;
-        border-radius: 0;
-    }
-    
-    .video-call-btn {
-        width: 40px;
-        height: 40px;
-        font-size: 1rem;
-        margin-left: 10px;
-    }
-    
-    .call-indicator {
-        top: 70px;
-        right: 10px;
-        padding: 10px 14px;
-        font-size: 0.8rem;
-    }
-    
-    .video-controls {
-        bottom: 10px;
-        gap: 10px;
-    }
-    
-    .video-control-btn {
-        width: 45px;
-        height: 45px;
-        font-size: 1.1rem;
-    }
-}
-
-/* Error states */
-.video-error {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    color: white;
-    background: rgba(220, 53, 69, 0.9);
-    padding: 20px;
-    border-radius: 8px;
-    z-index: 100;
-}
-
-/* Loading state */
-.video-loading {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    color: white;
-    z-index: 100;
-}
-
-.video-loading .spinner {
-    width: 50px;
-    height: 50px;
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    border-top: 3px solid white;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 15px;
-}
         :root {
             --primary-color: #8e44ad;
             --primary-dark: #7d3c98;
@@ -560,12 +216,13 @@
             background-color: var(--offline-status);
         }
 
-        /* Área de chat */
+        /* Área de chat - Layout VERTICAL */
         .chat-area {
             flex: 1;
             display: flex;
             flex-direction: column;
             background-color: white;
+            height: 100vh;
         }
 
         .chat-header {
@@ -576,6 +233,7 @@
             background-color: white;
             box-shadow: var(--shadow);
             z-index: 10;
+            min-height: 70px;
         }
 
         .back-button {
@@ -585,11 +243,19 @@
             font-size: 1.2rem;
             margin-right: 12px;
             cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .back-button:hover {
+            background-color: var(--light-bg);
         }
 
         .current-chat-user {
             display: flex;
             align-items: center;
+            flex: 1;
         }
 
         .chat-messages {
@@ -597,6 +263,8 @@
             padding: 20px;
             overflow-y: auto;
             background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
         }
 
         .message {
@@ -636,22 +304,32 @@
             text-align: right;
         }
 
+        /* Input de chat - SEMPRE NO BOTTOM */
         .chat-input {
-            padding: 15px;
+            padding: 15px 20px;
             border-top: 1px solid var(--border-color);
-            display: flex;
+            display: none;
             background-color: white;
+            align-items: flex-end;
+            gap: 10px;
+            min-height: 70px;
         }
 
         .chat-input textarea {
             flex: 1;
-            padding: 12px;
+            padding: 12px 16px;
             border: 1px solid var(--border-color);
             border-radius: 24px;
             resize: none;
-            height: 45px;
+            min-height: 45px;
+            max-height: 120px;
             font-family: inherit;
-            margin-right: 10px;
+            line-height: 1.4;
+        }
+
+        .chat-input textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
         }
 
         .chat-input button {
@@ -663,171 +341,17 @@
             height: 45px;
             cursor: pointer;
             transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
 
         .chat-input button:hover {
             background-color: var(--primary-dark);
         }
 
-        /* Notificações */
-        .notification-alert {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: white;
-            border-left: 4px solid var(--secondary-color);
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: var(--shadow);
-            display: flex;
-            align-items: center;
-            z-index: 1000;
-            max-width: 320px;
-            transform: translateX(150%);
-            transition: transform 0.3s ease;
-        }
-
-        .notification-alert.show {
-            transform: translateX(0);
-        }
-
-        .notification-content {
-            flex: 1;
-        }
-
-        .notification-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .notification-actions button {
-            padding: 6px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
-
-        .btn-responder {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .btn-fechar {
-            background-color: var(--light-bg);
-            color: var(--text-color);
-        }
-
-        /* Modal */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
-        }
-
-        .modal.show {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-content {
-            background-color: white;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 500px;
-            padding: 20px;
-            box-shadow: var(--shadow);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .modal-body {
-            margin-bottom: 20px;
-        }
-
-        .modal-footer {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        /* Responsividade */
-        @media (max-width: 992px) {
-            .sidebar {
-                position: fixed;
-                left: -320px;
-                top: 0;
-                bottom: 0;
-                z-index: 1000;
-            }
-
-            .sidebar.active {
-                left: 0;
-            }
-
-            .close-sidebar {
-                display: block;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
-            .back-button {
-                display: block;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .app-header h1 {
-                font-size: 1.2rem;
-            }
-
-            .message-content {
-                max-width: 85%;
-            }
-
-            .chat-input {
-                padding: 10px;
-            }
-
-            .chat-input textarea {
-                margin-right: 8px;
-            }
-        }
-
-        /* Estados vazios */
-        .empty-state {
-            text-align: center;
-            padding: 30px 15px;
-            color: var(--text-light);
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-            opacity: 0.5;
-        }
-
-        /* Botão de videochamada no header do chat */
+        /* Video call button */
         .video-call-btn {
             background-color: var(--success-color);
             color: white;
@@ -842,9 +366,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
         }
 
-        .video-call-btn:hover {
+        .video-call-btn:hover:not(:disabled) {
             background-color: #218838;
             transform: scale(1.05);
         }
@@ -853,9 +378,14 @@
             background-color: var(--text-light);
             cursor: not-allowed;
             transform: none;
+            opacity: 0.5;
         }
 
-        /* Modal de videochamada */
+        .video-call-btn.active {
+            background-color: #dc3545;
+        }
+
+        /* Video modal */
         .video-modal {
             position: fixed;
             top: 0;
@@ -933,36 +463,68 @@
             border: none;
         }
 
-        /* Indicador de chamada ativa */
-        .call-indicator {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            background-color: var(--success-color);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 25px;
-            font-size: 0.85rem;
-            box-shadow: var(--shadow);
-            z-index: 1001;
-            display: none;
-            animation: pulse 2s infinite;
+        /* Estados vazios */
+        .empty-state {
+            text-align: center;
+            padding: 30px 15px;
+            color: var(--text-light);
+            margin: auto;
         }
 
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.7; }
-            100% { opacity: 1; }
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
         }
 
-        /* Responsividade para modal de vídeo */
-        @media (max-width: 768px) {
-            .video-modal-content {
-                width: 100%;
-                height: 100%;
-                border-radius: 0;
+        /* Responsividade */
+        @media (max-width: 992px) {
+            .sidebar {
+                position: fixed;
+                left: -320px;
+                top: 0;
+                bottom: 0;
+                z-index: 1000;
             }
-            
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .close-sidebar {
+                display: block;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .back-button {
+                display: block;
+            }
+
+            .chat-area {
+                display: none;
+            }
+
+            .chat-area.active {
+                display: flex;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .app-header h1 {
+                font-size: 1.2rem;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .chat-input {
+                padding: 10px;
+            }
+
             .video-call-btn {
                 width: 40px;
                 height: 40px;
@@ -970,49 +532,54 @@
                 margin-left: 10px;
             }
         }
-    </style>
 
-<!-- Laravel Echo -->
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js" integrity="sha384-my6JkS7z1+r4r8eYg2l8v9d1a+C5U+G7wF7G7r2zFz5uG8d1b+F6oGz7C2o+B5G" crossorigin="anonymous"></script>
-
-<script src="https://cdn.jsdelivr.net/npm/laravel-echo@1.15.0/dist/echo.min.js"></script>
-
-<!-- Configuração do Echo para Laravel Echo Server com Redis -->
-<script>
-    console.log('Verificando Echo...');
-    setTimeout(() => {
-        if (typeof Echo !== 'undefined' && typeof io !== 'undefined') {
-            // Configura o objeto Echo com o broadcaster Socket.IO
-            window.Echo = new Echo({
-                broadcaster: 'socket.io',
-                host: window.location.hostname + ':6001'
-            });
-
-            console.log('Echo configurado com sucesso para Laravel Echo Server com Socket.IO');
-
-            try {
-                Echo.channel('test-channel')
-                    .listen('TestEvent', (e) => {
-                        console.log('Recebido TestEvent:', e);
-                    });
-                console.log('Echo conectado');
-            } catch (error) {
-                console.error('Erro na conexão Echo:', error);
-            }
-        } else {
-            console.error('Echo ou Socket.IO não foram carregados corretamente.');
+        /* Connection status */
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-    }, 100);
-</script>
 
+        .connection-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--success-color);
+            animation: pulse 2s infinite;
+        }
+
+        .connection-dot.disconnected {
+            background-color: #dc3545;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
 </head>
 
 <body>
+    <!-- Connection Status -->
+    <div class="connection-status" id="connectionStatus">
+        <div class="connection-dot" id="connectionDot"></div>
+        <span id="connectionText">Conectando...</span>
+    </div>
+
     <!-- Header -->
     <header class="app-header">
         <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
         <h1>SOS-MULHER • CHAT</h1>
-        <div></div> <!-- Espaço para balancear o flexbox -->
+        <div></div>
     </header>
 
     <!-- Container principal -->
@@ -1044,7 +611,7 @@
                         </li>
                         @empty
                         <div class="empty-state">
-                            <i class="fa fa-comments"></i>
+                            <i class="fas fa-comments"></i>
                             <p>Nenhuma conversa recente</p>
                         </div>
                         @endforelse
@@ -1065,7 +632,7 @@
                         </li>
                         @empty
                         <div class="empty-state">
-                            <i class="fa fa-users"></i>
+                            <i class="fas fa-users"></i>
                             <p>Nenhum usuário encontrado</p>
                         </div>
                         @endforelse
@@ -1075,9 +642,11 @@
         </div>
 
         <!-- Área de Chat -->
-        <div class="chat-area">
+        <div class="chat-area" id="chatArea">
             <div class="chat-header">
-                <button class="back-button" id="backButton">←</button>
+                <button class="back-button" id="backButton">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
                 <div class="current-chat-user">
                     <div class="user-avatar" id="currentUserAvatar">U</div>
                     <div>
@@ -1086,16 +655,15 @@
                     </div>
                 </div>
 
-                  <!-- Botão de videochamada -->
-                    <button class="video-call-btn" id="videoCallBtn" title="Iniciar videochamada" disabled>
-                        <i class="fa fa-video-camera"></i>
-                    </button>
-                </div>
+                <!-- Botão de videochamada -->
+                <button class="video-call-btn" id="videoCallBtn" title="Iniciar videochamada" disabled>
+                    <i class="fas fa-video"></i>
+                </button>
             </div>
 
             <div id="messages" class="chat-messages">
                 <div class="empty-state">
-                    <i class="fa fa-comment"></i>
+                    <i class="fas fa-comment"></i>
                     <p>Selecione uma conversa para começar</p>
                 </div>
             </div>
@@ -1104,75 +672,40 @@
                 @csrf
                 <textarea name="conteudo" id="conteudo" placeholder="Digite sua mensagem..." rows="1"></textarea>
                 <button type="submit">
-                    <i class="fa fa-paper-plane"></i>
+                    <i class="fas fa-paper-plane"></i>
                 </button>
             </form>
         </div>
 
-
-
-
-         <div class="video-modal" id="videoModal">
-        <div class="video-modal-content">
-            <div class="video-modal-header">
-                <h3 id="videoCallTitle">Videochamada - Carregando...</h3>
-                <button class="close-video-btn" id="closeVideoBtn" title="Fechar videochamada">
-                    ×
-                </button>
-            </div>
-            <div class="video-frame-container">
-                <iframe id="jitsiFrame" class="video-frame" allow="camera; microphone; display-capture">
-                </iframe>
-            </div>
-        </div>
-    </div>
-
-    <!-- Indicador de chamada ativa -->
-    <div class="call-indicator" id="callIndicator">
-        <i class="fa fa-video-camera"></i> Videochamada ativa
-    </div>
-    </div>
-
-    <!-- Notificação -->
-    <div class="notification-alert" id="mensagemAlerta">
-        <div class="notification-content">
-            <strong>Nova mensagem SOS</strong>
-            <p id="mensagemTextoCompleto">Você tem novas mensagens não lidas</p>
-            <div class="notification-actions">
-                <button class="btn-responder" id="enviarResposta">Responder</button>
-                <button class="btn-fechar" id="fecharNotificacao">Fechar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de Mensagem -->
-    <div class="modal" id="mensagemModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Mensagem SOS</h3>
-                <button id="fecharModal">×</button>
-            </div>
-            <div class="modal-body">
-                <p id="mensagemConteudo"></p>
-                <small id="mensagemData"></small>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-responder">Responder</button>
-                <button class="btn-fechar">Fechar</button>
+        <!-- Video Modal -->
+        <div class="video-modal" id="videoModal">
+            <div class="video-modal-content">
+                <div class="video-modal-header">
+                    <h3 id="videoCallTitle">Videochamada - Carregando...</h3>
+                    <button class="close-video-btn" id="closeVideoBtn" title="Fechar videochamada">
+                        ×
+                    </button>
+                </div>
+                <div class="video-frame-container">
+                    <iframe id="jitsiFrame" class="video-frame" allow="camera; microphone; display-capture">
+                    </iframe>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="https://unpkg.com/laravel-echo@1.15.3/dist/echo.iife.js"></script>
+
     <script>
-       // Add this JavaScript code to replace your existing <script> section in chat.blade.php
 document.addEventListener('DOMContentLoaded', function() {
     // Elementos da interface
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     const closeSidebar = document.getElementById('closeSidebar');
     const sidebar = document.getElementById('sidebar');
     const backButton = document.getElementById('backButton');
+    const chatArea = document.getElementById('chatArea');
     const tabMensagens = document.getElementById('tabMensagens');
     const tabUsuarios = document.getElementById('tabUsuarios');
     const mensagensRecentes = document.getElementById('mensagensRecentes');
@@ -1190,7 +723,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeVideoBtn = document.getElementById('closeVideoBtn');
     const jitsiFrame = document.getElementById('jitsiFrame');
     const videoCallTitle = document.getElementById('videoCallTitle');
-    const callIndicator = document.getElementById('callIndicator');
+    
+    // Connection status elements
+    const connectionStatus = document.getElementById('connectionStatus');
+    const connectionDot = document.getElementById('connectionDot');
+    const connectionText = document.getElementById('connectionText');
 
     let isCallActive = false;
     let currentRoomUrl = null;
@@ -1200,22 +737,84 @@ document.addEventListener('DOMContentLoaded', function() {
     let usuarioAtualId = null;
     let currentChannel = null;
 
-    // Verificar se Echo está funcionando
-    console.log('Verificando Echo...');
-    setTimeout(() => {
-        if (typeof Echo !== 'undefined') {
-            console.log('Echo carregado com sucesso');
-            // Testar conexão
-            try {
-                Echo.channel('test-channel');
-                console.log('Echo conectado');
-            } catch (error) {
+    // Configurar Laravel Echo
+    let echoConnected = false;
+    
+    function initializeEcho() {
+        try {
+            window.Echo = new Echo({
+                broadcaster: 'socket.io',
+                host: window.location.hostname + ':6001',
+                transports: ['websocket', 'polling'],
+            });
+
+            window.Echo.connector.socket.on('connect', () => {
+                console.log('Echo conectado com sucesso!');
+                echoConnected = true;
+                updateConnectionStatus(true);
+            });
+
+            window.Echo.connector.socket.on('disconnect', () => {
+                console.log('Echo desconectado');
+                echoConnected = false;
+                updateConnectionStatus(false);
+            });
+
+            window.Echo.connector.socket.on('connect_error', (error) => {
                 console.error('Erro na conexão Echo:', error);
-            }
-        } else {
-            console.error('Echo não foi carregado');
+                echoConnected = false;
+                updateConnectionStatus(false);
+            });
+
+            console.log('Echo inicializado');
+        } catch (error) {
+            console.error('Erro ao inicializar Echo:', error);
+            updateConnectionStatus(false);
         }
-    }, 1000);
+    }
+
+    function updateConnectionStatus(connected) {
+        if (connected) {
+            connectionDot.classList.remove('disconnected');
+            connectionText.textContent = 'Conectado';
+        } else {
+            connectionDot.classList.add('disconnected');
+            connectionText.textContent = 'Desconectado';
+        }
+    }
+
+    // Inicializar Echo
+    initializeEcho();
+
+    // Interface controls
+    mobileMenuBtn.addEventListener('click', () => {
+        sidebar.classList.add('active');
+    });
+
+    closeSidebar.addEventListener('click', () => {
+        sidebar.classList.remove('active');
+    });
+
+    backButton.addEventListener('click', () => {
+        if (window.innerWidth < 992) {
+            chatArea.classList.remove('active');
+            sidebar.style.display = 'flex';
+        }
+    });
+
+    tabMensagens.addEventListener('click', () => {
+        mensagensRecentes.style.display = 'block';
+        listaUsuarios.style.display = 'none';
+        tabMensagens.classList.add('active');
+        tabUsuarios.classList.remove('active');
+    });
+
+    tabUsuarios.addEventListener('click', () => {
+        mensagensRecentes.style.display = 'none';
+        listaUsuarios.style.display = 'block';
+        tabMensagens.classList.remove('active');
+        tabUsuarios.classList.add('active');
+    });
 
     // Enable/disable video call button
     function updateVideoCallButton() {
@@ -1237,7 +836,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        videoCallBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+        videoCallBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
         videoCallBtn.disabled = true;
         
         fetch(`/video-call/room/${usuarioAtualId}`, {
@@ -1266,7 +865,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Erro ao iniciar videochamada: ' + error.message);
         })
         .finally(() => {
-            videoCallBtn.innerHTML = '<i class="fa fa-video-camera"></i>';
+            videoCallBtn.innerHTML = '<i class="fas fa-video"></i>';
             updateVideoCallButton();
         });
     });
@@ -1276,9 +875,8 @@ document.addEventListener('DOMContentLoaded', function() {
         jitsiFrame.src = roomUrl;
         videoModal.classList.add('show');
         document.body.style.overflow = 'hidden';
-        callIndicator.style.display = 'block';
         isCallActive = true;
-        videoCallBtn.innerHTML = '<i class="fa fa-phone"></i>';
+        videoCallBtn.innerHTML = '<i class="fas fa-phone"></i>';
         videoCallBtn.title = 'Chamada ativa';
         videoCallBtn.classList.add('active');
     }
@@ -1287,7 +885,6 @@ document.addEventListener('DOMContentLoaded', function() {
         videoModal.classList.remove('show');
         document.body.style.overflow = 'auto';
         jitsiFrame.src = 'about:blank';
-        callIndicator.style.display = 'none';
         isCallActive = false;
         currentRoomUrl = null;
         videoCallBtn.classList.remove('active');
@@ -1308,34 +905,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Interface controls
-    mobileMenuBtn.addEventListener('click', () => {
-        sidebar.classList.add('active');
-    });
-
-    closeSidebar.addEventListener('click', () => {
-        sidebar.classList.remove('active');
-    });
-
-    backButton.addEventListener('click', () => {
-        document.querySelector('.chat-area').style.display = 'none';
-        document.querySelector('.sidebar').style.display = 'flex';
-    });
-
-    tabMensagens.addEventListener('click', () => {
-        mensagensRecentes.style.display = 'block';
-        listaUsuarios.style.display = 'none';
-        tabMensagens.classList.add('active');
-        tabUsuarios.classList.remove('active');
-    });
-
-    tabUsuarios.addEventListener('click', () => {
-        mensagensRecentes.style.display = 'none';
-        listaUsuarios.style.display = 'block';
-        tabMensagens.classList.remove('active');
-        tabUsuarios.classList.add('active');
-    });
-
     // Função para adicionar mensagem ao chat
     function appendMessage(message, sentByMe = false) {
         const emptyState = messagesDiv.querySelector('.empty-state');
@@ -1343,36 +912,40 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('message', sentByMe ? 'sent' : 'received');
-        messageDiv.innerHTML = `<div class="message-content">
-            <strong>${sentByMe ? 'Você' : message.remetente.name}:</strong><br>
-            ${message.conteudo.replace(/\n/g, '<br>')}<br>
-            <div class="message-time">${new Date(message.created_at).toLocaleString()}</div>
-        </div>`;
+        messageDiv.innerHTML = `
+            <div class="message-content">
+                <strong>${sentByMe ? 'Você' : (message.remetente ? message.remetente.name : 'Usuário')}:</strong><br>
+                ${message.conteudo.replace(/\n/g, '<br>')}<br>
+                <div class="message-time">${new Date(message.created_at).toLocaleString()}</div>
+            </div>
+        `;
         messagesDiv.appendChild(messageDiv);
         messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
-    // Escutar mensagens em tempo real
+    // Escutar mensagens em tempo real com Echo
     function escutarMensagens(usuarioId) {
-        if (typeof Echo === 'undefined') {
-            console.log('Echo não disponível, usando polling');
+        if (!window.Echo) {
+            console.log('Echo não disponível');
             return;
         }
 
         try {
+            // Sair do canal anterior se existir
+            if (currentChannel) {
+                window.Echo.leave(currentChannel);
+                console.log('Saiu do canal anterior:', currentChannel);
+            }
+            
             const minId = Math.min(usuarioLogadoId, usuarioId);
             const maxId = Math.max(usuarioLogadoId, usuarioId);
             const canal = `chat.${minId}-${maxId}`;
-
-            if (currentChannel) {
-                Echo.leave(currentChannel);
-            }
             
             currentChannel = canal;
             
             console.log('Conectando ao canal:', canal);
 
-            Echo.private(canal)
+            window.Echo.private(canal)
                 .listen('MessageSent', (e) => {
                     console.log('Nova mensagem recebida:', e);
                     if (e.de !== usuarioLogadoId) {
@@ -1399,22 +972,23 @@ document.addEventListener('DOMContentLoaded', function() {
             userStatus.textContent = 'Online';
             updateVideoCallButton();
             
+            // Mobile: mostrar chat area
             if (window.innerWidth < 992) {
                 sidebar.classList.remove('active');
-                document.querySelector('.sidebar').style.display = 'none';
-                document.querySelector('.chat-area').style.display = 'flex';
+                chatArea.classList.add('active');
             }
             
             messagesDiv.innerHTML = '';
             sendMessageForm.style.display = 'flex';
 
+            // Carregar mensagens
             fetch(`/chat/messages/${usuarioAtualId}`)
                 .then(res => res.json())
                 .then(messages => {
                     if (messages.length === 0) {
                         messagesDiv.innerHTML = `
                             <div class="empty-state">
-                                <i class="fa fa-comment"></i>
+                                <i class="fas fa-comment"></i>
                                 <p>Nenhuma mensagem ainda</p>
                                 <small>Envie uma mensagem para iniciar a conversa</small>
                             </div>
@@ -1430,6 +1004,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.error('Erro ao carregar mensagens:', error);
                 });
 
+            // Escutar mensagens em tempo real
             escutarMensagens(usuarioAtualId);
         });
     });
@@ -1456,6 +1031,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 appendMessage(data, true);
                 conteudoInput.value = '';
+                conteudoInput.style.height = '45px';
             })
             .catch(err => {
                 console.error('Erro ao enviar mensagem:', err);
@@ -1463,107 +1039,45 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     });
 
+    // Auto-resize textarea
     conteudoInput.addEventListener('input', function() {
-        this.style.height = 'auto';
-        this.style.height = (this.scrollHeight) + 'px';
+        this.style.height = '45px';
+        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
     });
 
-    // Notificações SOS simplificadas
-    let mensagensPendentes = [];
-    
-    function carregarMensagensSOS() {
-        fetch('/mensagens_nao_lidas')
-            .then(res => res.json())
-            .then(dados => {
-                if (dados && dados.length > 0) {
-                    mensagensPendentes = dados;
-                    atualizarAlerta();
-                }
-            })
-            .catch(error => {
-                console.error('Erro ao carregar mensagens SOS:', error);
-            });
-    }
-
-    function atualizarAlerta() {
-        const alerta = document.getElementById('mensagemAlerta');
-        const texto = document.getElementById('mensagemTextoCompleto');
-
-        if (mensagensPendentes.length > 0) { 
-            alerta.classList.add('show');
-            texto.textContent = `Você tem ${mensagensPendentes.length} mensagem(ns) não lida(s)`;
-        } else {
-            alerta.classList.remove('show');
-            texto.textContent = '';
-        } 
-    }
-
-    // Eventos para notificações
-    document.getElementById('fecharNotificacao')?.addEventListener('click', () => {
-        document.getElementById('mensagemAlerta').classList.remove('show');
-    });
-
-    document.getElementById('enviarResposta')?.addEventListener('click', () => {
-        const mensagemAtual = mensagensPendentes[0];
-        if (mensagemAtual && mensagemAtual.id) {
-            window.location.href = `/responder_mensagem_sos/${mensagemAtual.id}`;
-        } else {
-            alert('Mensagem inválida para responder.');
+    // Enter para enviar (Shift+Enter para nova linha)
+    conteudoInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessageForm.dispatchEvent(new Event('submit'));
         }
     });
 
-    document.getElementById('fecharModal')?.addEventListener('click', () => {
-        document.getElementById('mensagemModal').classList.remove('show');
-    });
-
-    // Configurar notificações SOS com Echo
-    if (typeof Echo !== 'undefined') {
-        setTimeout(() => {
-            try {
-                const userIdLogado = document.querySelector('meta[name="user-id"]').getAttribute('content');
-                
-                Echo.channel('mensagem_sos')
-                    .listen('.NovaMensagemSosEvent', (e) => {
-                        console.log('Nova mensagem SOS:', e);
-                        if (String(e.user_id) === userIdLogado) {
-                            const mensagem = {
-                                id: e.id,
-                                conteudo: e.conteudo,
-                                data: e.data
-                            };
-                            mensagensPendentes.unshift(mensagem);
-                            atualizarAlerta();
-                        }
-                    })
-                    .error((error) => {
-                        console.error('Erro no canal SOS:', error);
-                    });
-                    
-                console.log('Canal SOS configurado');
-            } catch (error) {
-                console.error('Erro ao configurar canal SOS:', error);
-            }
-        }, 2000);
-    }
-
-    // Carregar mensagens SOS iniciais
-    carregarMensagensSOS();
-    
-    // Polling de backup para SOS a cada 30 segundos
-    setInterval(carregarMensagensSOS, 30000);
-
     // Initialize
     updateVideoCallButton();
+    updateConnectionStatus(false);
 
     // Cleanup
     window.addEventListener('beforeunload', function() {
         if (isCallActive) {
             endVideoCall();
         }
-        if (currentChannel && typeof Echo !== 'undefined') {
-            Echo.leave(currentChannel);
+        if (currentChannel && window.Echo) {
+            window.Echo.leave(currentChannel);
         }
     });
+
+    // Retry connection every 10 seconds if disconnected
+    setInterval(() => {
+        if (!echoConnected && window.Echo) {
+            console.log('Tentando reconectar...');
+            try {
+                window.Echo.connector.socket.connect();
+            } catch (error) {
+                console.error('Erro ao tentar reconectar:', error);
+            }
+        }
+    }, 10000);
 });
     </script>
 </body>
