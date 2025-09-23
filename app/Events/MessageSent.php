@@ -16,17 +16,13 @@ class MessageSent implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $mensagem;
-    public $minId;
-    public $maxId;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(Mensagem $mensagem, $minId, $maxId)
+    public function __construct(Mensagem $mensagem)
     {
         $this->mensagem = $mensagem;
-        $this->minId = $minId;
-        $this->maxId = $maxId;
     }
 
     /**
@@ -34,8 +30,12 @@ class MessageSent implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
+        // CALCULAR minId e maxId AQUI, não no construtor
+        $minId = min($this->mensagem->de, $this->mensagem->para);
+        $maxId = max($this->mensagem->de, $this->mensagem->para);
+        
         return [
-            new PrivateChannel("chat.{$this->minId}-{$this->maxId}")
+            new PrivateChannel("chat.{$minId}-{$maxId}")
         ];
     }
 
@@ -49,7 +49,7 @@ class MessageSent implements ShouldBroadcast
             'de' => $this->mensagem->de,
             'para' => $this->mensagem->para,
             'conteudo' => $this->mensagem->conteudo,
-            'created_at' => $this->mensagem->created_at,
+            'created_at' => $this->mensagem->created_at->toISOString(),
             'remetente' => [
                 'id' => $this->mensagem->remetente->id,
                 'name' => $this->mensagem->remetente->name,

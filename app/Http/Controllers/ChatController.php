@@ -97,32 +97,28 @@ class ChatController extends Controller
     }
 
     public function sendMessage(Request $request, $usuarioId)
-    {
-        $request->validate([
-            'conteudo' => 'required|string',
-        ]);
+{
+    $request->validate([
+        'conteudo' => 'required|string',
+    ]);
 
-        $usuario = User::find($usuarioId);
-        if (!$usuario) {
-            return response()->json(['error' => 'Usuário não encontrado'], 404);
-        }
-
-        $mensagem = Mensagem::create([
-            'de' => auth()->user()->id,
-            'para' => $usuario->id,
-            'conteudo' => $request->conteudo,
-        ]);
-
-        // Carregar o relacionamento remetente
-        $mensagem->load('remetente');
-
-        // Determinar o canal correto para o broadcast
-        $minId = min(auth()->user()->id, $usuario->id);
-        $maxId = max(auth()->user()->id, $usuario->id);
-
-        // Disparar evento para Laravel Echo
-        event(new MessageSent($mensagem, $minId, $maxId));
-
-        return response()->json($mensagem);
+    $usuario = User::find($usuarioId);
+    if (!$usuario) {
+        return response()->json(['error' => 'Usuário não encontrado'], 404);
     }
+
+    $mensagem = Mensagem::create([
+        'de' => auth()->user()->id,
+        'para' => $usuario->id,
+        'conteudo' => $request->conteudo,
+    ]);
+
+    // Carregar o relacionamento remetente
+    $mensagem->load('remetente');
+
+    // Disparar evento - APENAS a mensagem, o canal é calculado no evento
+    broadcast(new MessageSent($mensagem))->toOthers();
+
+    return response()->json($mensagem);
+}
 }
