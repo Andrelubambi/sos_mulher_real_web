@@ -8,7 +8,7 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
-                'resources/js/modern-chat/index.js',
+                'resources/js/chat/index.js',
                 'resources/js/modern-chat/echo.js',
                 'resources/js/modern-chat/ui.js',
                 'resources/js/modern-chat/chat.js',

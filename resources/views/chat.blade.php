@@ -20,7 +20,7 @@
     <!-- Scripts -->
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="https://unpkg.com/laravel-echo@1.15.3/dist/echo.iife.js"></script>
-    @vite('resources/js/modern-chat/index.js')
+    @vite('resources/js/chat/index.js')
 </head>
 <body>
     <!-- Overlay para mobile -->
