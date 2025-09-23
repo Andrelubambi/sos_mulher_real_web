@@ -1,4 +1,8 @@
 import Echo from 'laravel-echo';
+import io from 'socket.io-client'; // ← AGORA É A VERSÃO 2.4.0
+
+// Configurar globalmente
+window.io = io;
 
 export function initializeEcho() {
     try {
@@ -9,6 +13,19 @@ export function initializeEcho() {
             path: '/socket.io',
             transports: ['websocket', 'polling'],
             autoConnect: true,
+            
+            // CONFIGURAÇÕES ESPECÍFICAS PARA v2.4.0
+            client: {
+                // Forçar compatibilidade com Echo Server (v2)
+                forceNode: false,
+                reconnection: true,
+                reconnectionAttempts: Infinity,
+                reconnectionDelay: 1000,
+                reconnectionDelayMax: 5000,
+                randomizationFactor: 0.5,
+                timeout: 20000,
+            },
+            
             auth: {
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -17,30 +34,33 @@ export function initializeEcho() {
         });
 
         window.Echo.connector.socket.on('connect', () => {
-            console.log('Laravel Echo Server conectado!');
+            console.log('✅ Conectado ao Laravel Echo Server! (v2.4.0)');
             window.echoConnected = true;
             updateConnectionStatus(true);
         });
 
         window.Echo.connector.socket.on('disconnect', (reason) => {
-            console.log('Desconectado do Laravel Echo Server:', reason);
+            console.log('🔌 Desconectado:', reason);
             window.echoConnected = false;
             updateConnectionStatus(false);
         });
 
         window.Echo.connector.socket.on('connect_error', (error) => {
-            console.error('Erro na conexão com Laravel Echo Server:', error);
+            console.error('💥 Erro de conexão:', error);
             window.echoConnected = false;
             updateConnectionStatus(false);
         });
 
         window.Echo.connector.socket.on('reconnect', (attemptNumber) => {
-            console.log('Reconectado ao Laravel Echo Server após', attemptNumber, 'tentativas');
+            console.log('🔄 Reconectado após', attemptNumber, 'tentativas');
+            window.echoConnected = true;
+            updateConnectionStatus(true);
         });
 
-        console.log('Laravel Echo inicializado com Socket.IO');
+        console.log('🚀 Laravel Echo inicializado com Socket.IO v2.4.0');
+        
     } catch (error) {
-        console.error('Erro ao inicializar Laravel Echo:', error);
+        console.error('❌ Erro ao inicializar Laravel Echo:', error);
         updateConnectionStatus(false);
     }
 }
