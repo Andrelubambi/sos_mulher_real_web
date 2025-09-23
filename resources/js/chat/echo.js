@@ -1,14 +1,13 @@
-// resources/js/chat/echo.js - VERSÃO SIMPLIFICADA E FUNCIONAL
+
 import io from 'socket.io-client';
 
 export function initializeEcho() {
     try {
-        // Conexão direta - compatível com Echo Server v2.x
-        window.socket = io(`http://${window.location.hostname}:6001`, {
+         
+        window.socket = io(`https://${window.location.hostname}`, {  // ← SEM porta, usa Nginx
             path: '/socket.io',
             transports: ['websocket', 'polling'],
-            reconnection: true,
-            reconnectionDelay: 1000,
+            secure: true
         });
 
         window.socket.on('connect', () => {
