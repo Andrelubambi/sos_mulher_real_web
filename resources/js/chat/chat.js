@@ -80,8 +80,8 @@ export function setupChat() {
             }
             
             messagesDiv.innerHTML = '';
-            sendMessageForm.style.display = 'flex';
             sendMessageForm.classList.remove('hidden');
+
 
 
             fetch(`/chat/messages/${window.usuarioAtualId}`)

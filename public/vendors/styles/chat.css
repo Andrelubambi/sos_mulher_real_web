@@ -284,18 +284,19 @@ body {
 
 /* Input de chat - SEMPRE NO BOTTOM */
 .chat-input {
+    display: flex;
     padding: 15px 20px;
     border-top: 1px solid var(--border-color);
     background-color: white;
     align-items: flex-end;
     gap: 10px;
     min-height: 70px;
-    /*display: flex;  ← opcional se JS controla */
 }
 
 .chat-input.hidden {
     display: none;
 }
+
 
 
 .chat-input textarea {
