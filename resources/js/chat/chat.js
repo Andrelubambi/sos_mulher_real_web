@@ -1,3 +1,4 @@
+
 export function setupChat() {
     console.log('[setupChat] Iniciado');
     const messagesDiv = document.getElementById('messages');
@@ -101,9 +102,17 @@ export function setupChat() {
             
             messagesDiv.innerHTML = '';
             sendMessageForm.classList.remove('hidden');
-            console.log('[User Click] Classe hidden removida do sendMessageForm. Estilo atual:', sendMessageForm.style.display);
-            sendMessageForm.style.display = 'flex'; // Forçar exibição
-            conteudoInput.focus(); // Focar no campo de texto
+            sendMessageForm.style.display = 'flex';
+            // Force DOM repaint
+            sendMessageForm.style.opacity = '0';
+            void sendMessageForm.offsetWidth; // Trigger reflow
+            sendMessageForm.style.opacity = '1';
+            console.log('[User Click] Classe hidden removida do sendMessageForm. Estilo atual:', {
+                display: sendMessageForm.style.display,
+                className: sendMessageForm.className,
+                computedStyle: window.getComputedStyle(sendMessageForm).display
+            });
+            conteudoInput.focus();
 
             fetch(`/chat/messages/${window.usuarioAtualId}`)
                 .then(res => {
