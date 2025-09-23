@@ -19,7 +19,7 @@ class ChatController extends Controller
         $usuariosNaoDoutores = User::where('role', '!=', 'doutor')
             ->where('id', '!=', $userId)
             ->get();
-
+            dd($usuariosNaoDoutores->toArray());
         $conversas = DB::table('mensagens')
             ->selectRaw('
                 CASE 
@@ -99,7 +99,7 @@ class ChatController extends Controller
     public function sendMessage(Request $request, $usuarioId)
     {
         $request->validate([
-            'conteudo' => 'required|string|max:1000',
+            'conteudo' => 'required|string',
         ]);
 
         $usuario = User::find($usuarioId);
