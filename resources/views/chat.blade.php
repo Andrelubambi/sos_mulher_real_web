@@ -97,7 +97,7 @@
                     <p>Selecione uma conversa para começar</p>
                 </div>
             </div>
-            <form id="sendMessageForm" class="chat-input" style="display: none;">
+            <form id="sendMessageForm" class="chat-input" style="display: flex;">
                 @csrf
                 <textarea name="conteudo" id="conteudo" placeholder="Digite sua mensagem..." rows="1"></textarea>
                 <button type="submit">
