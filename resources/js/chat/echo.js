@@ -4,7 +4,7 @@ export function initializeEcho() {
         window.Echo = new Echo({
             broadcaster: 'socket.io',
             host: `${window.location.hostname}:6001`,
-            transports: ['websocket', 'polling'],
+            encrypted: true,
             autoConnect: true,
             auth: {
                 headers: {
