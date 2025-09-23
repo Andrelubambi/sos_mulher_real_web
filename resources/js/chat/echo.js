@@ -26,50 +26,45 @@ export function initializeEcho() {
             updateConnectionStatus(false);
         });
 
-        // INTERFACE SIMULADA COMPLETA
+        // INTERFACE CORRIGIDA COM ENCADEAMENTO
         window.Echo = {
             connector: { socket: window.socket },
             socketId: () => window.socket.id,
-            private: (channel) => ({
-                listen: (event, callback) => {
-                    const eventName = event.startsWith('.') ? event : `.${event}`;
-                    window.socket.on(`${channel}${eventName}`, callback);
-                    return this;
-                },
-                listenForWhisper: (event, callback) => {
-                    window.socket.on(`client-${event}`, callback);
-                    return this;
-                },
-                whisper: (event, data) => {
-                    window.socket.emit(`client-${event}`, data);
-                },
-                error: (callback) => {
-                    window.socket.on('error', callback);
-                    return this;
-                },
-                stopListening: (event, callback) => {
-                    const eventName = event.startsWith('.') ? event : `.${event}`;
-                    window.socket.off(`${channel}${eventName}`, callback);
-                    return this;
-                }
-            }),
-            channel: (channel) => ({
-                listen: (event, callback) => {
-                    const eventName = event.startsWith('.') ? event : `.${event}`;
-                    window.socket.on(`${channel}${eventName}`, callback);
-                    return this;
-                }
-            }),
-            leave: (channel) => {
-                // Implementação simplificada
-                console.log('Left channel:', channel);
+            
+            private: (channel) => {
+                const channelObj = {
+                    listen: (event, callback) => {
+                        const eventName = event.startsWith('.') ? event : `.${event}`;
+                        window.socket.on(`${channel}${eventName}`, callback);
+                        return channelObj;
+                    },
+                    listenForWhisper: (event, callback) => {
+                        window.socket.on(`client-${event}`, callback);
+                        return channelObj;
+                    },
+                    whisper: (event, data) => {
+                        window.socket.emit(`client-${event}`, data);
+                        return channelObj;
+                    },
+                    error: (callback) => {
+                        window.socket.on('error', callback);
+                        return channelObj;
+                    },
+                    stopListening: (event, callback) => {
+                        const eventName = event.startsWith('.') ? event : `.${event}`;
+                        window.socket.off(`${channel}${eventName}`, callback);
+                        return channelObj;
+                    }
+                };
+                return channelObj;
             },
-            leaveChannel: (channel) => {
+            
+            leave: (channel) => {
                 console.log('Left channel:', channel);
             }
         };
 
-        console.log('🚀 WebSocket configurado com interface completa');
+        console.log('🚀 WebSocket com interface corrigida');
         
     } catch (error) {
         console.error('❌ Erro:', error);
