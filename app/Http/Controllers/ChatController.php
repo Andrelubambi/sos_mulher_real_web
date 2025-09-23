@@ -20,7 +20,7 @@ class ChatController extends Controller
             ->where('id', '!=', $userId)
             ->get();
             dd($usuariosNaoDoutores->toArray());
-        $conversas = DB::table('mensagens')
+       
             ->selectRaw('
                 CASE 
                     WHEN de = ? THEN para 
