@@ -101,7 +101,7 @@ export function setupChat() {
             console.log('Conectando ao canal:', canal);
 
             window.Echo.private(canal)
-                .listen('MessageSent', (e) => {
+                .listen('.MessageSent', (e) => {
                     console.log('Nova mensagem recebida:', e);
                     if (e.de !== parseInt(usuarioLogadoId)) {
                         appendMessage(e, false);
