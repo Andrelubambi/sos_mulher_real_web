@@ -159,4 +159,21 @@ export function setupChat() {
             videoCallBtn.title = 'Selecione um usuário para iniciar videochamada';
         }
     }
+
+    window.appendMessageToChat = function (data) {
+        const messagesContainer = document.getElementById('messages');
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message');
+    
+        messageElement.innerHTML = `
+            <div class="message-bubble">
+                <strong>${data.remetente.name}:</strong> ${data.conteudo}
+                <span class="timestamp">${new Date(data.created_at).toLocaleTimeString()}</span>
+            </div>
+        `;
+    
+        messagesContainer.appendChild(messageElement);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    };
+    
 }

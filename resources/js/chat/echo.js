@@ -13,6 +13,24 @@ export function initializeEcho() {
             }
         });
 
+        window.listenToChat = (otherUserId) => {
+            const minId = Math.min(userId, otherUserId);
+            const maxId = Math.max(userId, otherUserId);
+            const channelName = `chat.${minId}-${maxId}`;
+    
+            if (window.currentChannel) {
+                window.Echo.leave(window.currentChannel);
+            }
+    
+            window.currentChannel = channelName;
+    
+            window.Echo.private(channelName)
+                .listen('.MessageSent', (e) => {
+                    console.log('Nova mensagem recebida:', e);
+                    window.appendMessageToChat(e);
+                });
+        };
+
         window.Echo.connector.socket.on('connect', () => {
             console.log('Laravel Echo Server conectado!');
             window.echoConnected = true;
