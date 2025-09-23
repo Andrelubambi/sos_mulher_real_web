@@ -739,40 +739,50 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Configurar Laravel Echo
     let echoConnected = false;
-    
-    function initializeEcho() {
-        try {
-            window.Echo = new Echo({
-                broadcaster: 'socket.io',
-                host: window.location.hostname + ':6001',
-                transports: ['websocket', 'polling'],
-            });
+   // Configurar Laravel Echo - conexão direta ao Echo Server
+function initializeEcho() {
+    try {
+        window.Echo = new Echo({
+            broadcaster: 'socket.io',
+            host: `${window.location.hostname}:6001`,
+            transports: ['websocket'], // Sem polling fallback
+            autoConnect: true,
+            auth: {
+                headers: {
+                    'Authorization': 'Bearer ' + document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                }
+            }
+        });
 
-            window.Echo.connector.socket.on('connect', () => {
-                console.log('Echo conectado com sucesso!');
-                echoConnected = true;
-                updateConnectionStatus(true);
-            });
+        window.Echo.connector.socket.on('connect', () => {
+            console.log('Laravel Echo Server conectado!');
+            echoConnected = true;
+            updateConnectionStatus(true);
+        });
 
-            window.Echo.connector.socket.on('disconnect', () => {
-                console.log('Echo desconectado');
-                echoConnected = false;
-                updateConnectionStatus(false);
-            });
-
-            window.Echo.connector.socket.on('connect_error', (error) => {
-                console.error('Erro na conexão Echo:', error);
-                echoConnected = false;
-                updateConnectionStatus(false);
-            });
-
-            console.log('Echo inicializado');
-        } catch (error) {
-            console.error('Erro ao inicializar Echo:', error);
+        window.Echo.connector.socket.on('disconnect', (reason) => {
+            console.log('Laravel Echo Server desconectado:', reason);
+            echoConnected = false;
             updateConnectionStatus(false);
-        }
-    }
+        });
 
+        window.Echo.connector.socket.on('connect_error', (error) => {
+            console.error('Erro na conexão com Laravel Echo Server:', error);
+            echoConnected = false;
+            updateConnectionStatus(false);
+        });
+
+        window.Echo.connector.socket.on('reconnect', (attemptNumber) => {
+            console.log('Laravel Echo Server reconectado após', attemptNumber, 'tentativas');
+        });
+
+        console.log('Laravel Echo inicializado');
+    } catch (error) {
+        console.error('Erro ao inicializar Laravel Echo:', error);
+        updateConnectionStatus(false);
+    }
+}
     function updateConnectionStatus(connected) {
         if (connected) {
             connectionDot.classList.remove('disconnected');
