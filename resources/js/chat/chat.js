@@ -47,6 +47,37 @@ export function setupChat() {
         `;
         messagesList.appendChild(messageDiv);
         messagesList.scrollTop = messagesList.scrollHeight;
+
+        // Update unread count if message is not from the current user
+        if (!sentByMe && message.de !== parseInt(usuarioLogadoId)) {
+            updateUnreadCount(message.de);
+        }
+    }
+
+    function updateUnreadCount(senderId) {
+        fetch(`/chat/messages/${senderId}`)
+            .then(res => res.json())
+            .then(messages => {
+                const unreadCount = messages.filter(msg => msg.para == usuarioLogadoId && !msg.read_at).length;
+                const conversationItem = document.querySelector(`.chat-item[data-user-id="${senderId}"]`);
+                if (conversationItem) {
+                    const badge = conversationItem.querySelector('.unread-badge');
+                    if (unreadCount > 0) {
+                        if (!badge) {
+                            const metaDiv = conversationItem.querySelector('.conversation-meta');
+                            const newBadge = document.createElement('div');
+                            newBadge.className = 'unread-badge';
+                            newBadge.textContent = unreadCount;
+                            metaDiv.appendChild(newBadge);
+                        } else {
+                            badge.textContent = unreadCount;
+                        }
+                    } else if (badge) {
+                        badge.remove();
+                    }
+                }
+            })
+            .catch(error => console.error('[Unread] Erro ao atualizar unread_count:', error));
     }
 
     function escutarMensagens(usuarioId) {
@@ -141,6 +172,7 @@ export function setupChat() {
                         });
                     }
                     messagesList.scrollTop = messagesList.scrollHeight;
+                    updateUnreadCount(window.usuarioAtualId); // Update badge after loading messages
                 })
                 .catch(error => {
                     console.error('[Fetch] Erro ao carregar mensagens:', error);

@@ -46,10 +46,18 @@ class ChatController extends Controller
                 ->first();
 
             $user = User::find($conversa->user_id);
+
+            // Contar mensagens não lidas
+            $unreadCount = Mensagem::where('para', $userId)
+                ->where('de', $conversa->user_id)
+                ->whereNull('read_at') // Assumindo que há uma coluna read_at
+                ->count();
+
             if ($user && $ultimoMsg) {
                 $chatsRecentes[] = [
                     'user' => $user,
-                    'mensagem' => $ultimoMsg
+                    'mensagem' => $ultimoMsg,
+                    'unread_count' => $unreadCount
                 ];
             }
         }
@@ -75,9 +83,15 @@ class ChatController extends Controller
                 $query->where('de', $usuario->id)
                     ->where('para', $usuarioLogado->id);
             })
-            ->with('remetente') 
+            ->with('remetente')
             ->orderBy('created_at', 'asc')
             ->get();
+
+        // Marcar mensagens como lidas
+        Mensagem::where('para', $usuarioLogado->id)
+            ->where('de', $usuario->id)
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
 
         return response()->json($messages);
     }
@@ -94,9 +108,9 @@ class ChatController extends Controller
         }
 
         $mensagem = Mensagem::create([
-            'de' => auth()->user()->id,  
-            'para' => $usuario->id,      
-            'conteudo' => $request->conteudo,  
+            'de' => auth()->user()->id,
+            'para' => $usuario->id,
+            'conteudo' => $request->conteudo,
         ]);
 
         // Carregar o relacionamento remetente
@@ -105,10 +119,10 @@ class ChatController extends Controller
         // Determinar o canal correto para o broadcast
         $minId = min(auth()->user()->id, $usuario->id);
         $maxId = max(auth()->user()->id, $usuario->id);
-        
+
         // Disparar evento para Laravel Echo
         event(new MessageSent($mensagem, $minId, $maxId));
-        
+
         return response()->json($mensagem);
     }
 }
