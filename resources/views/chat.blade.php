@@ -6,53 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="user-id" content="{{ auth()->user()->id }}">
-
-    <!-- Ícones -->
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('vendors/images/apple-touch-icon.png') }}" />
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('vendors/images/favicon-32x32.png') }}" />
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('vendors/images/favicon-16x16.png') }}" />
-    
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Estilos -->
     <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/chat.css') }}" />
     @vite('resources/js/chat/index.js')
-
 </head>
 <body>
-    <!-- Connection Status -->
     <div class="connection-status" id="connectionStatus">
         <div class="connection-dot" id="connectionDot"></div>
         <span id="connectionText">Conectando...</span>
     </div>
-
-    <!-- Header -->
     <header class="app-header">
         <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
         <h1>SOS-MULHER • CHAT</h1>
         <div></div>
     </header>
-
-    <!-- Container principal -->
-    <div class="chat-container">
-        <!-- Sidebar -->
+<div class="chat-container">
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <h2>Conversas</h2>
                 <button class="close-sidebar" id="closeSidebar">×</button>
             </div>
-
             <div class="tab-buttons">
                 <button id="tabMensagens" class="active">Mensagens</button>
                 <button id="tabUsuarios">Usuários</button>
             </div>
-
             <div class="tab-content">
-                <!-- Mensagens Recentes -->
                 <div id="mensagensRecentes">
                     <ul class="recent-chats">
                         @forelse ($chatsRecentes as $chat)
@@ -72,8 +54,6 @@
                         @endforelse
                     </ul>
                 </div>
-
-                <!-- Lista de Usuários -->
                 <div id="listaUsuarios" style="display: none;">
                     <ul class="user-list">
                         @forelse ($usuariosNaoDoutores as $user)
@@ -95,8 +75,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Área de Chat -->
         <div class="chat-area" id="chatArea">
             <div class="chat-header">
                 <button class="back-button" id="backButton">
@@ -109,20 +87,16 @@
                         <small id="userStatus" class="text-muted">Disponível</small>
                     </div>
                 </div>
-
-                <!-- Botão de videochamada -->
                 <button class="video-call-btn" id="videoCallBtn" title="Iniciar videochamada" disabled>
                     <i class="fas fa-video"></i>
                 </button>
             </div>
-
             <div id="messages" class="chat-messages">
                 <div class="empty-state">
                     <i class="fas fa-comment"></i>
                     <p>Selecione uma conversa para começar</p>
                 </div>
             </div>
-
             <form id="sendMessageForm" class="chat-input" style="display: none;">
                 @csrf
                 <textarea name="conteudo" id="conteudo" placeholder="Digite sua mensagem..." rows="1"></textarea>
@@ -131,8 +105,6 @@
                 </button>
             </form>
         </div>
-
-        <!-- Video Modal -->
         <div class="video-modal" id="videoModal">
             <div class="video-modal-content">
                 <div class="video-modal-header">

@@ -1,6 +1,6 @@
 import Echo from 'laravel-echo';
 import io from 'socket.io-client';
-
+window.io = io; 
 export function initializeEcho() {
     try {
         window.Echo = new Echo({
