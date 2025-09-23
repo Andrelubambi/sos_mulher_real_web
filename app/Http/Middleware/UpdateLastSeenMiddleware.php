@@ -1,4 +1,3 @@
-
 <?php
 
 namespace App\Http\Middleware;
@@ -14,6 +13,7 @@ class UpdateLastSeenMiddleware
         if (Auth::check()) {
             Auth::user()->update(['last_seen' => Carbon::now()]);
         }
+
         return $next($request);
     }
 }
