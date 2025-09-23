@@ -5,8 +5,7 @@ window.io = io;
 
 window.Echo = new Echo({
     broadcaster: 'socket.io',
-    host: window.location.hostname + ':443',
-
+    host: 'https://sosmulherreal.com',
     path: '/socket.io',
     transports: ['websocket', 'polling'],
     withCredentials: true
