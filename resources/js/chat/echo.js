@@ -1,55 +1,55 @@
-import Echo from 'laravel-echo';
-import io from 'socket.io-client'; // ← AGORA É A VERSÃO 4.7.5
-
-// Configurar globalmente
-window.io = io;
+// resources/js/chat/echo.js - VERSÃO SIMPLIFICADA E FUNCIONAL
+import io from 'socket.io-client';
 
 export function initializeEcho() {
     try {
-        window.Echo = new Echo({
-            broadcaster: 'socket.io',
-            host: window.location.hostname,
-            port: 6001,
+        // Conexão direta - compatível com Echo Server v2.x
+        window.socket = io(`http://${window.location.hostname}:6001`, {
             path: '/socket.io',
             transports: ['websocket', 'polling'],
-            autoConnect: true,
-            
-            // CONFIGURAÇÕES PARA v4.7.5 (mais simples)
-            auth: {
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                }
-            }
+            reconnection: true,
+            reconnectionDelay: 1000,
         });
 
-        window.Echo.connector.socket.on('connect', () => {
-            console.log('✅ Conectado ao Laravel Echo Server! (v4.7.5)');
+        window.socket.on('connect', () => {
+            console.log('✅ CONECTADO ao WebSocket!');
             window.echoConnected = true;
             updateConnectionStatus(true);
         });
 
-        window.Echo.connector.socket.on('disconnect', (reason) => {
+        window.socket.on('disconnect', (reason) => {
             console.log('🔌 Desconectado:', reason);
             window.echoConnected = false;
             updateConnectionStatus(false);
         });
 
-        window.Echo.connector.socket.on('connect_error', (error) => {
-            console.error('💥 Erro de conexão:', error);
+        window.socket.on('connect_error', (error) => {
+            console.error('💥 Erro:', error);
             window.echoConnected = false;
             updateConnectionStatus(false);
         });
 
-        window.Echo.connector.socket.on('reconnect', (attemptNumber) => {
-            console.log('🔄 Reconectado após', attemptNumber, 'tentativas');
-            window.echoConnected = true;
-            updateConnectionStatus(true);
-        });
+        // Interface simulada para o chat.js funcionar
+        window.Echo = {
+            private: (channel) => ({
+                listen: (event, callback) => {
+                    window.socket.on(`${channel}.${event}`, callback);
+                    return this;
+                },
+                listenForWhisper: (event, callback) => {
+                    window.socket.on(`client-${event}`, callback);
+                    return this;
+                },
+                whisper: (event, data) => {
+                    window.socket.emit(`client-${event}`, data);
+                }
+            })
+        };
 
-        console.log('🚀 Laravel Echo + Socket.IO v4.7.5 inicializado');
+        console.log('🚀 WebSocket configurado com sucesso');
         
     } catch (error) {
-        console.error('❌ Erro ao inicializar Laravel Echo:', error);
+        console.error('❌ Erro:', error);
         updateConnectionStatus(false);
     }
 }
