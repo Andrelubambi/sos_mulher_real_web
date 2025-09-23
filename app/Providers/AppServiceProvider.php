@@ -11,7 +11,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(ChatService::class);
+        $this->app->singleton(SosService::class);
+        $this->app->singleton(GrupoService::class);
     }
 
     /**

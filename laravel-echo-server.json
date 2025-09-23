@@ -1,31 +1,22 @@
 {
     "authHost": "https://sosmulherreal.com",
     "authEndpoint": "/broadcasting/auth",
-    "clients": [
-        {
-            "appId": "sos-mulher-app",
-            "key": "sos-mulher-key-2024"
-        }
-    ],
     "database": "redis",
     "databaseConfig": {
         "redis": {
             "host": "laravel_redis",
             "port": "6379",
             "password": "",
-            "keyPrefix": "",
-            "options": {}
+            "keyPrefix": "laravel_database_",
+            "options": {
+                "db": 0
+            }
         }
     },
     "devMode": false,
     "host": "0.0.0.0",
     "port": "6001",
     "protocol": "https",
-    "socketio": {
-        "transports": ["websocket"],
-        "pingTimeout": 60000,
-        "pingInterval": 25000
-    },
     "sslCertPath": "/etc/letsencrypt/live/sosmulherreal.com/fullchain.pem",
     "sslKeyPath": "/etc/letsencrypt/live/sosmulherreal.com/privkey.pem",
     "subscribers": {
