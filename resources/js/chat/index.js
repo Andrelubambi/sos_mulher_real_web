@@ -27,4 +27,5 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Erro ao tentar reconectar:', error);
             }
         }
-    }, 10000);});
+    }, 10000);
+});

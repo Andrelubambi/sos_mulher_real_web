@@ -1,4 +1,3 @@
- 
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -7,16 +6,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="user-id" content="{{ auth()->user()->id }}">
+    
     <!-- Ícones -->
     <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('vendors/images/apple-touch-icon.png') }}" />
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('vendors/images/favicon-32x32.png') }}" />
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('vendors/images/favicon-16x16.png') }}" />
+    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Scripts -->
-    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-    <script src="https://unpkg.com/laravel-echo@1.15.3/dist/echo.iife.js"></script>
+    
     @vite([
         'resources/css/modern-chat.css',
         'resources/js/app.js'
@@ -224,29 +223,5 @@
             </div>
         </div>
     </div>
-
-
-    <script>
-// Teste rápido de conexão
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🔍 Iniciando teste de conexão...');
-    
-    // Aguardar Echo carregar
-    setTimeout(() => {
-        if (window.Echo) {
-            console.log('Echo carregado:', window.Echo);
-            console.log('Socket ID:', window.Echo.socketId());
-            
-            // Teste de canal público
-            window.Echo.channel('test-channel')
-                .listen('TestEvent', (e) => {
-                    console.log('✅ Evento recebido:', e);
-                });
-        } else {
-            console.error('❌ Echo não carregado');
-        }
-    }, 2000);
-});
-</script>
 </body>
 </html>

@@ -1,25 +1,8 @@
-import Echo from 'laravel-echo';
+import axios from 'axios';
+window.axios = axios;
+
+window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+
+// Importar Socket.IO client globalmente
 import io from 'socket.io-client';
-
 window.io = io;
-
-window.Echo = new Echo({
-    broadcaster: 'socket.io',
-    host: 'https://sosmulherreal.com',
-    path: '/socket.io',
-    transports: ['websocket', 'polling'],
-    withCredentials: true
-});
-
-console.log('Echo initialized', window.Echo);
-
-let i = 0;
-window.Echo.channel('user-channel')
-    .listen('.UserEvent', (data) => {
-        i++;
-        const notification = document.getElementById('notification');
-        const div = document.createElement('div');
-        div.className = 'alert alert-success';
-        div.innerText = `${i}. ${data.title}`;
-        notification.appendChild(div);
-    });
