@@ -10,15 +10,20 @@ export function setupChat() {
     const usuarioLogadoId = document.querySelector('meta[name="user-id"]').getAttribute('content');
 
     console.log('[setupChat] Elementos capturados:', {
-        messagesDiv,
-        sendMessageForm,
-        conteudoInput,
-        chatHeader,
-        currentUserAvatar,
-        userStatus,
-        videoCallBtn,
+        messagesDiv: !!messagesDiv,
+        sendMessageForm: !!sendMessageForm,
+        conteudoInput: !!conteudoInput,
+        chatHeader: !!chatHeader,
+        currentUserAvatar: !!currentUserAvatar,
+        userStatus: !!userStatus,
+        videoCallBtn: !!videoCallBtn,
         usuarioLogadoId
     });
+
+    if (!sendMessageForm) {
+        console.error('[setupChat] Elemento sendMessageForm não encontrado!');
+        return;
+    }
 
     window.usuarioAtualId = null;
     window.currentChannel = null;
@@ -42,7 +47,7 @@ export function setupChat() {
 
     function escutarMensagens(usuarioId) {
         console.log('[Echo] Escutando mensagens para usuário:', usuarioId);
-        console.log('[Echo] Echo disponível:', window.Echo);
+        console.log('[Echo] Echo disponível:', !!window.Echo);
         if (!window.Echo) {
             console.log('Echo não disponível');
             return;
@@ -54,8 +59,8 @@ export function setupChat() {
                 console.log('Saiu do canal anterior:', window.currentChannel);
             }
             
-            const minId = Math.min(usuarioLogadoId, usuarioId);
-            const maxId = Math.max(usuarioLogadoId, usuarioId);
+            const minId = Math.min(parseInt(usuarioLogadoId), parseInt(usuarioId));
+            const maxId = Math.max(parseInt(usuarioLogadoId), parseInt(usuarioId));
             const canal = `chat.${minId}-${maxId}`;
             
             window.currentChannel = canal;
@@ -65,7 +70,7 @@ export function setupChat() {
             window.Echo.private(canal)
                 .listen('MessageSent', (e) => {
                     console.log('Nova mensagem recebida:', e);
-                    if (e.de !== usuarioLogadoId) {
+                    if (e.de !== parseInt(usuarioLogadoId)) {
                         appendMessage(e, false);
                     }
                 })
@@ -80,9 +85,8 @@ export function setupChat() {
 
     document.querySelectorAll('.user-item, .chat-item').forEach(item => {
         item.addEventListener('click', () => {
-            console.log('[User Click] Usuário selecionado:', item.dataset.userName);
+            console.log('[User Click] Usuário selecionado:', item.dataset.userName, 'ID:', item.dataset.userId);
             window.usuarioAtualId = item.dataset.userId;
-            console.log('[User Click] ID do usuário atual:', window.usuarioAtualId);
             const userName = item.dataset.userName;
             
             chatHeader.textContent = userName;
@@ -97,13 +101,17 @@ export function setupChat() {
             
             messagesDiv.innerHTML = '';
             sendMessageForm.classList.remove('hidden');
-            console.log('[User Click] Caixa de mensagem exibida');
-
-
+            console.log('[User Click] Classe hidden removida do sendMessageForm. Estilo atual:', sendMessageForm.style.display);
+            sendMessageForm.style.display = 'flex'; // Forçar exibição
+            conteudoInput.focus(); // Focar no campo de texto
 
             fetch(`/chat/messages/${window.usuarioAtualId}`)
-                .then(res => res.json())
+                .then(res => {
+                    console.log('[Fetch] Resposta recebida:', res.status);
+                    return res.json();
+                })
                 .then(messages => {
+                    console.log('[Fetch] Mensagens carregadas:', messages);
                     if (messages.length === 0) {
                         messagesDiv.innerHTML = `
                             <div class="empty-state">
@@ -120,7 +128,7 @@ export function setupChat() {
                     messagesDiv.scrollTop = messagesDiv.scrollHeight;
                 })
                 .catch(error => {
-                    console.error('Erro ao carregar mensagens:', error);
+                    console.error('[Fetch] Erro ao carregar mensagens:', error);
                 });
 
             escutarMensagens(window.usuarioAtualId);
@@ -129,10 +137,12 @@ export function setupChat() {
 
     sendMessageForm.addEventListener('submit', function(e) {
         e.preventDefault();
-
         const conteudo = conteudoInput.value.trim();
         console.log('[Submit] Conteúdo digitado:', conteudo);
-        if (!conteudo || !window.usuarioAtualId) return;
+        if (!conteudo || !window.usuarioAtualId) {
+            console.log('[Submit] Conteúdo ou usuário inválido');
+            return;
+        }
 
         fetch(`/chat/send/${window.usuarioAtualId}`, {
                 method: 'POST',
@@ -140,18 +150,17 @@ export function setupChat() {
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 },
-                body: JSON.stringify({
-                    conteudo
-                }),
+                body: JSON.stringify({ conteudo }),
             })
             .then(res => res.json())
             .then(data => {
+                console.log('[Submit] Mensagem enviada:', data);
                 appendMessage(data, true);
                 conteudoInput.value = '';
                 conteudoInput.style.height = '45px';
             })
             .catch(err => {
-                console.error('Erro ao enviar mensagem:', err);
+                console.error('[Submit] Erro ao enviar mensagem:', err);
                 alert('Erro ao enviar mensagem.');
             });
     });
@@ -180,20 +189,17 @@ export function setupChat() {
         }
     }
 
-    window.appendMessageToChat = function (data) {
-    const messagesContainer = document.getElementById('messages');
-    const messageElement = document.createElement('div');
-    messageElement.classList.add('message');
-
-    messageElement.innerHTML = `
-        <div class="message-bubble">
-            <strong>${data.remetente.name}:</strong> ${data.conteudo}
-            <span class="timestamp">${new Date(data.created_at).toLocaleTimeString()}</span>
-        </div>
-    `;
-
-    messagesContainer.appendChild(messageElement);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-};
-
+    window.appendMessageToChat = function(data) {
+        const messagesContainer = document.getElementById('messages');
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message');
+        messageElement.innerHTML = `
+            <div class="message-bubble">
+                <strong>${data.remetente.name}:</strong> ${data.conteudo}
+                <span class="timestamp">${new Date(data.created_at).toLocaleTimeString()}</span>
+            </div>
+        `;
+        messagesContainer.appendChild(messageElement);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    };
 }

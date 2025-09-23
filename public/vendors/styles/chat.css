@@ -283,21 +283,24 @@ body {
 }
 
 /* Input de chat - SEMPRE NO BOTTOM */
+
+/* Input de chat - SEMPRE NO BOTTOM */
 .chat-input {
-    display: flex;
+    display: flex !important; /* Garante que o display: flex sobrescreva outros estilos */
     padding: 15px 20px;
     border-top: 1px solid var(--border-color);
     background-color: white;
     align-items: flex-end;
     gap: 10px;
     min-height: 70px;
+    transition: opacity 0.3s ease; /* Adiciona transição suave */
+    opacity: 1;
 }
 
 .chat-input.hidden {
-    display: none;
+    display: none !important;
+    opacity: 0;
 }
-
-
 
 .chat-input textarea {
     flex: 1;
@@ -334,7 +337,6 @@ body {
 .chat-input button:hover {
     background-color: var(--primary-dark);
 }
-
 /* Video call button */
 .video-call-btn {
     background-color: var(--success-color);
