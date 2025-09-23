@@ -1,3 +1,6 @@
+import Echo from 'laravel-echo';
+import io from 'socket.io-client';
+
 export function initializeEcho() {
     try {
         window.Echo = new Echo({
@@ -14,6 +17,8 @@ export function initializeEcho() {
         });
 
         window.listenToChat = (otherUserId) => {
+            const userId = document.querySelector('meta[name="user-id"]').getAttribute('content');
+
             const minId = Math.min(userId, otherUserId);
             const maxId = Math.max(userId, otherUserId);
             const channelName = `chat.${minId}-${maxId}`;
