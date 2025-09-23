@@ -89,7 +89,7 @@ services:
       - laravel
     depends_on:
       redis:
-      condition: service_started
+        condition: service_started
     env_file:
       - .env
 
