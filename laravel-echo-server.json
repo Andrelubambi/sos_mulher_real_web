@@ -19,6 +19,8 @@
     "protocol": "http",
     "sslCertPath": "",
     "sslKeyPath": "",
+    "sslCertChainPath": "",
+    "sslPassphrase": "",
     "subscribers": {
         "http": true,
         "redis": true
@@ -26,7 +28,9 @@
     "apiOriginAllow": {
         "allowCors": true,
         "allowOrigin": "https://sosmulherreal.com",
-        "allowMethods": "GET,POST",
+        "allowMethods": "GET, POST",
         "allowHeaders": "Origin, Content-Type, X-Auth-Token, X-Requested-With, Accept, Authorization, X-CSRF-TOKEN, X-Socket-Id"
-    }
+    },
+    "referrers": [],
+    "clients": []
 }
