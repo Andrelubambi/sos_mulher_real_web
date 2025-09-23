@@ -14,19 +14,19 @@ export function setupUI() {
     mobileMenuBtn.addEventListener('click', () => {
         sidebar.classList.add('active');
         overlay.classList.add('active');
+        chatMain.classList.remove('active');
     });
 
     overlay.addEventListener('click', () => {
         sidebar.classList.remove('active');
         overlay.classList.remove('active');
+        chatMain.classList.remove('active');
     });
 
     backBtn.addEventListener('click', () => {
-        if (window.innerWidth < 768) {
-            chatMain.classList.remove('active');
-            sidebar.classList.add('active');
-            overlay.classList.add('active');
-        }
+        sidebar.classList.add('active');
+        overlay.classList.add('active');
+        chatMain.classList.remove('active');
     });
 
     tabMensagens.addEventListener('click', () => {

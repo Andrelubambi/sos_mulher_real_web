@@ -1,4 +1,4 @@
-
+ 
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -21,10 +21,9 @@
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="https://unpkg.com/laravel-echo@1.15.3/dist/echo.iife.js"></script>
     @vite([
-    'resources/css/modern-chat.css',
-    'resources/js/app.js'
-])
-
+        'resources/css/modern-chat.css',
+        'resources/js/app.js'
+    ])
 </head>
 <body>
     <!-- Overlay para mobile -->
@@ -46,9 +45,6 @@
         </div>
         <div class="header-right">
             <div class="header-actions">
-                <button class="search-btn" id="searchBtn" title="Buscar">
-                    <i class="fas fa-search"></i>
-                </button>
                 <div class="status-indicator online"></div>
             </div>
         </div>
@@ -79,7 +75,7 @@
                         <div class="conversation-item chat-item" data-user-id="{{ $chat['user']->id }}" data-user-name="{{ $chat['user']->name }}">
                             <div class="avatar-container">
                                 <div class="avatar">{{ substr($chat['user']->name, 0, 1) }}</div>
-                                <div class="online-status online"></div>
+                                <div class="online-status {{ $chat['user']->last_seen && \Carbon\Carbon::parse($chat['user']->last_seen)->gt(now()->subMinutes(5)) ? 'online' : 'offline' }}"></div>
                             </div>
                             <div class="conversation-info">
                                 <div class="user-name">{{ $chat['user']->name }}</div>
@@ -109,11 +105,11 @@
                         <div class="user-item" data-user-id="{{ $user->id }}" data-user-name="{{ $user->name }}">
                             <div class="avatar-container">
                                 <div class="avatar">{{ substr($user->name, 0, 1) }}</div>
-                                <div class="online-status offline"></div>
+                                <div class="online-status {{ $user->last_seen && \Carbon\Carbon::parse($user->last_seen)->gt(now()->subMinutes(5)) ? 'online' : 'offline' }}"></div>
                             </div>
                             <div class="user-info">
                                 <div class="user-name">{{ $user->name }}</div>
-                                <div class="user-status">Clique para iniciar conversa</div>
+                                <div class="user-status">{{ $user->last_seen && \Carbon\Carbon::parse($user->last_seen)->gt(now()->subMinutes(5)) ? 'Online' : 'Offline' }}</div>
                             </div>
                         </div>
                         @empty
