@@ -26,6 +26,20 @@ export function initializeEcho() {
             updateConnectionStatus(false);
         });
 
+        // No seu arquivo de chat
+window.Echo.private(`chat.${senderId}-${receiverId}`)
+.subscribed(() => {
+    console.log('✅ CANAL AUTENTICADO com sucesso!');
+})
+.error((error) => {
+    console.log('❌ ERRO na autenticação do canal:', error);
+})
+.listen('MessageSent', (e) => {
+    console.log('📨 MENSAGEM RECEBIDA:', e);
+    // Sua lógica para exibir a mensagem
+});
+// Quando enviar mensagem, adicione logs:
+console.log('📤 ENVIANDO mensagem para canal:', `chat.${senderId}-${receiverId}`);
         // INTERFACE CORRIGIDA COM ENCADEAMENTO
         window.Echo = {
             connector: { socket: window.socket },

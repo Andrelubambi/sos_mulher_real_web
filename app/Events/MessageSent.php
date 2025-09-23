@@ -30,7 +30,11 @@ class MessageSent implements ShouldBroadcast
      */
     public function broadcastOn(): array
     {
-        // CALCULAR minId e maxId AQUI, não no construtor
+       
+        $channel = "chat.{$this->message->sender_id}-{$this->message->receiver_id}";
+        \Log::info("📡 Broadcasting para canal: {$channel}");
+
+        
         $minId = min($this->mensagem->de, $this->mensagem->para);
         $maxId = max($this->mensagem->de, $this->mensagem->para);
         
