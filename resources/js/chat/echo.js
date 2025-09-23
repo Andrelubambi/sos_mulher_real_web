@@ -1,5 +1,5 @@
 import Echo from 'laravel-echo';
-import io from 'socket.io-client'; // ← AGORA É A VERSÃO 2.4.0
+import io from 'socket.io-client'; // ← AGORA É A VERSÃO 4.7.5
 
 // Configurar globalmente
 window.io = io;
@@ -14,18 +14,7 @@ export function initializeEcho() {
             transports: ['websocket', 'polling'],
             autoConnect: true,
             
-            // CONFIGURAÇÕES ESPECÍFICAS PARA v2.4.0
-            client: {
-                // Forçar compatibilidade com Echo Server (v2)
-                forceNode: false,
-                reconnection: true,
-                reconnectionAttempts: Infinity,
-                reconnectionDelay: 1000,
-                reconnectionDelayMax: 5000,
-                randomizationFactor: 0.5,
-                timeout: 20000,
-            },
-            
+            // CONFIGURAÇÕES PARA v4.7.5 (mais simples)
             auth: {
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -34,7 +23,7 @@ export function initializeEcho() {
         });
 
         window.Echo.connector.socket.on('connect', () => {
-            console.log('✅ Conectado ao Laravel Echo Server! (v2.4.0)');
+            console.log('✅ Conectado ao Laravel Echo Server! (v4.7.5)');
             window.echoConnected = true;
             updateConnectionStatus(true);
         });
@@ -57,7 +46,7 @@ export function initializeEcho() {
             updateConnectionStatus(true);
         });
 
-        console.log('🚀 Laravel Echo inicializado com Socket.IO v2.4.0');
+        console.log('🚀 Laravel Echo + Socket.IO v4.7.5 inicializado');
         
     } catch (error) {
         console.error('❌ Erro ao inicializar Laravel Echo:', error);
