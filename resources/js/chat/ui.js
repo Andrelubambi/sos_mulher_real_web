@@ -1,40 +1,49 @@
+ 
 export function setupUI() {
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const closeSidebar = document.getElementById('closeSidebar');
     const sidebar = document.getElementById('sidebar');
-    const backButton = document.getElementById('backButton');
-    const chatArea = document.getElementById('chatArea');
+    const overlay = document.getElementById('overlay');
+    const backBtn = document.getElementById('backBtn');
+    const chatMain = document.getElementById('chatMain');
     const tabMensagens = document.getElementById('tabMensagens');
     const tabUsuarios = document.getElementById('tabUsuarios');
     const mensagensRecentes = document.getElementById('mensagensRecentes');
     const listaUsuarios = document.getElementById('listaUsuarios');
+    const newChatBtn = document.getElementById('newChatBtn');
 
     mobileMenuBtn.addEventListener('click', () => {
         sidebar.classList.add('active');
+        overlay.classList.add('active');
     });
 
-    closeSidebar.addEventListener('click', () => {
+    overlay.addEventListener('click', () => {
         sidebar.classList.remove('active');
+        overlay.classList.remove('active');
     });
 
-    backButton.addEventListener('click', () => {
-        if (window.innerWidth < 992) {
-            chatArea.classList.remove('active');
-            sidebar.style.display = 'flex';
+    backBtn.addEventListener('click', () => {
+        if (window.innerWidth < 768) {
+            chatMain.classList.remove('active');
+            sidebar.classList.add('active');
+            overlay.classList.add('active');
         }
     });
 
     tabMensagens.addEventListener('click', () => {
-        mensagensRecentes.style.display = 'block';
-        listaUsuarios.style.display = 'none';
+        mensagensRecentes.classList.add('active');
+        listaUsuarios.classList.remove('active');
         tabMensagens.classList.add('active');
         tabUsuarios.classList.remove('active');
     });
 
     tabUsuarios.addEventListener('click', () => {
-        mensagensRecentes.style.display = 'none';
-        listaUsuarios.style.display = 'block';
+        mensagensRecentes.classList.remove('active');
+        listaUsuarios.classList.add('active');
         tabMensagens.classList.remove('active');
         tabUsuarios.classList.add('active');
+    });
+
+    newChatBtn.addEventListener('click', () => {
+        tabUsuarios.click();
     });
 }

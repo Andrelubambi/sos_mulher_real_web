@@ -1,40 +1,17 @@
-import Echo from 'laravel-echo';
-import io from 'socket.io-client';
-window.io = io; 
+ 
 export function initializeEcho() {
     try {
         window.Echo = new Echo({
             broadcaster: 'socket.io',
             host: `${window.location.hostname}:6001`,
-            transports: ['websocket','polling'],
+            transports: ['websocket', 'polling'],
             autoConnect: true,
             auth: {
                 headers: {
-                    'Authorization': 'Bearer ' + document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
                 }
             }
         });
-
-        window.listenToChat = (otherUserId) => {
-            const userId = document.querySelector('meta[name="user-id"]').getAttribute('content');
-
-            const minId = Math.min(userId, otherUserId);
-            const maxId = Math.max(userId, otherUserId);
-            const channelName = `chat.${minId}-${maxId}`;
-    
-            if (window.currentChannel) {
-                window.Echo.leave(window.currentChannel);
-            }
-    
-            window.currentChannel = channelName;
-    
-            window.Echo.private(channelName)
-                .listen('.MessageSent', (e) => {
-                    console.log('Nova mensagem recebida:', e);
-                    window.appendMessageToChat(e);
-                });
-        };
 
         window.Echo.connector.socket.on('connect', () => {
             console.log('Laravel Echo Server conectado!');
@@ -43,7 +20,7 @@ export function initializeEcho() {
         });
 
         window.Echo.connector.socket.on('disconnect', (reason) => {
-            console.log('Laravel Echo Server desconectado:', reason);
+            console.log('Desconectado do Laravel Echo Server:', reason);
             window.echoConnected = false;
             updateConnectionStatus(false);
         });
@@ -55,10 +32,10 @@ export function initializeEcho() {
         });
 
         window.Echo.connector.socket.on('reconnect', (attemptNumber) => {
-            console.log('Laravel Echo Server reconectado após', attemptNumber, 'tentativas');
+            console.log('Reconectado ao Laravel Echo Server após', attemptNumber, 'tentativas');
         });
 
-        console.log('Laravel Echo inicializado');
+        console.log('Laravel Echo inicializado com Socket.IO');
     } catch (error) {
         console.error('Erro ao inicializar Laravel Echo:', error);
         updateConnectionStatus(false);
@@ -69,10 +46,10 @@ export function updateConnectionStatus(connected) {
     const connectionDot = document.getElementById('connectionDot');
     const connectionText = document.getElementById('connectionText');
     if (connected) {
-        connectionDot.classList.remove('disconnected');
+        connectionDot.classList.add('connected');
         connectionText.textContent = 'Conectado';
     } else {
-        connectionDot.classList.add('disconnected');
+        connectionDot.classList.remove('connected');
         connectionText.textContent = 'Desconectado';
     }
 }

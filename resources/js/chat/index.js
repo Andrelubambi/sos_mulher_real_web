@@ -1,4 +1,4 @@
-import { initializeEcho, updateConnectionStatus } from './echo.js';
+import { initializeEcho } from './echo.js';
 import { setupUI } from './ui.js';
 import { setupChat } from './chat.js';
 import { setupVideoCall } from './video.js';
@@ -27,5 +27,4 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error('Erro ao tentar reconectar:', error);
             }
         }
-    }, 10000);
-});
+    }, 10000);});

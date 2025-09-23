@@ -1,28 +1,31 @@
-
+ 
 export function setupChat() {
     console.log('[setupChat] Iniciado');
-    const messagesDiv = document.getElementById('messages');
+    const messagesList = document.getElementById('messagesList');
     const sendMessageForm = document.getElementById('sendMessageForm');
-    const conteudoInput = document.getElementById('conteudo');
-    const chatHeader = document.getElementById('chatHeader');
-    const currentUserAvatar = document.getElementById('currentUserAvatar');
-    const userStatus = document.getElementById('userStatus');
+    const messageInput = document.getElementById('messageInput');
+    const participantName = document.getElementById('participantName');
+    const currentAvatar = document.getElementById('currentAvatar');
+    const participantStatus = document.getElementById('participantStatus');
     const videoCallBtn = document.getElementById('videoCallBtn');
+    const sendBtn = sendMessageForm.querySelector('.send-btn');
     const usuarioLogadoId = document.querySelector('meta[name="user-id"]').getAttribute('content');
+    const typingIndicator = document.getElementById('typingIndicator');
 
     console.log('[setupChat] Elementos capturados:', {
-        messagesDiv: !!messagesDiv,
+        messagesList: !!messagesList,
         sendMessageForm: !!sendMessageForm,
-        conteudoInput: !!conteudoInput,
-        chatHeader: !!chatHeader,
-        currentUserAvatar: !!currentUserAvatar,
-        userStatus: !!userStatus,
+        messageInput: !!messageInput,
+        participantName: !!participantName,
+        currentAvatar: !!currentAvatar,
+        participantStatus: !!participantStatus,
         videoCallBtn: !!videoCallBtn,
+        sendBtn: !!sendBtn,
         usuarioLogadoId
     });
 
-    if (!sendMessageForm) {
-        console.error('[setupChat] Elemento sendMessageForm não encontrado!');
+    if (!sendMessageForm || !messageInput || !sendBtn) {
+        console.error('[setupChat] Elementos essenciais não encontrados!');
         return;
     }
 
@@ -30,9 +33,9 @@ export function setupChat() {
     window.currentChannel = null;
 
     function appendMessage(message, sentByMe = false) {
-        const emptyState = messagesDiv.querySelector('.empty-state');
-        if (emptyState) emptyState.remove();
-        
+        const welcomeMessage = messagesList.querySelector('.welcome-message');
+        if (welcomeMessage) welcomeMessage.remove();
+
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('message', sentByMe ? 'sent' : 'received');
         messageDiv.innerHTML = `
@@ -42,13 +45,12 @@ export function setupChat() {
                 <div class="message-time">${new Date(message.created_at).toLocaleString()}</div>
             </div>
         `;
-        messagesDiv.appendChild(messageDiv);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        messagesList.appendChild(messageDiv);
+        messagesList.scrollTop = messagesList.scrollHeight;
     }
 
     function escutarMensagens(usuarioId) {
         console.log('[Echo] Escutando mensagens para usuário:', usuarioId);
-        console.log('[Echo] Echo disponível:', !!window.Echo);
         if (!window.Echo) {
             console.log('Echo não disponível');
             return;
@@ -59,13 +61,12 @@ export function setupChat() {
                 window.Echo.leave(window.currentChannel);
                 console.log('Saiu do canal anterior:', window.currentChannel);
             }
-            
+
             const minId = Math.min(parseInt(usuarioLogadoId), parseInt(usuarioId));
             const maxId = Math.max(parseInt(usuarioLogadoId), parseInt(usuarioId));
             const canal = `chat.${minId}-${maxId}`;
-            
             window.currentChannel = canal;
-            
+
             console.log('Conectando ao canal:', canal);
 
             window.Echo.private(canal)
@@ -75,10 +76,17 @@ export function setupChat() {
                         appendMessage(e, false);
                     }
                 })
+                .listenForWhisper('typing', (e) => {
+                    if (e.userId !== parseInt(usuarioLogadoId)) {
+                        typingIndicator.style.display = 'flex';
+                        setTimeout(() => {
+                            typingIndicator.style.display = 'none';
+                        }, 3000);
+                    }
+                })
                 .error((error) => {
                     console.error('Erro no canal:', error);
                 });
-                
         } catch (error) {
             console.error('Erro ao escutar mensagens:', error);
         }
@@ -89,30 +97,28 @@ export function setupChat() {
             console.log('[User Click] Usuário selecionado:', item.dataset.userName, 'ID:', item.dataset.userId);
             window.usuarioAtualId = item.dataset.userId;
             const userName = item.dataset.userName;
-            
-            chatHeader.textContent = userName;
-            currentUserAvatar.textContent = userName.charAt(0);
-            userStatus.textContent = 'Online';
+
+            participantName.textContent = userName;
+            currentAvatar.textContent = userName.charAt(0);
+            participantStatus.textContent = 'Online';
             updateVideoCallButton();
-            
-            if (window.innerWidth < 992) {
+
+            if (window.innerWidth < 768) {
                 document.getElementById('sidebar').classList.remove('active');
-                document.getElementById('chatArea').classList.add('active');
+                document.getElementById('overlay').classList.remove('active');
+                document.getElementById('chatMain').classList.add('active');
             }
-            
-            messagesDiv.innerHTML = '';
-            sendMessageForm.classList.remove('hidden');
-            sendMessageForm.style.display = 'flex';
-            // Force DOM repaint
-            sendMessageForm.style.opacity = '0';
-            void sendMessageForm.offsetWidth; // Trigger reflow
-            sendMessageForm.style.opacity = '1';
-            console.log('[User Click] Classe hidden removida do sendMessageForm. Estilo atual:', {
-                display: sendMessageForm.style.display,
-                className: sendMessageForm.className,
-                computedStyle: window.getComputedStyle(sendMessageForm).display
+
+            messagesList.innerHTML = '';
+            messageInput.disabled = false;
+            sendBtn.disabled = false;
+            requestAnimationFrame(() => {
+                messageInput.focus();
+                console.log('[User Click] Formulário ativado. Estilo computed:', {
+                    display: window.getComputedStyle(sendMessageForm).display,
+                    disabled: messageInput.disabled
+                });
             });
-            conteudoInput.focus();
 
             fetch(`/chat/messages/${window.usuarioAtualId}`)
                 .then(res => {
@@ -122,9 +128,9 @@ export function setupChat() {
                 .then(messages => {
                     console.log('[Fetch] Mensagens carregadas:', messages);
                     if (messages.length === 0) {
-                        messagesDiv.innerHTML = `
-                            <div class="empty-state">
-                                <i class="fas fa-comment"></i>
+                        messagesList.innerHTML = `
+                            <div class="welcome-message">
+                                <i class="fas fa-comment-dots"></i>
                                 <p>Nenhuma mensagem ainda</p>
                                 <small>Envie uma mensagem para iniciar a conversa</small>
                             </div>
@@ -134,7 +140,7 @@ export function setupChat() {
                             appendMessage(msg, msg.de == usuarioLogadoId);
                         });
                     }
-                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+                    messagesList.scrollTop = messagesList.scrollHeight;
                 })
                 .catch(error => {
                     console.error('[Fetch] Erro ao carregar mensagens:', error);
@@ -146,7 +152,7 @@ export function setupChat() {
 
     sendMessageForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        const conteudo = conteudoInput.value.trim();
+        const conteudo = messageInput.value.trim();
         console.log('[Submit] Conteúdo digitado:', conteudo);
         if (!conteudo || !window.usuarioAtualId) {
             console.log('[Submit] Conteúdo ou usuário inválido');
@@ -154,19 +160,19 @@ export function setupChat() {
         }
 
         fetch(`/chat/send/${window.usuarioAtualId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-                },
-                body: JSON.stringify({ conteudo }),
-            })
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            },
+            body: JSON.stringify({ conteudo }),
+        })
             .then(res => res.json())
             .then(data => {
                 console.log('[Submit] Mensagem enviada:', data);
                 appendMessage(data, true);
-                conteudoInput.value = '';
-                conteudoInput.style.height = '45px';
+                messageInput.value = '';
+                messageInput.style.height = '40px';
             })
             .catch(err => {
                 console.error('[Submit] Erro ao enviar mensagem:', err);
@@ -174,12 +180,17 @@ export function setupChat() {
             });
     });
 
-    conteudoInput.addEventListener('input', function() {
-        this.style.height = '45px';
-        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+    messageInput.addEventListener('input', function() {
+        this.style.height = '40px';
+        this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+        if (window.currentChannel && this.value.trim()) {
+            window.Echo.private(window.currentChannel).whisper('typing', {
+                userId: parseInt(usuarioLogadoId)
+            });
+        }
     });
 
-    conteudoInput.addEventListener('keydown', function(e) {
+    messageInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             sendMessageForm.dispatchEvent(new Event('submit'));
@@ -197,18 +208,4 @@ export function setupChat() {
             videoCallBtn.title = 'Selecione um usuário para iniciar videochamada';
         }
     }
-
-    window.appendMessageToChat = function(data) {
-        const messagesContainer = document.getElementById('messages');
-        const messageElement = document.createElement('div');
-        messageElement.classList.add('message');
-        messageElement.innerHTML = `
-            <div class="message-bubble">
-                <strong>${data.remetente.name}:</strong> ${data.conteudo}
-                <span class="timestamp">${new Date(data.created_at).toLocaleTimeString()}</span>
-            </div>
-        `;
-        messagesContainer.appendChild(messageElement);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    };
 }
