@@ -16,9 +16,9 @@
     "devMode": false,
     "host": "0.0.0.0",
     "port": "6001",
-    "protocol": "https",
-    "sslCertPath": "/etc/letsencrypt/live/sosmulherreal.com/fullchain.pem",
-    "sslKeyPath": "/etc/letsencrypt/live/sosmulherreal.com/privkey.pem",
+    "protocol": "http",
+    "sslCertPath": "",
+    "sslKeyPath": "",
     "subscribers": {
         "http": true,
         "redis": true
