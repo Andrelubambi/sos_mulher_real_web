@@ -75,23 +75,24 @@ services:
       - laravel
 
   laravel_echo:
-    image: node:18-alpine
-    container_name: laravel_echo
-    working_dir: /var/www
-    restart: always
-    volumes:
-      - .:/var/www
-      - ./docker/certbot/conf:/etc/letsencrypt:ro
-    command: ["/bin/sh", "-c", "apk add --no-cache netcat-openbsd && while ! nc -z laravel_redis 6379; do echo 'Waiting for Redis...'; sleep 2; done && echo 'Redis is ready!' && npx laravel-echo-server start --force"]
-    ports:
-      - "6001:6001"
-    networks:
-      - laravel
-    depends_on:
-      redis:
-        condition: service_started
-    env_file:
-      - .env
+  image: node:18-alpine
+  container_name: laravel_echo
+  working_dir: /var/www
+  restart: on-failure
+  volumes:
+    - .:/var/www
+    - ./docker/certbot/conf:/etc/letsencrypt:ro
+  command: ["/bin/sh", "-c", "apk add --no-cache netcat-openbsd && while ! nc -z laravel_redis 6379; do echo 'Waiting for Redis...'; sleep 2; done && echo 'Redis is ready!' && if ! pgrep -f laravel-echo-server; then npx laravel-echo-server start --force; else echo 'Echo Server já está rodando'; fi"]
+  ports:
+    - "6001:6001"
+  networks:
+    - laravel
+  depends_on:
+    redis:
+      condition: service_started
+  env_file:
+    - .env
+
 
   mysql:
     image: mysql:8.0
