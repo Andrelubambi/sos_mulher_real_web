@@ -224,5 +224,29 @@
             </div>
         </div>
     </div>
+
+
+    <script>
+// Teste rápido de conexão
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔍 Iniciando teste de conexão...');
+    
+    // Aguardar Echo carregar
+    setTimeout(() => {
+        if (window.Echo) {
+            console.log('Echo carregado:', window.Echo);
+            console.log('Socket ID:', window.Echo.socketId());
+            
+            // Teste de canal público
+            window.Echo.channel('test-channel')
+                .listen('TestEvent', (e) => {
+                    console.log('✅ Evento recebido:', e);
+                });
+        } else {
+            console.error('❌ Echo não carregado');
+        }
+    }, 2000);
+});
+</script>
 </body>
 </html>
