@@ -1,10 +1,8 @@
-
 import io from 'socket.io-client';
 
 export function initializeEcho() {
     try {
-         
-        window.socket = io(`https://${window.location.hostname}`, {  // ← SEM porta, usa Nginx
+        window.socket = io(`https://${window.location.hostname}`, {
             path: '/socket.io',
             transports: ['websocket', 'polling'],
             secure: true
@@ -28,11 +26,14 @@ export function initializeEcho() {
             updateConnectionStatus(false);
         });
 
-        // Interface simulada para o chat.js funcionar
+        // INTERFACE SIMULADA COMPLETA
         window.Echo = {
+            connector: { socket: window.socket },
+            socketId: () => window.socket.id,
             private: (channel) => ({
                 listen: (event, callback) => {
-                    window.socket.on(`${channel}.${event}`, callback);
+                    const eventName = event.startsWith('.') ? event : `.${event}`;
+                    window.socket.on(`${channel}${eventName}`, callback);
                     return this;
                 },
                 listenForWhisper: (event, callback) => {
@@ -41,11 +42,34 @@ export function initializeEcho() {
                 },
                 whisper: (event, data) => {
                     window.socket.emit(`client-${event}`, data);
+                },
+                error: (callback) => {
+                    window.socket.on('error', callback);
+                    return this;
+                },
+                stopListening: (event, callback) => {
+                    const eventName = event.startsWith('.') ? event : `.${event}`;
+                    window.socket.off(`${channel}${eventName}`, callback);
+                    return this;
                 }
-            })
+            }),
+            channel: (channel) => ({
+                listen: (event, callback) => {
+                    const eventName = event.startsWith('.') ? event : `.${event}`;
+                    window.socket.on(`${channel}${eventName}`, callback);
+                    return this;
+                }
+            }),
+            leave: (channel) => {
+                // Implementação simplificada
+                console.log('Left channel:', channel);
+            },
+            leaveChannel: (channel) => {
+                console.log('Left channel:', channel);
+            }
         };
 
-        console.log('🚀 WebSocket configurado com sucesso');
+        console.log('🚀 WebSocket configurado com interface completa');
         
     } catch (error) {
         console.error('❌ Erro:', error);
