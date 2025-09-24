@@ -129,7 +129,7 @@ export function setupChat() {
             console.log('[Echo] 📤 ENVIANDO mensagem para canal:', canal);
 
             // CONECTAR AO CANAL PRIVADO COM DEBUG COMPLETO
-            window.Echo.private(canal)
+            const channelRef = window.Echo.private(canal)
                 .subscribed(() => {
                     console.log('[Echo] ✅ CANAL AUTENTICADO com sucesso!', canal);
                 })
@@ -159,6 +159,27 @@ export function setupChat() {
                         }, 3000);
                     }
                 });
+
+            // Fallback: escutar via socket.io direto nos formatos emitidos pelo servidor
+            try {
+                const directHandler = (e) => {
+                    if (!e) return;
+                    // Garante que é do canal atual
+                    const incomingChannel = e.channel || canal;
+                    if (incomingChannel === canal && e.de !== parseInt(usuarioLogadoId)) {
+                        console.log('[Echo] 🔁 Fallback Socket.IO recebida para', canal, e);
+                        appendMessage(e, false);
+                    }
+                };
+
+                // 1) Evento no formato `${canal}:MessageSent`
+                window.Echo.connector.socket.on(`${canal}:MessageSent`, directHandler);
+                
+                // 2) Evento somente pelo nome 'MessageSent' (validar canal no payload)
+                window.Echo.connector.socket.on('MessageSent', directHandler);
+            } catch (e) {
+                console.warn('[Echo] Fallback Socket.IO indisponível:', e);
+            }
 
         } catch (error) {
             console.error('[Echo] 💥 Erro ao escutar mensagens:', error);
