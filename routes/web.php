@@ -176,9 +176,30 @@ Route::get('/debug-env', function() {
 
 Route::get('/test-broadcast', function() {
     try {
-        event(new App\Events\MessageSent(['message' => 'teste']));
-        return response()->json(['status' => 'success', 'message' => 'Evento disparado']);
+        // Encontre ou crie uma message real
+        $message = \App\Models\Message::first();
+        
+        if (!$message) {
+            // Crie uma message de teste se não existir
+            $message = new \App\Models\Message();
+            $message->de = 1;
+            $message->para = 2;
+            $message->conteudo = 'Mensagem de teste';
+            $message->save();
+        }
+        
+        \Log::info("📡 Testando broadcast da message ID: " . $message->id);
+        
+        event(new App\Events\MessageSent($message));
+        
+        return response()->json([
+            'status' => 'success', 
+            'message' => 'Evento disparado',
+            'channel' => "chat." . min($message->de, $message->para) . "-" . max($message->de, $message->para)
+        ]);
+        
     } catch (\Exception $e) {
+        \Log::error("Erro no broadcast: " . $e->getMessage());
         return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
     }
 });
