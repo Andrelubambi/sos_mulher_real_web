@@ -29,6 +29,15 @@ redis.psubscribe('private-*', (err, count) => {
   console.log(`✅ Conectado ao Redis, escutando canais: ${count}`);
 });
 
+// Também assinar canais sem prefixo 'private-'
+redis.psubscribe('chat-*', (err, count) => {
+  if (err) {
+    console.error('❌ Erro de subscrição (pattern chat-*):', err);
+    return;
+  }
+  console.log(`✅ Conectado ao Redis, escutando canais adicionais: ${count}`);
+});
+
 redis.on('pmessage', (pattern, channel, message) => {
   try {
     const data = JSON.parse(message);
@@ -70,7 +79,13 @@ io.on('connection', (socket) => {
       return;
     }
     console.log(`🎧 Cliente ${socket.id} subscrevendo ao canal: ${channel}`);
+    // Entrar no canal informado e no alias correspondente
+    const alias = channel.startsWith('private-') ? channel.replace(/^private-/, '') : `private-${channel}`;
     socket.join(channel);
+    if (alias !== channel) {
+      socket.join(alias);
+      console.log(`🎧 Alias adicional unido: ${alias}`);
+    }
   });
 
   socket.on('unsubscribe', (data) => {
@@ -80,7 +95,12 @@ io.on('connection', (socket) => {
       return;
     }
     console.log(`👋 Cliente ${socket.id} saindo do canal: ${channel}`);
+    const alias = channel.startsWith('private-') ? channel.replace(/^private-/, '') : `private-${channel}`;
     socket.leave(channel);
+    if (alias !== channel) {
+      socket.leave(alias);
+      console.log(`👋 Alias adicional removido: ${alias}`);
+    }
   });
 
   // Ouve whispers diretamente no socket
