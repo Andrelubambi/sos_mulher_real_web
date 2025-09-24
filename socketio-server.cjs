@@ -54,16 +54,25 @@ redis.on('pmessage', (pattern, channel, message) => {
         const eventName = data.event || 'message';
         const eventData = data.data || {};
         
-        // Extrair canal do chat (ex: laravel_database_private-chat.6-11 → chat.6-11)
-        const chatChannel = channel.replace('laravel_database_private-', '');
+        // CORREÇÃO: Usar uma expressão regular para capturar o nome do canal
+        const match = channel.match(/^laravel_database_(.*)/);
+
+        let chatChannel;
+
+        if (match && match[1]) {
+            chatChannel = match[1];
+        } else {
+            // Se o canal não corresponder, retornamos o canal original
+            chatChannel = channel;
+        }
         
-        console.log('🎯 Processando evento:', eventName, 'Canal:', chatChannel);
+        console.log(`🎯 Processando evento: ${eventName} no canal: ${chatChannel}`);
         
         // Emitir para todos os clientes conectados no canal específico
         io.to(chatChannel).emit(eventName, eventData);
         
         // Log para debug
-        console.log('📡 Mensagem redistribuída para canal:', chatChannel);
+        console.log(`📡 Mensagem redistribuída para canal: ${chatChannel}`);
         
     } catch (error) {
         console.error('❌ Erro ao processar mensagem Redis:', error);
