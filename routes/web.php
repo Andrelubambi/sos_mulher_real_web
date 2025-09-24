@@ -176,26 +176,27 @@ Route::get('/debug-env', function() {
 
 Route::get('/test-broadcast', function() {
     try {
-        // Encontre ou crie uma message real
-        $message = \App\Models\Message::first();
+        // Use o modelo correto Mensagem
+        $mensagem = \App\Models\Mensagem::first();
         
-        if (!$message) {
-            // Crie uma message de teste se não existir
-            $message = new \App\Models\Message();
-            $message->de = 1;
-            $message->para = 2;
-            $message->conteudo = 'Mensagem de teste';
-            $message->save();
+        if (!$mensagem) {
+            // Crie uma mensagem de teste
+            $mensagem = \App\Models\Mensagem::create([
+                'de' => 6,
+                'para' => 11, 
+                'conteudo' => 'Mensagem de teste do broadcast'
+            ]);
         }
         
-        \Log::info("📡 Testando broadcast da message ID: " . $message->id);
+        \Log::info("📡 Testando broadcast da mensagem ID: " . $mensagem->id);
         
-        event(new App\Events\MessageSent($message));
+        // Agora passe o objeto Mensagem corretamente
+        event(new App\Events\MessageSent($mensagem));
         
         return response()->json([
             'status' => 'success', 
-            'message' => 'Evento disparado',
-            'channel' => "chat." . min($message->de, $message->para) . "-" . max($message->de, $message->para)
+            'message' => 'Evento disparado com modelo correto',
+            'channel' => "chat." . min($mensagem->de, $mensagem->para) . "-" . max($mensagem->de, $mensagem->para)
         ]);
         
     } catch (\Exception $e) {
