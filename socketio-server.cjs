@@ -37,8 +37,18 @@ redis.on('pmessage', (pattern, channel, message) => {
 
     if (channel && event) {
       console.log(`📣 Mensagem recebida no Redis: ${channel}, Evento: ${event}`);
-      // Emitir para a sala com o mesmo nome do canal Redis (ex.: 'private-chat.6-11')
-      io.of('/').to(channel).emit(event, payload);
+      // Canal original do Redis (ex.: 'private-chat.6-11')
+      const originalChannel = channel;
+      // Alias sem o prefixo 'private-' para compatibilidade com clientes que usam 'chat.6-11'
+      const aliasChannel = channel.startsWith('private-') ? channel.replace(/^private-/, '') : `private-${channel}`;
+
+      // 1) Formato esperado pelo Laravel Echo: `${canal}:${evento}`
+      io.of('/').to(originalChannel).emit(`${originalChannel}:${event}`, payload);
+      io.of('/').to(aliasChannel).emit(`${aliasChannel}:${event}`, payload);
+
+      // 2) Emissão simples somente pelo nome do evento (alguns clientes escutam assim)
+      io.of('/').to(originalChannel).emit(event, payload);
+      io.of('/').to(aliasChannel).emit(event, payload);
     }
   } catch (e) {
     console.error('❌ Erro ao analisar a mensagem do Redis:', e);
