@@ -1,5 +1,9 @@
 FROM php:8.2-fpm-alpine
 
+# Adicionar o repositório 'testing' para o redis-cli
+RUN echo "http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
+    && apk update
+
 # Dependências do sistema e build
 RUN apk add --no-cache \
     oniguruma-dev libxml2-dev build-base \
