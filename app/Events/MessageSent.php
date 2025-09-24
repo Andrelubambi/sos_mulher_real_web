@@ -35,6 +35,12 @@ class MessageSent implements ShouldBroadcast
 
     public function broadcastWith()
     {
+        // Add a safety check to avoid null reference errors
+        $remetente = $this->message->remetente ? [
+            'id' => $this->message->remetente->id,
+            'name' => $this->message->remetente->name,
+        ] : null;
+
         return [
             'id' => $this->message->id,
             'de' => $this->message->de,
@@ -42,10 +48,7 @@ class MessageSent implements ShouldBroadcast
             'conteudo' => $this->message->conteudo,
             'created_at' => $this->message->created_at,
             'channel' => "chat.{$this->getMinId()}-{$this->getMaxId()}",
-            'remetente' => $this->message->remetente ? [
-                'id' => $this->message->remetente->id,
-                'name' => $this->message->remetente->name,
-            ] : null
+            'remetente' => $remetente
         ];
     }
 
