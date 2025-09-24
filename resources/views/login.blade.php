@@ -55,32 +55,19 @@
             <form action="{{ url('login') }}" method="POST">
     @csrf
     <div class="login-card"> <!-- wrapper escopo (pode ser .card, .box, etc) -->
-  <div class="input-group custom mb-3">
-    <div class="input-group-prepend">
-      <span class="input-group-text"><i class="fa fa-phone"></i></span>
-    </div>
-    <input type="tel" pattern="[0-9]+" inputmode="numeric" name="telefone" id="telefone"
-           class="form-control" placeholder="Telefone" required>
+    <div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <span class="input-group-text">
+      <i class="icon-copy dw dw-padlock1"></i>
+    </span>
   </div>
-
-  <div class="input-group custom mb-3">
-    <div class="input-group-prepend">
-      <span class="input-group-text"><i class="icon-copy dw dw-padlock1"></i></span>
-    </div>
-
-    <input type="password" name="password" id="senha" class="form-control" placeholder="Senha" required>
-
-    <div class="input-group-append">
-      <!-- use span.input-group-text (como o cadeado/fone) para garantir alinhamento -->
-      <span id="toggleSenha" class="input-group-text" role="button" aria-label="Mostrar/ocultar senha">
-        <i class="fa fa-eye"></i>
-      </span>
-    </div>
+  <input type="password" name="password" id="senha" class="form-control" placeholder="Senha" required>
+  <div class="input-group-append">
+    <span class="input-group-text" id="toggleSenha" style="cursor: pointer;">
+      <i class="fa fa-eye"></i>
+    </span>
   </div>
 </div>
-
-
-
 
 
     <div class="row">

@@ -5044,5 +5044,13 @@ body.IE .register-page-wrap .container {
   }
   
   /* Cursor para o span clicável */
- 
+  .input-group .input-group-prepend,
+  .input-group .input-group-append {
+    display: flex;
+    align-items: center;
+  }
+  
+  .input-group .input-group-text {
+    height: 100%;
+  }
   
