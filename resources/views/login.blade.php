@@ -62,16 +62,17 @@
     </div>
 
     <div class="input-group custom mb-3">
-        <div class="input-group-prepend custom">
-            <span class="input-group-text"><i class="icon-copy dw dw-padlock1"></i></span>
-        </div>
-        <input type="password" name="password" id="senha" class="form-control" placeholder="Senha" required>
-        <div class="input-group-append custom">
-            <button type="button" id="toggleSenha" aria-label="Mostrar/ocultar senha" class="btn btn-outline-secondary" style="border-left: 0;">
-                <i class="fa fa-eye"></i>
-            </button>
-        </div>
+    <div class="input-group-prepend custom">
+        <span class="input-group-text"><i class="icon-copy dw dw-padlock1"></i></span>
     </div>
+    <input type="password" name="password" id="senha" class="form-control" placeholder="Senha" required>
+    <div class="input-group-append custom">
+        <span class="input-group-text" id="toggleSenha" style="cursor: pointer;">
+            <i class="fa fa-eye"></i>
+        </span>
+    </div>
+</div>
+
 
     <div class="row">
         <div class="col-sm-12">
