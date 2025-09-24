@@ -79,19 +79,6 @@ redis.on('pmessage', (pattern, channel, message) => {
     }
 });
 
-// Middleware de autenticação
-io.use((socket, next) => {
-    const token = socket.handshake.query.auth_token;
-    if (token) {
-        // Se um token é fornecido, a conexão é permitida.
-        // Em um ambiente de produção, esta lógica deve ser mais segura.
-        next();
-    } else {
-        // Se nenhum token for fornecido, a conexão é negada.
-        next(new Error("Authentication failed"));
-    }
-});
-
 // Quando um cliente se conecta
 io.on('connection', (socket) => {
     console.log('🔌 Cliente conectado:', socket.id);
