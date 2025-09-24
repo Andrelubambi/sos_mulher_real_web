@@ -21,11 +21,7 @@
                     <img src="vendors/images/android-chrome-192x192.png" alt="" style="height: 60px;" />
                 </a>
             </div>
-            <div class="login-menu">
-                <ul>
-                    <li><a href="{{ route('register') }}" class="text-danger">Registrar</a></li>
-                </ul>
-            </div>
+            
         </div>
     </div>
 
@@ -33,7 +29,7 @@
         <div class="login-box bg-white box-shadow border-radius-10 p-4">
             <div class="login-title">
                 <h2 class="text-center text-danger">Faça o seu login</h2>
-                <p class="text-center">Ainda não tem uma conta? <a href="{{ route('register') }}" class="text-danger">Crie</a></p>
+               
             </div>
             @if ($errors->any())
                 <div class="alert alert-danger">
@@ -57,35 +53,36 @@
                 </div>
             @endif
             <form action="{{ url('login') }}" method="POST">
-                @csrf
-                <div class="input-group custom mb-3">
-                    <div class="input-group-prepend custom">
-                        <span class="input-group-text"><i class="fa fa-phone"></i></span>
-                    </div>
-                    <input type="tel" pattern="[0-9]+" inputmode="numeric" name="telefone" id="telefone" class="form-control" placeholder="Telefone"
-                        required>
-                </div>
+    @csrf
+    <div class="input-group custom mb-3">
+        <div class="input-group-prepend custom">
+            <span class="input-group-text"><i class="fa fa-phone"></i></span>
+        </div>
+        <input type="tel" pattern="[0-9]+" inputmode="numeric" name="telefone" id="telefone" class="form-control" placeholder="Telefone" required>
+    </div>
 
-                <div class="input-group custom mb-3">
-                    <div class="input-group-prepend custom">
-                        <span class="input-group-text"><i class="icon-copy dw dw-padlock1"></i></span>
-                    </div>
-                    <div style="position: relative; width: 100%;">
-                        <input type="password" name="password" id="senha" class="form-control" placeholder="Senha" required>
-                        <button type="button" id="toggleSenha" aria-label="Mostrar/ocultar senha" style="position:absolute; right:10px; top:50%; transform: translateY(-50%); background:none; border:none;">
-                            <i class="fa fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
+    <div class="input-group custom mb-3">
+        <div class="input-group-prepend custom">
+            <span class="input-group-text"><i class="icon-copy dw dw-padlock1"></i></span>
+        </div>
+        <input type="password" name="password" id="senha" class="form-control" placeholder="Senha" required>
+        <div class="input-group-append custom">
+            <button type="button" id="toggleSenha" aria-label="Mostrar/ocultar senha" class="btn btn-outline-secondary" style="border-left: 0;">
+                <i class="fa fa-eye"></i>
+            </button>
+        </div>
+    </div>
 
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="input-group mb-0">
-                            <button type="submit" class="btn btn-danger btn-block">Entrar</button>
-                        </div>
-                    </div>
-                </div>
-            </form>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="input-group mb-0">
+                <button type="submit" class="btn btn-danger btn-block">Entrar</button>
+            </div>
+        </div>
+    </div>
+    <p class="text-center">Ainda não tem uma conta? <a href="{{ route('register') }}" class="text-danger">Crie agora</a></p>
+</form>
+           
             <script>
                 (function(){
                     var senha = document.getElementById('senha');

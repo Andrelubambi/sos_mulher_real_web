@@ -145,7 +145,7 @@
                     <li class="dropdown">
                         <a href="javascript:;" class="dropdown-toggle">
                             <span class="micon bi bi-calendar-check"></span>
-                            </span><span class="mtext">Consultas</span>
+                            <span class="mtext">Consultas</span>
                         </a>
                         <ul class="submenu">
                             <li><a href="{{ route('consulta') }}"><i class="fa fa-calendar" aria-hidden="true" style="margin-right:6px;"></i> Todas as Consultas</a></li>

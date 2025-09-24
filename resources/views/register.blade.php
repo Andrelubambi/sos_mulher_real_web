@@ -23,11 +23,7 @@
                     <img src="vendors/images/android-chrome-192x192.png" alt="" style="height: 60px;" />
                 </a>
             </div>
-            <div class="login-menu">
-                <ul>
-                    <li><a href="{{ route('login') }}" class="text-danger">Login</a></li>
-                </ul>
-            </div>
+             
         </div>
     </div>
 
@@ -47,42 +43,41 @@
                         {{ session('error') }}
                     </div>
                 @endif
-                <form class="tab-wizard2 wizard-circle wizard" action="{{ route('users.vitima.store') }}" method="POST"
-                    id="vitima-form">
-                    @csrf
-                    <h2 class="text-center text-danger">Crie a sua conta</h2>
-                    <p>Já tem uma conta? <a href="{{ route('login.form') }}" class="text-danger">Faça login</a></p>
+                <form class="tab-wizard2 wizard-circle wizard" action="{{ route('users.vitima.store') }}" method="POST" id="vitima-form">
+    @csrf
+    <h2 class="text-center text-danger">Crie a sua conta</h2>
+    
+    <div class="input-group custom mb-3">
+        <div class="input-group-prepend custom">
+            <span class="input-group-text"><i class="fa fa-phone"></i></span>
+        </div>
+        <input type="tel" pattern="[0-9]+" inputmode="numeric" name="telefone" id="telefone" class="form-control" placeholder="Telefone" required>
+    </div>
 
-                    <div class="input-group custom mb-3">
-                        <div class="input-group-prepend custom">
-                            <span class="input-group-text"><i class="fa fa-phone"></i></span>
-                        </div>
-                        <input type="tel" pattern="[0-9]+" inputmode="numeric" name="telefone" id="telefone" class="form-control" placeholder="Telefone" required>
-                    </div>
+    <div class="input-group custom mb-3">
+        <div class="input-group-prepend custom">
+            <span class="input-group-text"><i class="icon-copy dw dw-user1"></i></span>
+        </div>
+        <input type="text" class="form-control" name="name" id="name" placeholder="Nome" required />
+    </div>
 
-                    <div class="input-group custom mb-3">
-                        <div class="input-group-prepend custom">
-                            <span class="input-group-text"><i class="icon-copy dw dw-user1"></i></span>
-                        </div>
-                        <input type="text" class="form-control" name="name" id="name" placeholder="Nome"
-                            required />
-                    </div>
+    <div class="input-group custom mb-3">
+        <div class="input-group-prepend custom">
+            <span class="input-group-text"><i class="icon-copy dw dw-padlock1"></i></span>
+        </div>
+        <input type="password" class="form-control" name="password" id="password" placeholder="Senha" required />
+        <div class="input-group-append custom">
+            <button type="button" id="togglePassword" aria-label="Mostrar/ocultar senha" class="btn btn-outline-secondary" style="border-left: 0;">
+                <i class="fa fa-eye"></i>
+            </button>
+        </div>
+    </div>
 
-                    <div class="input-group custom mb-3">
-                        <div class="input-group-prepend custom">
-                            <span class="input-group-text"><i class="icon-copy dw dw-padlock1"></i></span>
-                        </div>
-                        <div style="position: relative; width: 100%;">
-                            <input type="password" class="form-control" name="password" id="password" placeholder="Senha" required />
-                            <button type="button" id="togglePassword" aria-label="Mostrar/ocultar senha" style="position:absolute; right:10px; top:50%; transform: translateY(-50%); background:none; border:none;">
-                                <i class="fa fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <input type="hidden" name="role" value="vitima">
-                    <button type="submit" class="btn btn-danger btn-block">Criar conta</button>
-                </form>
+    <input type="hidden" name="role" value="vitima">
+    <button type="submit" class="btn btn-danger btn-block">Criar conta</button>
+    <p>Já tem uma conta? <a href="{{ route('login.form') }}" class="text-danger">Faça login</a></p>
+</form>
+                
 
                 <div id="response-message"></div>
                 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
