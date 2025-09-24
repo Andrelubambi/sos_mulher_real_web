@@ -1,4 +1,3 @@
-# Use uma imagem base Alpine (mais leve)
 FROM php:8.2-fpm-alpine
 
 # Dependências do sistema e build
@@ -6,7 +5,9 @@ RUN apk add --no-cache \
     oniguruma-dev libxml2-dev build-base \
     freetype-dev libpng-dev libjpeg-turbo-dev \
     nodejs npm \
-    netcat-openbsd
+    netcat-openbsd \
+    redis-cli \
+    && rm -rf /var/cache/apk/*
 
 # Instalar extensões PHP (inclui GD com JPEG/Freetype)
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
