@@ -56,7 +56,7 @@
     @csrf
     <div class="login-card"> 
   <!-- Campo Telefone -->
-  <div class="input-group custom mb-3">
+  <div class="input-group mb-3">
     <!-- Ícone dentro (esquerda) -->
     <div class="input-group-prepend">
       <span class="input-group-text">
