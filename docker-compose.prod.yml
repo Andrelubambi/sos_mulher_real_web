@@ -15,7 +15,6 @@ services:
         condition: service_started
       mysql:
         condition: service_started
-    # Variáveis lidas do .env
     env_file:
       - .env
 
@@ -36,7 +35,6 @@ services:
         condition: service_started
       mysql:
         condition: service_started
-    # Variáveis lidas do .env
     env_file:
       - .env
 
@@ -74,17 +72,15 @@ services:
     networks:
       - laravel
 
-  laravel_echo:
+  # SERVIDOR SOCKET.IO CUSTOMIZADO (substitui laravel_echo)
+  socketio_server:
     image: node:20-alpine
-    container_name: laravel_echo
+    container_name: socketio_server
     working_dir: /var/www
-    restart: on-failure
+    restart: always
     volumes:
       - .:/var/www
-      - ./docker/certbot/conf:/etc/letsencrypt:ro
-    command: ["/bin/sh", "-c", "apk add --no-cache netcat-openbsd && cd /var/www && npm install && while ! nc -z laravel_redis 6379; do echo 'Waiting for Redis...'; sleep 2; done && echo 'Redis is ready!' && npx laravel-echo-server start --force --no-daemon"]
-
-
+    command: ["/bin/sh", "-c", "apk add --no-cache netcat-openbsd && cd /var/www && npm install express socket.io ioredis --save && while ! nc -z laravel_redis 6379; do echo 'Aguardando Redis...'; sleep 2; done && echo 'Redis conectado!' && node socketio-server.js"]
     ports:
       - "6001:6001"
     networks:
@@ -92,9 +88,9 @@ services:
     depends_on:
       redis:
         condition: service_started
-    env_file:
-      - .env
-
+    environment:
+      - SOCKET_PORT=6001
+      - NODE_ENV=production
 
   mysql:
     image: mysql:8.0
@@ -110,7 +106,6 @@ services:
     networks:
       - laravel
 
-# ----------------- NOVO - SERVIÇOS JITSI MEET -----------------
   # ----------------- JITSI MEET SERVICES -----------------
   web:
     image: jitsi/web:stable

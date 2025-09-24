@@ -2,10 +2,8 @@
 
 namespace App\Events;
 
-use App\Models\Mensagem;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -15,57 +13,52 @@ class MessageSent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $mensagem;
+    public $message;
 
-    /**
-     * Create a new event instance.
-     */
-    public function __construct(Mensagem $mensagem)
+    public function __construct($message)
     {
-        $this->mensagem = $mensagem;
+        $this->message = $message;
     }
 
-    /**
-     * Get the channels the event should broadcast on.
-     */
-    public function broadcastOn(): array
+    public function broadcastOn()
     {
-       
-        $channel = "chat.{$this->message->sender_id}-{$this->message->receiver_id}";
-        \Log::info("📡 Broadcasting para canal: {$channel}");
+        $minId = min($this->message->de, $this->message->para);
+        $maxId = max($this->message->de, $this->message->para);
+        $channel = "chat.{$minId}-{$maxId}";
+        
+        \Log::info("📡 Broadcasting para Redis canal: {$channel}");
+        
+        return new PrivateChannel($channel);
+    }
 
-        
-        $minId = min($this->mensagem->de, $this->mensagem->para);
-        $maxId = max($this->mensagem->de, $this->mensagem->para);
-        
+    public function broadcastWith()
+    {
         return [
-            new PrivateChannel("chat.{$minId}-{$maxId}")
+            'id' => $this->message->id,
+            'de' => $this->message->de,
+            'para' => $this->message->para,
+            'conteudo' => $this->message->conteudo,
+            'created_at' => $this->message->created_at,
+            'channel' => "chat.{$this->getMinId()}-{$this->getMaxId()}",
+            'remetente' => $this->message->remetente ? [
+                'id' => $this->message->remetente->id,
+                'name' => $this->message->remetente->name,
+            ] : null
         ];
     }
 
-    /**
-     * Get the data to broadcast.
-     */
-    public function broadcastWith(): array
-    {
-        return [
-            'id' => $this->mensagem->id,
-            'de' => $this->mensagem->de,
-            'para' => $this->mensagem->para,
-            'conteudo' => $this->mensagem->conteudo,
-            'created_at' => $this->mensagem->created_at->toISOString(),
-            'remetente' => [
-                'id' => $this->mensagem->remetente->id,
-                'name' => $this->mensagem->remetente->name,
-            ]
-        ];
-    }
-
-    /**
-     * The event's broadcast name.
-     */
-    public function broadcastAs(): string
+    public function broadcastAs()
     {
         return 'MessageSent';
+    }
+
+    private function getMinId()
+    {
+        return min($this->message->de, $this->message->para);
+    }
+
+    private function getMaxId()
+    {
+        return max($this->message->de, $this->message->para);
     }
 }
