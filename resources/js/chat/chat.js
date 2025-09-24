@@ -11,8 +11,8 @@ window.Echo = new Echo({
     client: io,
     transports: ['websocket', 'polling'],
     host: `https://${window.location.hostname}`,
-    // Garantir que o caminho é /socket.io atrás do Nginx
-    path: '/socket.io',
+    // Garantir que o caminho combina com o bloco location do Nginx (/socket.io/)
+    path: '/socket.io/',
 });
 
 window.Echo.connector.socket.on('connect', () => {
