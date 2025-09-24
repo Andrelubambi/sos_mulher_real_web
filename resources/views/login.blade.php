@@ -54,35 +54,43 @@
             @endif
             <form action="{{ url('login') }}" method="POST">
     @csrf
-    <div class="login-card"> <!-- wrapper escopo (pode ser .card, .box, etc) -->
+    <div class="login-card"> 
+  <!-- Campo Telefone -->
   <div class="input-group custom mb-3">
+    <!-- Ícone dentro (esquerda) -->
     <div class="input-group-prepend">
-      <span class="input-group-text"><i class="fa fa-phone"></i></span>
+      <span class="input-group-text">
+        <i class="fa fa-phone"></i>
+      </span>
     </div>
-    <input type="tel" pattern="[0-9]+" inputmode="numeric" name="telefone" id="telefone"
+    <!-- Input -->
+    <input type="tel" pattern="[0-9]+" inputmode="numeric" 
+           name="telefone" id="telefone"
            class="form-control" placeholder="Telefone" required>
   </div>
 
+  <!-- Campo Senha -->
   <div class="input-group mb-3">
-  <!-- Cadeado dentro -->
-  <div class="input-group-prepend">
-    <span class="input-group-text">
-      <i class="icon-copy dw dw-padlock1"></i>
-    </span>
-  </div>
+    <!-- Ícone cadeado (esquerda) -->
+    <div class="input-group-prepend">
+      <span class="input-group-text">
+        <i class="icon-copy dw dw-padlock1"></i>
+      </span>
+    </div>
 
-  <!-- Input -->
-  <input type="password" name="password" id="senha"
-         class="form-control" placeholder="Senha" required>
+    <!-- Input -->
+    <input type="password" name="password" id="senha"
+           class="form-control" placeholder="Senha" required>
 
-  <!-- Olho dentro -->
-  <div class="input-group-append">
-    <span class="input-group-text" id="toggleSenha" style="cursor: pointer;">
-      <i class="fa fa-eye"></i>
-    </span>
+    <!-- Ícone olho (direita) -->
+    <div class="input-group-append">
+      <span class="input-group-text" id="toggleSenha" style="cursor: pointer;">
+        <i class="fa fa-eye"></i>
+      </span>
+    </div>
   </div>
 </div>
-</div>
+
 
 
 
