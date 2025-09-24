@@ -1,145 +1,123 @@
 const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
+const { createServer } = require('http');
+const { Server } = require('socket.io');
 const Redis = require('ioredis');
 
 const app = express();
-const server = http.createServer(app);
+const server = createServer(app);
 
-// CONFIGURAR CORS PARA SEU DOMÍNIO
-const io = socketIo(server, {
+// Socket.IO com configuração compatível com Laravel Echo
+const io = new Server(server, {
     cors: {
         origin: ["https://sosmulherreal.com", "http://localhost"],
         methods: ["GET", "POST"],
         credentials: true
     },
-    path: '/socket.io'
+    // IMPORTANTE: Use Engine.IO v3 para compatibilidade com Laravel Echo
+    allowEIO3: true,
+    transports: ['websocket', 'polling']
 });
 
-// CONECTAR AO REDIS (usando nome do container Docker)
+// Conexão com Redis
 const redis = new Redis({
-    host: 'laravel_redis', // Nome do container Redis no Docker
+    host: 'laravel_redis',
     port: 6379,
-    password: '', 
-    keyPrefix: 'laravel_database_'
+    retryDelayOnFailover: 100,
+    enableReadyCheck: false,
+    maxRetriesPerRequest: null,
 });
 
-const connectedUsers = new Map();
-
-io.on('connection', (socket) => {
-    console.log('🔌 Cliente conectado:', socket.id);
-
-    // REGISTRAR USUÁRIO ONLINE
-    socket.on('user-online', (data) => {
-        console.log('👤 Usuário online:', data.userId);
-        connectedUsers.set(data.userId, {
-            socketId: socket.id,
-            userId: data.userId
-        });
-        socket.userId = data.userId;
-    });
-
-    // JUNTAR-SE A UM CANAL
-    socket.on('join-channel', (data) => {
-        console.log('🔐 Juntando-se ao canal:', data.channel);
-        socket.join(data.channel);
-        socket.emit(`${data.channel}:subscribed`);
-    });
-
-    // SAIR DE UM CANAL
-    socket.on('leave-channel', (data) => {
-        console.log('👋 Saindo do canal:', data.channel);
-        socket.leave(data.channel);
-    });
-
-    // WHISPER (TYPING)
-    socket.on('whisper:typing', (data) => {
-        socket.broadcast.emit('whisper:typing', data);
-    });
-
-    // NOVA MENSAGEM (vinda do Laravel)
-    socket.on('new-message', (data) => {
-        console.log('📨 Nova mensagem recebida:', data);
-        
-        // REENVIAR PARA O CANAL ESPECÍFICO
-        if (data.channel) {
-            io.to(data.channel).emit(`${data.channel}:MessageSent`, data);
-            console.log(`📡 Mensagem reenviada para canal: ${data.channel}`);
-        }
-        
-        // TAMBÉM ENVIAR COMO EVENTO GLOBAL
-        io.emit('message:MessageSent', data);
-    });
-
-    // DESCONEXÃO
-    socket.on('disconnect', () => {
-        console.log('🔌 Cliente desconectado:', socket.id);
-        if (socket.userId) {
-            connectedUsers.delete(socket.userId);
-        }
-    });
+// Verificar conexão Redis
+redis.on('connect', () => {
+    console.log('✅ Conectado ao Redis');
 });
 
-// ESCUTAR EVENTOS DO REDIS (Laravel Broadcasting)
-redis.psubscribe('*', (err, count) => {
+redis.on('error', (err) => {
+    console.error('❌ Erro Redis:', err);
+});
+
+// Subscribe nos canais do Laravel
+redis.psubscribe('laravel_database_*', (err, count) => {
     if (err) {
-        console.error('❌ Erro ao conectar Redis:', err);
+        console.error('❌ Erro ao se inscrever:', err);
     } else {
-        console.log('✅ Conectado ao Redis, escutando canais:', count);
+        console.log(`✅ Conectado ao Redis, escutando canais: ${count}`);
     }
 });
 
+// Processar mensagens do Redis
 redis.on('pmessage', (pattern, channel, message) => {
     try {
         console.log('📡 Evento Redis recebido:', channel);
-        const data = JSON.parse(message);
         
-        if (data.event && data.data) {
-            const channelClean = channel.replace('laravel_database_', '').replace('private-', '');
-            
-            console.log('🎯 Processando evento:', data.event, 'Canal:', channelClean);
-            
-            // DADOS DA MENSAGEM
-            const messageData = {
-                ...data.data,
-                channel: channelClean,
-                event: data.event
-            };
-            
-            // REENVIAR PARA CANAL ESPECÍFICO
-            io.to(channelClean).emit(`${channelClean}:${data.event}`, messageData);
-            
-            // EVENTO GLOBAL
-            io.emit(`message:${data.event}`, messageData);
-            
-            console.log(`📡 Mensagem redistribuída para canal: ${channelClean}`);
-        }
+        const data = JSON.parse(message);
+        const eventName = data.event || 'message';
+        const eventData = data.data || {};
+        
+        // Extrair canal do chat (ex: laravel_database_private-chat.6-11 → chat.6-11)
+        const chatChannel = channel.replace('laravel_database_private-', '');
+        
+        console.log('🎯 Processando evento:', eventName, 'Canal:', chatChannel);
+        
+        // Emitir para todos os clientes conectados no canal específico
+        io.to(chatChannel).emit(eventName, eventData);
+        
+        // Log para debug
+        console.log('📡 Mensagem redistribuída para canal:', chatChannel);
+        
     } catch (error) {
         console.error('❌ Erro ao processar mensagem Redis:', error);
     }
 });
 
-// ROTA DE HEALTH CHECK
-app.get('/health', (req, res) => {
-    res.json({ 
-        status: 'ok', 
-        connectedUsers: connectedUsers.size,
-        timestamp: new Date().toISOString()
+// Quando um cliente se conecta
+io.on('connection', (socket) => {
+    console.log('🔌 Cliente conectado:', socket.id);
+    
+    // Cliente se junta a um canal específico
+    socket.on('join', (channel) => {
+        socket.join(channel);
+        console.log(`👥 Socket ${socket.id} entrou no canal: ${channel}`);
+    });
+    
+    // Cliente sai de um canal
+    socket.on('leave', (channel) => {
+        socket.leave(channel);
+        console.log(`👋 Socket ${socket.id} saiu do canal: ${channel}`);
+    });
+    
+    // Quando cliente desconecta
+    socket.on('disconnect', () => {
+        console.log('🔌 Cliente desconectado:', socket.id);
+    });
+    
+    // Echo do Laravel - compatibilidade
+    socket.on('echo', (data) => {
+        console.log('📨 Echo recebido:', data);
     });
 });
 
-// INICIAR SERVIDOR
+// Rota de health check
+app.get('/health', (req, res) => {
+    res.json({ 
+        status: 'ok', 
+        timestamp: new Date().toISOString(),
+        connections: io.engine.clientsCount
+    });
+});
+
+// Iniciar servidor
 const PORT = process.env.SOCKET_PORT || 6001;
 server.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Socket.IO Server rodando na porta ${PORT}`);
-    console.log(`🌐 Endpoint: http://0.0.0.0:${PORT}`);
+    console.log('🚀 Socket.IO Server rodando na porta', PORT);
+    console.log('🌐 Endpoint:', `http://0.0.0.0:${PORT}`);
 });
 
-// TRATAMENTO DE ERROS
-process.on('uncaughtException', (error) => {
-    console.error('💥 Erro não tratado:', error);
-});
-
-process.on('unhandledRejection', (error) => {
-    console.error('💥 Rejeição não tratada:', error);
+// Graceful shutdown
+process.on('SIGTERM', () => {
+    console.log('🛑 Recebido SIGTERM, fechando servidor...');
+    server.close(() => {
+        redis.disconnect();
+        process.exit(0);
+    });
 });
