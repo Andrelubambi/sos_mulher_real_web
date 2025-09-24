@@ -47,31 +47,54 @@
     @csrf
     <h2 class="text-center text-danger">Crie a sua conta</h2>
     
-    <div class="input-group custom mb-3">
-        <div class="input-group-prepend custom">
-            <span class="input-group-text"><i class="fa fa-phone"></i></span>
-        </div>
-        <input type="tel" pattern="[0-9]+" inputmode="numeric" name="telefone" id="telefone" class="form-control" placeholder="Telefone" required>
+    <div class="login-card"> 
+  <!-- Campo Telefone -->
+  <div class="input-group mb-3">
+    <!-- Ícone telefone (esquerda) -->
+    <div class="input-group-prepend">
+      <span class="input-group-text">
+        <i class="fa fa-phone"></i>
+      </span>
     </div>
+    <!-- Input -->
+    <input type="tel" pattern="[0-9]+" inputmode="numeric" 
+           name="telefone" id="telefone"
+           class="form-control" placeholder="Telefone" required>
+  </div>
 
-    <div class="input-group custom mb-3">
-        <div class="input-group-prepend custom">
-            <span class="input-group-text"><i class="icon-copy dw dw-user1"></i></span>
-        </div>
-        <input type="text" class="form-control" name="name" id="name" placeholder="Nome" required />
+  <!-- Campo Nome -->
+  <div class="input-group mb-3">
+    <!-- Ícone usuário (esquerda) -->
+    <div class="input-group-prepend">
+      <span class="input-group-text">
+        <i class="icon-copy dw dw-user1"></i>
+      </span>
     </div>
+    <!-- Input -->
+    <input type="text" class="form-control" 
+           name="name" id="name" placeholder="Nome" required>
+  </div>
 
-    <div class="input-group custom mb-3">
-        <div class="input-group-prepend custom">
-            <span class="input-group-text"><i class="icon-copy dw dw-padlock1"></i></span>
-        </div>
-        <input type="password" class="form-control" name="password" id="password" placeholder="Senha" required />
-        <div class="input-group-append custom">
-            <button type="button" id="togglePassword" aria-label="Mostrar/ocultar senha" class="btn btn-outline-secondary" style="border-left: 0;">
-                <i class="fa fa-eye"></i>
-            </button>
-        </div>
+  <!-- Campo Senha -->
+  <div class="input-group mb-3">
+    <!-- Ícone cadeado (esquerda) -->
+    <div class="input-group-prepend">
+      <span class="input-group-text">
+        <i class="icon-copy dw dw-padlock1"></i>
+      </span>
     </div>
+    <!-- Input -->
+    <input type="password" class="form-control" 
+           name="password" id="password" placeholder="Senha" required>
+    <!-- Ícone olho (direita) -->
+    <div class="input-group-append">
+      <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
+        <i class="fa fa-eye"></i>
+      </span>
+    </div>
+  </div>
+</div>
+
 
     <input type="hidden" name="role" value="vitima">
     <button type="submit" class="btn btn-danger btn-block">Criar conta</button>
