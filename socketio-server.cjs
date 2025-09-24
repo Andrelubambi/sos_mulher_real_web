@@ -21,26 +21,26 @@ redis.on('error', (err) => {
   console.error('❌ Erro de conexão com o Redis:', err);
 });
 
-// Subscrever a canais privados do Laravel
-// Não é necessária autenticação, pois a lógica foi removida do backend
-redis.subscribe('private-chat', (err, count) => {
+// Subscrever com curinga aos canais privados do Laravel (ex.: private-chat.6-11)
+// Usamos psubscribe para receber todos os canais que começam com "private-"
+redis.psubscribe('private-*', (err, count) => {
   if (err) {
-    console.error('❌ Erro de subscrição:', err);
+    console.error('❌ Erro de subscrição (pattern):', err);
     return;
   }
   console.log(`✅ Conectado ao Redis, escutando canais: ${count}`);
 });
 
-redis.on('message', (channel, message) => {
+redis.on('pmessage', (pattern, channel, message) => {
   try {
     const data = JSON.parse(message);
-    const event = data.event;
-    const channelName = data.channel;
-    const payload = data.data;
+    const event = data.event; // e.g., 'MessageSent'
+    const payload = data.data; // dados do evento
 
-    if (channelName && event) {
-      console.log(`📣 Mensagem recebida no Redis: ${channelName}, Evento: ${event}`);
-      io.of('/').to(channelName).emit(event, payload);
+    if (channel && event) {
+      console.log(`📣 Mensagem recebida no Redis: ${channel}, Evento: ${event}`);
+      // Emitir para a sala com o mesmo nome do canal Redis (ex.: 'private-chat.6-11')
+      io.of('/').to(channel).emit(event, payload);
     }
   } catch (e) {
     console.error('❌ Erro ao analisar a mensagem do Redis:', e);
@@ -54,12 +54,23 @@ io.on('connection', (socket) => {
     console.log(`🔌 Cliente desconectado: ${socket.id}`);
   });
 
-  socket.on('subscribe', (channel) => {
+  socket.on('subscribe', (data) => {
+    // O Echo envia um objeto { channel: 'private-chat.6-11', auth: {...} }
+    const channel = typeof data === 'string' ? data : data?.channel;
+    if (!channel) {
+      console.warn(`⚠️ Subscribe sem canal válido do cliente ${socket.id}:`, data);
+      return;
+    }
     console.log(`🎧 Cliente ${socket.id} subscrevendo ao canal: ${channel}`);
     socket.join(channel);
   });
 
-  socket.on('unsubscribe', (channel) => {
+  socket.on('unsubscribe', (data) => {
+    const channel = typeof data === 'string' ? data : data?.channel;
+    if (!channel) {
+      console.warn(`⚠️ Unsubscribe sem canal válido do cliente ${socket.id}:`, data);
+      return;
+    }
     console.log(`👋 Cliente ${socket.id} saindo do canal: ${channel}`);
     socket.leave(channel);
   });
