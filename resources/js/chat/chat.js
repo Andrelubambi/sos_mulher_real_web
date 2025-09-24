@@ -1,3 +1,31 @@
+// Configuração do Laravel Echo para se conectar ao seu servidor Socket.IO
+// IMPORTANTE: Unificado com a lógica de chat para garantir a ordem de execução
+import Echo from 'laravel-echo';
+import io from 'socket.io-client';
+
+window.io = io;
+
+window.Echo = new Echo({
+    broadcaster: 'socket.io',
+    host: window.location.hostname + ':6001',
+    // auth: {
+    //     headers: {
+    //         'Authorization': 'Bearer YOUR_AUTH_TOKEN_HERE',
+    //     },
+    // },
+    client: io,
+    transports: ['websocket', 'polling'],
+});
+
+window.Echo.connector.socket.on('connect', () => {
+    console.log('✅ CONECTADO ao WebSocket!');
+});
+
+window.Echo.connector.socket.on('disconnect', () => {
+    console.log('❌ DESCONECTADO do WebSocket!');
+});
+
+
 export function setupChat() {
     console.log('[setupChat] Iniciado');
     const messagesList = document.getElementById('messagesList');
