@@ -136,7 +136,7 @@ export function setupChat() {
                 .error((error) => {
                     console.error('[Echo] ❌ ERRO na autenticação do canal:', canal, error);
                 })
-                .listen('.MessageSent', (e) => {
+                .listen('MessageSent', (e) => {
                     console.log('[Echo] 📨 MENSAGEM RECEBIDA:', e);
                     console.log('[Echo] 📨 Detalhes da mensagem:', {
                         de: e.de,
