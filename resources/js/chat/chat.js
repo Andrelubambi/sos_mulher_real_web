@@ -1,4 +1,3 @@
- 
 export function setupChat() {
     console.log('[setupChat] Iniciado');
     const messagesList = document.getElementById('messagesList');
@@ -8,8 +7,8 @@ export function setupChat() {
     const currentAvatar = document.getElementById('currentAvatar');
     const participantStatus = document.getElementById('participantStatus');
     const videoCallBtn = document.getElementById('videoCallBtn');
-    const sendBtn = sendMessageForm.querySelector('.send-btn');
-    const usuarioLogadoId = document.querySelector('meta[name="user-id"]').getAttribute('content');
+    const sendBtn = sendMessageForm?.querySelector('.send-btn');
+    const usuarioLogadoId = document.querySelector('meta[name="user-id"]')?.getAttribute('content');
     const typingIndicator = document.getElementById('typingIndicator');
 
     console.log('[setupChat] Elementos capturados:', {
@@ -24,7 +23,7 @@ export function setupChat() {
         usuarioLogadoId
     });
 
-    if (!sendMessageForm || !messageInput || !sendBtn) {
+    if (!sendMessageForm || !messageInput || !sendBtn || !usuarioLogadoId) {
         console.error('[setupChat] Elementos essenciais não encontrados!');
         return;
     }
@@ -48,7 +47,6 @@ export function setupChat() {
         messagesList.appendChild(messageDiv);
         messagesList.scrollTop = messagesList.scrollHeight;
 
-        // Update unread count if message is not from the current user
         if (!sentByMe && message.de !== parseInt(usuarioLogadoId)) {
             updateUnreadCount(message.de);
         }
@@ -81,51 +79,70 @@ export function setupChat() {
     }
 
     function escutarMensagens(usuarioId) {
-        console.log('[Echo] Escutando mensagens para usuário:', usuarioId);
+        console.log('[Echo] 🎧 Escutando mensagens para usuário:', usuarioId);
+        
         if (!window.Echo) {
-            console.log('Echo não disponível');
+            console.error('[Echo] ❌ Echo não disponível!');
             return;
         }
 
         try {
+            // Sair do canal anterior
             if (window.currentChannel) {
                 window.Echo.leave(window.currentChannel);
-                console.log('Saiu do canal anterior:', window.currentChannel);
+                console.log('[Echo] 👋 Saiu do canal anterior:', window.currentChannel);
             }
 
+            // Calcular canal corretamente
             const minId = Math.min(parseInt(usuarioLogadoId), parseInt(usuarioId));
             const maxId = Math.max(parseInt(usuarioLogadoId), parseInt(usuarioId));
             const canal = `chat.${minId}-${maxId}`;
             window.currentChannel = canal;
 
-            console.log('Conectando ao canal:', canal);
+            console.log('[Echo] 🔐 Tentando conectar ao canal privado:', canal);
+            console.log('[Echo] 📤 ENVIANDO mensagem para canal:', canal);
 
+            // CONECTAR AO CANAL PRIVADO COM DEBUG COMPLETO
             window.Echo.private(canal)
+                .subscribed(() => {
+                    console.log('[Echo] ✅ CANAL AUTENTICADO com sucesso!', canal);
+                })
+                .error((error) => {
+                    console.error('[Echo] ❌ ERRO na autenticação do canal:', canal, error);
+                })
                 .listen('.MessageSent', (e) => {
-                    console.log('Nova mensagem recebida:', e);
+                    console.log('[Echo] 📨 MENSAGEM RECEBIDA:', e);
+                    console.log('[Echo] 📨 Detalhes da mensagem:', {
+                        de: e.de,
+                        para: e.para,
+                        conteudo: e.conteudo,
+                        usuarioLogado: parseInt(usuarioLogadoId)
+                    });
+                    
+                    // Só adicionar se não foi enviada pelo usuário logado
                     if (e.de !== parseInt(usuarioLogadoId)) {
                         appendMessage(e, false);
                     }
                 })
                 .listenForWhisper('typing', (e) => {
+                    console.log('[Echo] ⌨️ Usuário digitando:', e);
                     if (e.userId !== parseInt(usuarioLogadoId)) {
                         typingIndicator.style.display = 'flex';
                         setTimeout(() => {
                             typingIndicator.style.display = 'none';
                         }, 3000);
                     }
-                })
-                .error((error) => {
-                    console.error('Erro no canal:', error);
                 });
+
         } catch (error) {
-            console.error('Erro ao escutar mensagens:', error);
+            console.error('[Echo] 💥 Erro ao escutar mensagens:', error);
         }
     }
 
+    // Event listeners para seleção de usuários
     document.querySelectorAll('.user-item, .chat-item').forEach(item => {
         item.addEventListener('click', () => {
-            console.log('[User Click] Usuário selecionado:', item.dataset.userName, 'ID:', item.dataset.userId);
+            console.log('[User Click] 👤 Usuário selecionado:', item.dataset.userName, 'ID:', item.dataset.userId);
             window.usuarioAtualId = item.dataset.userId;
             const userName = item.dataset.userName;
 
@@ -134,30 +151,32 @@ export function setupChat() {
             participantStatus.textContent = 'Online';
             updateVideoCallButton();
 
+            // Mobile responsive
             if (window.innerWidth < 768) {
-                document.getElementById('sidebar').classList.remove('active');
-                document.getElementById('overlay').classList.remove('active');
-                document.getElementById('chatMain').classList.add('active');
+                document.getElementById('sidebar')?.classList.remove('active');
+                document.getElementById('overlay')?.classList.remove('active');
+                document.getElementById('chatMain')?.classList.add('active');
             }
 
+            // Limpar e ativar interface
             messagesList.innerHTML = '';
             messageInput.disabled = false;
             sendBtn.disabled = false;
+            
             requestAnimationFrame(() => {
                 messageInput.focus();
-                console.log('[User Click] Formulário ativado. Estilo computed:', {
-                    display: window.getComputedStyle(sendMessageForm).display,
-                    disabled: messageInput.disabled
-                });
+                console.log('[User Click] ✅ Formulário ativado');
             });
 
+            // Carregar mensagens
             fetch(`/chat/messages/${window.usuarioAtualId}`)
                 .then(res => {
-                    console.log('[Fetch] Resposta recebida:', res.status);
+                    console.log('[Fetch] 📥 Resposta recebida:', res.status);
                     return res.json();
                 })
                 .then(messages => {
-                    console.log('[Fetch] Mensagens carregadas:', messages);
+                    console.log('[Fetch] 📨 Mensagens carregadas:', messages.length, 'mensagens');
+                    
                     if (messages.length === 0) {
                         messagesList.innerHTML = `
                             <div class="welcome-message">
@@ -171,23 +190,29 @@ export function setupChat() {
                             appendMessage(msg, msg.de == usuarioLogadoId);
                         });
                     }
+                    
                     messagesList.scrollTop = messagesList.scrollHeight;
-                    updateUnreadCount(window.usuarioAtualId); // Update badge after loading messages
+                    updateUnreadCount(window.usuarioAtualId);
                 })
                 .catch(error => {
-                    console.error('[Fetch] Erro ao carregar mensagens:', error);
+                    console.error('[Fetch] ❌ Erro ao carregar mensagens:', error);
                 });
 
+            // INICIAR ESCUTA DO CANAL
             escutarMensagens(window.usuarioAtualId);
         });
     });
 
+    // Event listener para envio de mensagens
     sendMessageForm.addEventListener('submit', function(e) {
         e.preventDefault();
         const conteudo = messageInput.value.trim();
-        console.log('[Submit] Conteúdo digitado:', conteudo);
+        
+        console.log('[Submit] 📝 Conteúdo digitado:', conteudo);
+        console.log('[Submit] 👤 Usuário destinatário:', window.usuarioAtualId);
+        
         if (!conteudo || !window.usuarioAtualId) {
-            console.log('[Submit] Conteúdo ou usuário inválido');
+            console.log('[Submit] ⚠️ Conteúdo ou usuário inválido');
             return;
         }
 
@@ -199,26 +224,35 @@ export function setupChat() {
             },
             body: JSON.stringify({ conteudo }),
         })
-            .then(res => res.json())
-            .then(data => {
-                console.log('[Submit] Mensagem enviada:', data);
-                appendMessage(data, true);
-                messageInput.value = '';
-                messageInput.style.height = '40px';
-            })
-            .catch(err => {
-                console.error('[Submit] Erro ao enviar mensagem:', err);
-                alert('Erro ao enviar mensagem.');
-            });
+        .then(res => {
+            console.log('[Submit] 📡 Status da resposta:', res.status);
+            return res.json();
+        })
+        .then(data => {
+            console.log('[Submit] ✅ Mensagem enviada:', data);
+            appendMessage(data, true);
+            messageInput.value = '';
+            messageInput.style.height = '40px';
+        })
+        .catch(err => {
+            console.error('[Submit] ❌ Erro ao enviar mensagem:', err);
+            alert('Erro ao enviar mensagem.');
+        });
     });
 
+    // Event listeners para typing e enter
     messageInput.addEventListener('input', function() {
         this.style.height = '40px';
         this.style.height = Math.min(this.scrollHeight, 100) + 'px';
-        if (window.currentChannel && this.value.trim()) {
-            window.Echo.private(window.currentChannel).whisper('typing', {
-                userId: parseInt(usuarioLogadoId)
-            });
+        
+        if (window.currentChannel && this.value.trim() && window.Echo) {
+            try {
+                window.Echo.private(window.currentChannel).whisper('typing', {
+                    userId: parseInt(usuarioLogadoId)
+                });
+            } catch (error) {
+                console.error('[Typing] Erro ao enviar whisper:', error);
+            }
         }
     });
 

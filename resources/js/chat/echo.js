@@ -1,87 +1,61 @@
+import Echo from 'laravel-echo';
 import io from 'socket.io-client';
 
 export function initializeEcho() {
     try {
-        window.socket = io(`https://${window.location.hostname}`, {
-            path: '/socket.io',
+        // USAR LARAVEL ECHO REAL COM SUA CONFIGURAÇÃO
+        window.io = io;
+        
+        window.Echo = new Echo({
+            broadcaster: 'socket.io',
+            host: 'https://sosmulherreal.com:6001', // Sua configuração do Laravel Echo Server
+            auth: {
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                    'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`,
+                },
+            },
+            authEndpoint: '/broadcasting/auth',
             transports: ['websocket', 'polling'],
-            secure: true
+            forceNew: false,
+            reconnection: true,
+            timeout: 60000,
+            enabledTransports: ['websocket', 'polling']
         });
 
-        window.socket.on('connect', () => {
-            console.log('✅ CONECTADO ao WebSocket!');
+        // LISTENERS DE CONEXÃO
+        window.Echo.connector.socket.on('connect', () => {
+            console.log('✅ CONECTADO ao Laravel Echo Server!');
             window.echoConnected = true;
             updateConnectionStatus(true);
         });
 
-        window.socket.on('disconnect', (reason) => {
-            console.log('🔌 Desconectado:', reason);
+        window.Echo.connector.socket.on('disconnect', (reason) => {
+            console.log('🔌 Desconectado do Laravel Echo Server:', reason);
             window.echoConnected = false;
             updateConnectionStatus(false);
         });
 
-        window.socket.on('connect_error', (error) => {
-            console.error('💥 Erro:', error);
+        window.Echo.connector.socket.on('connect_error', (error) => {
+            console.error('💥 Erro na conexão Laravel Echo:', error);
             window.echoConnected = false;
             updateConnectionStatus(false);
         });
 
-        // No seu arquivo de chat
-window.Echo.private(`chat.${senderId}-${receiverId}`)
-.subscribed(() => {
-    console.log('✅ CANAL AUTENTICADO com sucesso!');
-})
-.error((error) => {
-    console.log('❌ ERRO na autenticação do canal:', error);
-})
-.listen('MessageSent', (e) => {
-    console.log('📨 MENSAGEM RECEBIDA:', e);
-    // Sua lógica para exibir a mensagem
-});
-// Quando enviar mensagem, adicione logs:
-console.log('📤 ENVIANDO mensagem para canal:', `chat.${senderId}-${receiverId}`);
-        // INTERFACE CORRIGIDA COM ENCADEAMENTO
-        window.Echo = {
-            connector: { socket: window.socket },
-            socketId: () => window.socket.id,
-            
-            private: (channel) => {
-                const channelObj = {
-                    listen: (event, callback) => {
-                        const eventName = event.startsWith('.') ? event : `.${event}`;
-                        window.socket.on(`${channel}${eventName}`, callback);
-                        return channelObj;
-                    },
-                    listenForWhisper: (event, callback) => {
-                        window.socket.on(`client-${event}`, callback);
-                        return channelObj;
-                    },
-                    whisper: (event, data) => {
-                        window.socket.emit(`client-${event}`, data);
-                        return channelObj;
-                    },
-                    error: (callback) => {
-                        window.socket.on('error', callback);
-                        return channelObj;
-                    },
-                    stopListening: (event, callback) => {
-                        const eventName = event.startsWith('.') ? event : `.${event}`;
-                        window.socket.off(`${channel}${eventName}`, callback);
-                        return channelObj;
-                    }
-                };
-                return channelObj;
-            },
-            
-            leave: (channel) => {
-                console.log('Left channel:', channel);
-            }
-        };
+        // DEBUG: Listeners adicionais
+        window.Echo.connector.socket.on('error', (error) => {
+            console.error('🚨 Socket Error:', error);
+        });
 
-        console.log('🚀 WebSocket com interface corrigida');
+        window.Echo.connector.socket.on('reconnect', (attemptNumber) => {
+            console.log('🔄 Reconectado após tentativas:', attemptNumber);
+            updateConnectionStatus(true);
+        });
+
+        console.log('🚀 Laravel Echo inicializado com sucesso!');
         
     } catch (error) {
-        console.error('❌ Erro:', error);
+        console.error('❌ Erro ao inicializar Laravel Echo:', error);
         updateConnectionStatus(false);
     }
 }
@@ -89,11 +63,14 @@ console.log('📤 ENVIANDO mensagem para canal:', `chat.${senderId}-${receiverId
 export function updateConnectionStatus(connected) {
     const connectionDot = document.getElementById('connectionDot');
     const connectionText = document.getElementById('connectionText');
-    if (connected) {
-        connectionDot.classList.add('connected');
-        connectionText.textContent = 'Conectado';
-    } else {
-        connectionDot.classList.remove('connected');
-        connectionText.textContent = 'Desconectado';
+    
+    if (connectionDot && connectionText) {
+        if (connected) {
+            connectionDot.classList.add('connected');
+            connectionText.textContent = 'Conectado';
+        } else {
+            connectionDot.classList.remove('connected');
+            connectionText.textContent = 'Desconectado';
+        }
     }
 }
