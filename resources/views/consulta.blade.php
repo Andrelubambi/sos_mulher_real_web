@@ -139,7 +139,7 @@
                         <span class="mtext">Consultas</span>
                     </a>
                     <ul class="submenu">
-                        <li><a href="{{ route('consulta') }}">Todas as Consultas</a></li>
+                        <li><a href="{{ route('consulta') }}"><i class="fa fa-calendar" aria-hidden="true" style="margin-right:6px;"></i> Todas as Consultas</a></li>
                     @if(in_array(auth()->user()->role, ['admin', 'doutor', 'estagiario,vitima']))
                         <li><a href="{{ route('minhas.consultas') }}">Minhas Consultas</a></li>
                         @endif
@@ -233,8 +233,8 @@
                 <!-- Botão Adicionar Consulta - Visível apenas para criadores e vítimas -->
                 @if(auth()->user()->role == 'criador' || auth()->user()->role == 'vitima')
                 <div class="pl-20 mb-3">
-                        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal"
-                            data-target="#modalAdicionarConsulta">
+                        <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal"
+                            data-bs-target="#modalAdicionarConsulta">
                             Adicionar Consulta
                         </button>
                     </div>
@@ -269,8 +269,8 @@
                                 <td>
                                    <div class="d-flex" style="gap: 20px !important;">
                                         @if(auth()->user()->role == 'admin' || auth()->user()->id == $consulta->criada_por || (auth()->user()->role == 'medico' && auth()->user()->id == $consulta->medico_id))
-                                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                                            data-target="#editModal" onclick="editConsulta({{ $consulta->id }})">
+                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#editModal" onclick="editConsulta({{ $consulta->id }})">
                                             <i class="bi bi-pencil-square"></i> Editar
                                         </button>
 

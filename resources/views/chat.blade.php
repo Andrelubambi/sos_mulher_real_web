@@ -35,6 +35,9 @@
             <button class="mobile-menu-btn" id="mobileMenuBtn">
                 <i class="fas fa-bars"></i>
             </button>
+            <a href="{{ url()->previous() }}" class="back-link" title="Voltar" style="margin-right: 8px; display:none;" id="headerBackLink">
+                <i class="fas fa-arrow-left"></i>
+            </a>
             <h1 class="app-title">SOS-MULHER</h1>
         </div>
         <div class="header-right">
@@ -121,7 +124,7 @@
         <main class="chat-main" id="chatMain">
             <div class="chat-header">
                 <div class="chat-header-left">
-                    <button class="back-btn" id="backBtn">
+                    <button class="back-btn" id="backBtn" title="Voltar">
                         <i class="fas fa-arrow-left"></i>
                     </button>
                     <div class="chat-participant">
@@ -221,5 +224,23 @@
             </div>
         </div>
     </div>
+    <script>
+        (function(){
+            const backBtn = document.getElementById('backBtn');
+            const headerBackLink = document.getElementById('headerBackLink');
+            function goBack(){
+                if (window.history.length > 1) {
+                    window.history.back();
+                } else {
+                    window.location.href = '{{ route('index') }}';
+                }
+            }
+            if (backBtn) backBtn.addEventListener('click', goBack);
+            if (headerBackLink) {
+                headerBackLink.style.display = 'inline-flex';
+                headerBackLink.addEventListener('click', function(e){ e.preventDefault(); goBack(); });
+            }
+        })();
+    </script>
 </body>
 </html>

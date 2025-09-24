@@ -181,3 +181,27 @@ public function minhasConsultas()
 // ==================  Filtrar consultas por medico  ============
  
 }
+
+    /**
+     * Atualiza a senha do usuário (autenticado ou alvo específico)
+     */
+    public function updatePassword(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $validated = $request->validate([
+            'current_password' => 'nullable|string',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        if (!empty($validated['current_password'])) {
+            if (!Hash::check($validated['current_password'], $user->password)) {
+                return back()->with('error', 'Senha atual incorreta.');
+            }
+        }
+
+        $user->password = Hash::make($validated['password']);
+        $user->save();
+
+        return back()->with('success', 'Senha alterada com sucesso!');
+    }

@@ -32,7 +32,8 @@
     <div class="login-wrap d-flex align-items-center justify-content-center min-vh-100">
         <div class="login-box bg-white box-shadow border-radius-10 p-4">
             <div class="login-title">
-                <h2 class="text-center text-danger">Faça Login no SOS-MULHER</h2>
+                <h2 class="text-center text-danger">Faça o seu login</h2>
+                <p class="text-center">Ainda não tem uma conta? <a href="{{ route('register') }}" class="text-danger">Crie</a></p>
             </div>
             @if ($errors->any())
                 <div class="alert alert-danger">
@@ -61,16 +62,20 @@
                     <div class="input-group-prepend custom">
                         <span class="input-group-text"><i class="fa fa-phone"></i></span>
                     </div>
-                    <input type="text" name="telefone" id="telefone" class="form-control" placeholder="Telefone"
-                        required> 
+                    <input type="tel" pattern="[0-9]+" inputmode="numeric" name="telefone" id="telefone" class="form-control" placeholder="Telefone"
+                        required>
                 </div>
 
                 <div class="input-group custom mb-3">
                     <div class="input-group-prepend custom">
                         <span class="input-group-text"><i class="icon-copy dw dw-padlock1"></i></span>
                     </div>
-                    <input type="password" name="password" id="senha" class="form-control" placeholder="Senha"
-                        required>
+                    <div style="position: relative; width: 100%;">
+                        <input type="password" name="password" id="senha" class="form-control" placeholder="Senha" required>
+                        <button type="button" id="toggleSenha" aria-label="Mostrar/ocultar senha" style="position:absolute; right:10px; top:50%; transform: translateY(-50%); background:none; border:none;">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="row">
@@ -81,6 +86,19 @@
                     </div>
                 </div>
             </form>
+            <script>
+                (function(){
+                    var senha = document.getElementById('senha');
+                    var btn = document.getElementById('toggleSenha');
+                    if (btn && senha){
+                        btn.addEventListener('click', function(){
+                            var isPwd = senha.getAttribute('type') === 'password';
+                            senha.setAttribute('type', isPwd ? 'text' : 'password');
+                            this.innerHTML = isPwd ? '<i class="fa fa-eye-slash"></i>' : '<i class="fa fa-eye"></i>';
+                        });
+                    }
+                })();
+            </script>
 
         </div>
     </div>
