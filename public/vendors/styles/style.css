@@ -5053,4 +5053,16 @@ body.IE .register-page-wrap .container {
   .input-group .input-group-text {
     height: 100%;
   }
+  .input-group-text {
+    background: #fff;           /* mesma cor do input */
+    border: 1px solid #ced4da;  /* mesma borda do input */
+  }
+  
+  .input-group-prepend .input-group-text {
+    border-right: 0; /* remove a linha dupla */
+  }
+  
+  .input-group-append .input-group-text {
+    border-left: 0;  /* remove a linha dupla */
+  }
   
