@@ -14,6 +14,8 @@ class MessageSent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    // A solução: declare a propriedade aqui
+    public Mensagem $message;
 
     public function __construct(Mensagem $message)
     {
