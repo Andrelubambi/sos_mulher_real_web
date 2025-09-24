@@ -5008,3 +5008,41 @@ body.IE .register-page-wrap .container {
 .data-table tbody tr:hover {
     background-color: #f1f1f1;
 }
+
+
+/* Escopo para não mexer globalmente — ajusta .login-card se necessário */
+.login-card .input-group.custom {
+    width: 100%;
+    display: flex;
+    align-items: stretch;
+    position: relative; /* garante referência para elementos filhos */
+  }
+  
+  /* Garante que prepend/append não sejam removidos do fluxo por regras personalizadas */
+  .login-card .input-group.custom .input-group-prepend,
+  .login-card .input-group.custom .input-group-append {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    float: none !important;
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Faz o texto do input-group ocupar toda a altura do input e centraliza o ícone */
+  .login-card .input-group.custom .input-group-text,
+  .login-card .input-group.custom .input-group-append .btn {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Garante que o input tenha altura mínima coerente */
+  .login-card .input-group.custom .form-control {
+    min-height: calc(1.5em + 0.75rem + 2px); /* corresponde ao default do Bootstrap */
+  }
+  
+  /* Cursor para o span clicável */
+ 
+  
