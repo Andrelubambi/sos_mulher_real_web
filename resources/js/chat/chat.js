@@ -7,14 +7,12 @@ window.io = io;
 
 window.Echo = new Echo({
     broadcaster: 'socket.io',
-    host: window.location.hostname + ':6001',
-    // auth: {
-    //     headers: {
-    //         'Authorization': 'Bearer YOUR_AUTH_TOKEN_HERE',
-    //     },
-    // },
+    // Use HTTPS através do Nginx, com path padrão do Socket.IO
     client: io,
     transports: ['websocket', 'polling'],
+    host: `https://${window.location.hostname}`,
+    // Garantir que o caminho é /socket.io atrás do Nginx
+    path: '/socket.io',
 });
 
 window.Echo.connector.socket.on('connect', () => {

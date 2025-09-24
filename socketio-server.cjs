@@ -20,9 +20,7 @@ redis.on('connect', () => {
 redis.on('error', (err) => {
   console.error('❌ Erro de conexão com o Redis:', err);
 });
-
-// Subscrever com curinga aos canais privados do Laravel (ex.: private-chat.6-11)
-// Usamos psubscribe para receber todos os canais que começam com "private-"
+ 
 redis.psubscribe('private-*', (err, count) => {
   if (err) {
     console.error('❌ Erro de subscrição (pattern):', err);
