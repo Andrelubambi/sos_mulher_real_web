@@ -80,7 +80,7 @@ services:
     restart: always
     volumes:
       - .:/var/www
-    command: ["/bin/sh", "-c", "apk add --no-cache netcat-openbsd && cd /var/www && npm install express socket.io ioredis --save && while ! nc -z laravel_redis 6379; do echo 'Aguardando Redis...'; sleep 2; done && echo 'Redis conectado!' && node socketio-server.js"]
+    command: ["/bin/sh", "-c", "apk add --no-cache netcat-openbsd && cd /var/www && npm install express socket.io ioredis --save && while ! nc -z laravel_redis 6379; do echo 'Aguardando Redis...'; sleep 2; done && echo 'Redis conectado!' && node socketio-server.cjs"]
     ports:
       - "6001:6001"
     networks:
@@ -192,3 +192,10 @@ networks:
 volumes:
   mysql_data:
     driver: local
+
+
+
+
+    
+    
+
