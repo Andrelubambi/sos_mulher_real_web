@@ -172,3 +172,13 @@ Route::get('/debug-env', function() {
         'db_connection' => config('database.default')
     ]);
 });
+
+
+Route::get('/test-broadcast', function() {
+    try {
+        event(new App\Events\MessageSent(['message' => 'teste']));
+        return response()->json(['status' => 'success', 'message' => 'Evento disparado']);
+    } catch (\Exception $e) {
+        return response()->json(['status' => 'error', 'message' => $e->getMessage()]);
+    }
+});
