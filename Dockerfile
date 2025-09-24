@@ -10,7 +10,7 @@ RUN apk add --no-cache \
     freetype-dev libpng-dev libjpeg-turbo-dev \
     nodejs npm \
     netcat-openbsd \
-    redis-cli \
+    redis \
     && rm -rf /var/cache/apk/*
 
 # Instalar extensões PHP (inclui GD com JPEG/Freetype)
