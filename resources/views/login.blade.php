@@ -67,11 +67,13 @@
     </div>
     <input type="password" name="password" id="senha" class="form-control" placeholder="Senha" required>
     <div class="input-group-append custom">
-        <span class="input-group-text" id="toggleSenha" style="cursor: pointer;">
+        <button type="button" id="toggleSenha" aria-label="Mostrar/ocultar senha" 
+                class="btn btn-outline-secondary d-flex align-items-center px-3">
             <i class="fa fa-eye"></i>
-        </span>
+        </button>
     </div>
 </div>
+
 
 
     <div class="row">
