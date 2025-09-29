@@ -131,7 +131,7 @@
                     <ul class="submenu">
                         <li><a href="{{ route('consulta') }}"><i class="fa fa-calendar" aria-hidden="true" style="margin-right:6px;"></i> Todas as Consultas</a></li>
                     @if(in_array(auth()->user()->role, ['admin', 'doutor', 'estagiario,vitima']))
-                        <li><a href="{{ route('minhas.consultas') }}">Minhas Consultas</a></li>
+                        <li><a href="{{ route('consulta') }}">Minhas Consultas</a></li>
                         @endif
                     </ul>
                 </li>
