@@ -12,7 +12,7 @@ class AdminSeeder extends Seeder
     public function run(): void
     { 
         // Usuário Admin
-        User::updateOrCreate(
+        User::updateOrCreate( 
             ['telefone' => '999990000'],
             [
                 'name' => 'Admin Master',

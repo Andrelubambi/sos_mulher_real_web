@@ -231,14 +231,14 @@
                 <div class="h5 pd-20 mb-0">Consultas Recentes</div>
 
                 <!-- Botão Adicionar Consulta - Visível apenas para criadores e vítimas -->
-                @if(auth()->user()->role == 'criador' || auth()->user()->role == 'vitima')
+            
                 <div class="pl-20 mb-3">
                         <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal"
                             data-bs-target="#modalAdicionarConsulta">
                             Adicionar Consulta
                         </button>
                     </div>
-                @endif
+       
 
                
 
@@ -546,6 +546,8 @@
                 }
             });
         </script>
+        <!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

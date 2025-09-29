@@ -104,7 +104,7 @@ class ConsultaController extends Controller
     {
         $consulta = Consulta::findOrFail($id);
 
-        $validated = $request->validate([
+        $validated = $request->validate([ 
             'medico_id' => 'required|exists:users,id',
             'descricao' => 'required|string',
             'bairro' => 'required|string',
