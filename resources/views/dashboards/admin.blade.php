@@ -24,24 +24,61 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-    </style>
+   <style>
+.pre-loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: #fff; /* ou a cor de fundo que preferir */
+    z-index: 9999;
+}
+
+.pre-loader-box {
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+    padding: 20px;
+}
+
+.loader-progress {
+    margin: 20px auto;
+    max-width: 300px;
+}
+
+.percent {
+    margin: 10px 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.loading-text {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #666;
+}
+</style>
+
     <!-- Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
     <div class="pre-loader">
-        <div class="pre-loader-box">
-            <div class="loader-logo">
-                <img src="{{ asset('vendors/images/sos-progress.jpg') }}" alt="" style="width: 120px; height: auto;" />
-            </div>
-            <div class="loader-progress" id="progress_div">
-                <div class="bar" id="bar1"></div>
-            </div>
-            <div class="percent" id="percent1">0%</div>
-            <div class="loading-text">Por favor, aguarde ...</div>
+    <div class="pre-loader-box">
+        <div class="loader-logo">
+            <img src="{{ asset('vendors/images/sos-progress.jpg') }}" alt="" style="width: 120px; height: auto;" />
         </div>
+        <div class="loader-progress" id="progress_div">
+            <div class="bar" id="bar1"></div>
+        </div>
+        <div class="percent" id="percent1">0%</div>
+        <div class="loading-text">Por favor, aguarde ...</div>
     </div>
+</div>
     <div class="header">
         <div class="header-left">
             <div class="menu-icon bi bi-list"></div>

@@ -19,18 +19,16 @@ class ConsultaController extends Controller
             return redirect()->route('login');
         }
 
-        $consultas = collect(); // Inicializa uma coleção vazia por padrão
+        $consultas = collect();
 
         switch ($user->role) {
             case 'admin':
-                // Administradores podem ver todas as consultas com as relações carregadas, ordenadas pela data de criação
                 $consultas = Consulta::with(['medico', 'criador'])
                                      ->orderBy('created_at', 'desc')
                                      ->get();
                 break;
 
-            case 'medico':
-                // Médicos veem apenas suas consultas
+            case 'doutor': // CORRIGIDO: era 'medico', mas no código usa 'doutor'
                 $consultas = Consulta::with(['medico', 'criador'])
                                      ->where('medico_id', $user->id)
                                      ->get();
@@ -38,14 +36,12 @@ class ConsultaController extends Controller
 
             case 'vitima':
             case 'criador':
-                // Vítimas e criadores veem as consultas que eles criaram
                 $consultas = Consulta::with(['medico', 'criador'])
                                      ->where('criada_por', $user->id)
                                      ->get();
                 break;
             
             default:
-                // Caso o papel do usuário não seja reconhecido
                 return redirect()->route('home')->with('error', 'Seu papel de usuário não tem permissão para visualizar esta página.');
         }
 
@@ -64,7 +60,6 @@ class ConsultaController extends Controller
         ]);
     
         try {
-            // Verifica se o usuário está autenticado antes de obter o ID
             if (!auth()->check()) {
                 return redirect()->back()->with('error', 'Você deve estar logado para criar uma consulta.');
             }
@@ -77,12 +72,13 @@ class ConsultaController extends Controller
                 'provincia' => $validated['provincia'],
                 'data' => $validated['data'],
                 'criada_por' => $userId,
-                'vitima_id' => $userId, // Adicionando o ID do usuário logado
+                'vitima_id' => $userId,
                 'medico_id' => $validated['medico_id'],
-                'status' => 'pendente', // Adicionando o status com valor padrão
+                'status' => 'pendente',
             ]);
     
-            return redirect()->route('consultas.index')->with('success', 'Consulta criada com sucesso!');
+            // CORRIGIDO: redirecionamento para a rota correta
+            return redirect()->route('consulta')->with('success', 'Consulta criada com sucesso!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Falha ao criar consulta: ' . $e->getMessage());
         }
@@ -113,13 +109,13 @@ class ConsultaController extends Controller
         ]);
         
         $consulta->update($validated);
-        return redirect()->back()->with('success', 'Dados atualizados com sucesso!');
+        return redirect()->route('consulta')->with('success', 'Dados atualizados com sucesso!');
     }
 
     public function destroy($id)
     {
         $consulta = Consulta::findOrFail($id);
         $consulta->delete();
-        return redirect()->back()->with('success', 'Consulta deletada com sucesso!');
+        return redirect()->route('consulta')->with('success', 'Consulta deletada com sucesso!');
     }
 }

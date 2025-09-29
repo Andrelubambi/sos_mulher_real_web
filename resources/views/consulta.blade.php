@@ -25,6 +25,66 @@
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* Responsividade para tabelas em dispositivos móveis */
+        @media screen and (max-width: 768px) {
+            .table-responsive {
+                border: 0;
+            }
+            
+            .table thead {
+                display: none;
+            }
+            
+            .table tbody tr {
+                display: block;
+                margin-bottom: 1rem;
+                border: 1px solid #dee2e6;
+                border-radius: 0.25rem;
+            }
+            
+            .table tbody td {
+                display: flex;
+                justify-content: space-between;
+                padding: 0.75rem;
+                border: none;
+                border-bottom: 1px solid #dee2e6;
+            }
+            
+            .table tbody td:last-child {
+                border-bottom: none;
+            }
+            
+            .table tbody td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                margin-right: 1rem;
+            }
+            
+            .table tbody td .d-flex {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .table tbody td .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        /* Melhorias gerais de responsividade */
+        @media screen and (max-width: 576px) {
+            .modal-dialog {
+                margin: 0.5rem;
+            }
+            
+            .btn-lg {
+                width: 100%;
+            }
+            
+            .pl-20 {
+                padding-left: 1rem !important;
+            }
+        }
     </style>
     <!-- Vite -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -203,7 +263,7 @@
                         </li>
                     @endforeach
                 </ul>
-     
+            </li>
 
             <!-- Chat (todos têm acesso) -->
             <li>
@@ -216,8 +276,6 @@
     </div>
 </div>
     
-
-
     </div>
     <div class="mobile-menu-overlay"></div>
 
@@ -227,6 +285,32 @@
                 <h2 class="h3 mb-0">Gerir Consultas</h2>
             </div>
 
+            <!-- Mensagens de Feedback -->
+            @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            @endif
+
+            @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            @endif
+
+            @if($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <ul class="mb-0">
+                    @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            @endif
+
             <div class="card-box pb-10">
                 <div class="h5 pd-20 mb-0">Consultas Recentes</div>
 
@@ -235,7 +319,7 @@
                 <div class="pl-20 mb-3">
                         <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal"
                             data-bs-target="#modalAdicionarConsulta">
-                            Adicionar Consulta
+                            <i class="bi bi-plus-circle"></i> Adicionar Consulta
                         </button>
                     </div>
        
@@ -243,96 +327,108 @@
                
 
                 <!-- Tabela de Consulta -->
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Descrição</th>
-                            <th>Bairro</th>
-                            <th>Província</th>
-                            <th>Data</th>
-                            <th>Médico</th>
-                            <th>Criado por</th>
-                            @if(auth()->user()->role == 'admin' || auth()->user()->role == 'criador' || auth()->user()->role == 'vitima' || auth()->user()->role == 'medico')
-                            <th>Ações</th>
-                            @endif
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($consultas as $consulta)
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead class="table-light">
                             <tr>
-                                <td>{{ $consulta->descricao }}</td>
-                                <td>{{ $consulta->bairro }}</td>
-                                <td>{{ $consulta->provincia }}</td>
-                                <td>{{ $consulta->data }}</td>
-                                <td>{{ $consulta->medico->name ?? 'N/A' }}</td>
-                                <td>{{ $consulta->criador->name ?? 'N/A' }}</td>
-                                <td>
-                                   <div class="d-flex" style="gap: 20px !important;">
-                                        @if(auth()->user()->role == 'admin' || auth()->user()->id == $consulta->criada_por || (auth()->user()->role == 'medico' && auth()->user()->id == $consulta->medico_id))
-                                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#editModal" onclick="editConsulta({{ $consulta->id }})">
-                                            <i class="bi bi-pencil-square"></i> Editar
-                                        </button>
-
-                                        <form action="{{ route('consulta.destroy', $consulta->id) }}" method="POST">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="btn btn-danger btn-sm d-flex align-items-center gap-1">
-                                                <i class="bi bi-trash"></i> Excluir
+                                <th>Descrição</th>
+                                <th>Bairro</th>
+                                <th>Província</th>
+                                <th>Data</th>
+                                <th>Médico</th>
+                                <th>Criado por</th>
+                                @if(auth()->user()->role == 'admin' || auth()->user()->role == 'criador' || auth()->user()->role == 'vitima' || auth()->user()->role == 'doutor')
+                                <th>Ações</th>
+                                @endif
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($consultas as $consulta)
+                                <tr>
+                                    <td data-label="Descrição">{{ $consulta->descricao }}</td>
+                                    <td data-label="Bairro">{{ $consulta->bairro }}</td>
+                                    <td data-label="Província">{{ $consulta->provincia }}</td>
+                                    <td data-label="Data">{{ \Carbon\Carbon::parse($consulta->data)->format('d/m/Y') }}</td>
+                                    <td data-label="Médico">{{ $consulta->medico->name ?? 'N/A' }}</td>
+                                    <td data-label="Criado por">{{ $consulta->criador->name ?? 'N/A' }}</td>
+                                    <td data-label="Ações">
+                                       <div class="d-flex flex-wrap" style="gap: 10px;">
+                                            @if(auth()->user()->role == 'admin' || auth()->user()->id == $consulta->criada_por || (auth()->user()->role == 'doutor' && auth()->user()->id == $consulta->medico_id))
+                                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#editModal" onclick="editConsulta({{ $consulta->id }})">
+                                                <i class="bi bi-pencil-square"></i> Editar
                                             </button>
-                                        </form>
-                                        @endif
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="7" class="text-center">Nenhuma consulta encontrada.</td>
-                            </tr>
-                        @endforelse
-                    </tbody>
 
-                </table>
+                                            <form action="{{ route('consulta.destroy', $consulta->id) }}" method="POST"
+                                                  onsubmit="return confirm('Tem certeza que deseja excluir esta consulta?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                    class="btn btn-danger btn-sm d-flex align-items-center gap-1">
+                                                    <i class="bi bi-trash"></i> Excluir
+                                                </button>
+                                            </form>
+                                            @endif
+                                        </div>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="text-center py-4">
+                                        <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+                                        <p class="mt-2">Nenhuma consulta encontrada.</p>
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- Modal Criar Consulta -->
             <div class="modal fade" id="modalAdicionarConsulta" tabindex="-1"
                 aria-labelledby="modalAdicionarConsultaLabel" aria-hidden="true">
-                <div class="modal-dialog">
+                <div class="modal-dialog modal-dialog-centered">
                     <form method="POST" action="{{ route('consulta.store') }}"
                         class="modal-content shadow rounded">
                         @csrf
 
                         <div class="modal-header bg-primary text-white">
-                            <h5 class="modal-title" id="modalAdicionarConsultaLabel">Nova Consulta</h5>
+                            <h5 class="modal-title" id="modalAdicionarConsultaLabel">
+                                <i class="bi bi-plus-circle"></i> Nova Consulta
+                            </h5>
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                                 aria-label="Fechar"></button>
                         </div>
 
                         <div class="modal-body">
                             <div class="mb-3">
-                                <label for="descricao" class="form-label">Descrição</label>
-                                <input type="text" name="descricao" id="descricao" class="form-control" required>
+                                <label for="descricao" class="form-label">Descrição *</label>
+                                <input type="text" name="descricao" id="descricao" class="form-control" 
+                                       placeholder="Ex: Consulta de rotina" required>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="bairro" class="form-label">Bairro *</label>
+                                    <input type="text" name="bairro" id="bairro" class="form-control" 
+                                           placeholder="Ex: Ingombota" required>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="provincia" class="form-label">Província *</label>
+                                    <input type="text" name="provincia" id="provincia" class="form-control" 
+                                           placeholder="Ex: Luanda" required>
+                                </div>
                             </div>
 
                             <div class="mb-3">
-                                <label for="bairro" class="form-label">Bairro</label>
-                                <input type="text" name="bairro" id="bairro" class="form-control" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="provincia" class="form-label">Província</label>
-                                <input type="text" name="provincia" id="provincia" class="form-control" required>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="data" class="form-label">Data</label>
+                                <label for="data" class="form-label">Data *</label>
                                 <input type="date" name="data" id="data" class="form-control" required>
                             </div>
 
                             <div class="mb-3">
-                                <label for="medico_id" class="form-label">Médico</label>
+                                <label for="medico_id" class="form-label">Médico *</label>
                                 <select name="medico_id" id="medico_id" class="form-select" required>
                                     <option value="">Selecione um médico</option>
                                     @foreach ($medicos as $medico)
@@ -344,8 +440,12 @@
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary"
-                                data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">Criar Consulta</button>
+                                data-bs-dismiss="modal">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Criar Consulta
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -354,34 +454,42 @@
             <!-- Modal Editar Consulta -->
 
             <div class="modal fade" id="editModal" tabindex="-1">
-                <div class="modal-dialog">
+                <div class="modal-dialog modal-dialog-centered">
                     <form id="editForm" method="POST" action="" class="modal-content">
                         @csrf
                         @method('PUT')
-                        <div class="modal-header">
-                            <h5 class="modal-title">Editar Consulta</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title">
+                                <i class="bi bi-pencil-square"></i> Editar Consulta
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body">
                             <div class="mb-3">
-                                <label for="descricao">Descrição</label>
-                                <input type="text" class="form-control" id="descricao" name="descricao" required>
+                                <label for="edit_descricao" class="form-label">Descrição *</label>
+                                <input type="text" class="form-control" id="edit_descricao" name="descricao" required>
                             </div>
-                            <div class="mb-3">
-                                <label for="bairro">Bairro</label>
-                                <input type="text" class="form-control" id="bairro" name="bairro" required>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="edit_bairro" class="form-label">Bairro *</label>
+                                    <input type="text" class="form-control" id="edit_bairro" name="bairro" required>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="edit_provincia" class="form-label">Província *</label>
+                                    <input type="text" class="form-control" id="edit_provincia" name="provincia" required>
+                                </div>
                             </div>
+                            
                             <div class="mb-3">
-                                <label for="provincia">Província</label>
-                                <input type="text" class="form-control" id="provincia" name="provincia" required>
+                                <label for="edit_data" class="form-label">Data *</label>
+                                <input type="date" class="form-control" id="edit_data" name="data" required>
                             </div>
+                            
                             <div class="mb-3">
-                                <label for="data">Data</label>
-                                <input type="date" class="form-control" id="data" name="data" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="medico_id">Médico</label>
-                                <select name="medico_id" id="medico_id" class="form-control" required>
+                                <label for="edit_medico_id" class="form-label">Médico *</label>
+                                <select name="medico_id" id="edit_medico_id" class="form-select" required>
                                     @foreach ($medicos as $medico)
                                         <option value="{{ $medico->id }}">{{ $medico->name }}</option>
                                     @endforeach
@@ -389,7 +497,12 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Salvar alterações</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Salvar alterações
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -399,16 +512,32 @@
             <script>
                 function editConsulta(id) {
                     fetch(`/consultas/${id}/edit`)
-                        .then(response => response.json())
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Erro ao buscar dados da consulta');
+                            }
+                            return response.json();
+                        })
                         .then(data => {
-                            document.getElementById('descricao').value = data.descricao;
-                            document.getElementById('bairro').value = data.bairro;
-                            document.getElementById('provincia').value = data.provincia;
-                            document.getElementById('data').value = data.data;
-                            document.getElementById('medico_id').value = data.medico_id;
+                            document.getElementById('edit_descricao').value = data.descricao;
+                            document.getElementById('edit_bairro').value = data.bairro;
+                            document.getElementById('edit_provincia').value = data.provincia;
+                            document.getElementById('edit_data').value = data.data;
+                            document.getElementById('edit_medico_id').value = data.medico_id;
                             document.getElementById('editForm').action = `/consultas/${id}`;
+                        })
+                        .catch(error => {
+                            console.error('Erro:', error);
+                            alert('Erro ao carregar dados da consulta');
                         });
                 }
+
+                // Define data mínima como hoje
+                document.addEventListener('DOMContentLoaded', function() {
+                    const hoje = new Date().toISOString().split('T')[0];
+                    document.getElementById('data').setAttribute('min', hoje);
+                    document.getElementById('edit_data').setAttribute('min', hoje);
+                });
             </script>
 
         </div>
@@ -547,7 +676,7 @@
             });
         </script>
         <!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 
