@@ -11,7 +11,9 @@ use App\Http\Controllers\MensagemSosController;
 use App\Http\Controllers\DoutorDashboardController;
 use App\Http\Controllers\EstagiarioDashboardController;      
 use App\Http\Controllers\VitimaDashboardController; 
-use App\Http\Controllers\VideoCallController;  // ADD THIS LINE
+use App\Http\Controllers\VideoCallController;  
+use App\Http\Controllers\ParceriaController;
+
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::middleware('auth:sanctum')->get('/', function () {
@@ -31,6 +33,9 @@ Route::view('/faq', 'faq')->name('faq');
 Route::view('/blog', 'blog')->name('blog');
 Route::view('/blog-detail', 'blog-detail')->name('blog-detail');
 Route::view('/gallery', 'gallery')->name('gallery');
+    //Parceiros
+Route::get('/parceria', [ParceriaController::class, 'create'])->name('parceria.form');
+Route::post('/parceria', [ParceriaController::class, 'store'])->name('parceria.enviar');
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -90,6 +95,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/mensagem_lida',[MensagemSosController::class,'mensagemLida'])->name('mensagem_lida');
     Route::get('/mensagens_nao_lidas',[MensagemSosController::class,'pegarMensagensNaoLidas'])->name('mensagens_nao_lidas');
     Route::get('/responder_mensagem_sos/{id}', [ChatController::class, 'responderMensagemSos'])->name('responder_mensagem_sos');
+
+
+
+
+
 
     // Rotas para as novas páginas
     Route::get('/nao-suicidio', function () {

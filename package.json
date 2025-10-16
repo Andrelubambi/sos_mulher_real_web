@@ -13,7 +13,7 @@
     },
     "dependencies": {
         "express": "^5.1.0",
-        "ioredis": "^5.8.0",
+        "ioredis": "^5.8.1",
         "laravel-echo": "^1.15.3",
         "pusher-js": "^8.4.0",
         "socket.io": "^4.8.1",

@@ -191,4 +191,18 @@ networks:
 
 volumes:
   mysql_data:
-    driver: local
+    driver: local 
+
+
+
+
+
+    ### Use o compose file de production
+#docker compose -f docker-compose.prod.yml up -d
+
+# Execute migrations
+#docker compose -f docker-compose.prod.yml exec app php artisan migrate --force
+
+# Limpe caches
+#docker compose -f docker-compose.prod.yml exec app php artisan config:clear
+#docker compose -f docker-compose.prod.yml exec app php artisan cache:clear

@@ -39,11 +39,11 @@ class AuthController extends Controller
                     return redirect()->route('estagiario.dashboard'); // Corrected route name
                 case 'vitima':
                     // Corrected route name to match the definition in web.php
-                    return redirect()->route('vitima.dashboard');
+                    return redirect()->route('vitima.dashboard'); 
                 default:
                     // Redireciona para uma página padrão se a role não for encontrada
                     return redirect()->route('home');
-            } 
+            }   
         }
 
         // 4. Retorna com erro se a autenticação falhar
