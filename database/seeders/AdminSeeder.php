@@ -44,7 +44,7 @@ class AdminSeeder extends Seeder
             ]
         );
 
-        // Usuário Doutor 2
+        // Usuário Doutor 2 
         User::updateOrCreate(
             ['telefone' => '999995555'],
             [
