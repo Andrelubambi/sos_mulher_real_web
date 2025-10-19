@@ -204,4 +204,33 @@ class UserController extends Controller
 
         return back()->with('success', 'Senha alterada com sucesso!');
     }
+
+
+ public function showProfile()
+{
+    $user = auth()->user();
+    return view('profile', compact('user'));
+}
+
+public function updateProfile(Request $request)
+{
+    $user = auth()->user();
+
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => "required|email|unique:users,email,{$user->id}",
+        'telefone' => 'nullable|string|max:20',
+        'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+    ]);
+
+    if ($request->hasFile('photo')) {
+        $path = $request->file('photo')->store('profile_photos', 'public');
+        $user->photo = $path;
+    }
+
+    $user->update($validated);
+
+    return back()->with('success', 'Perfil atualizado com sucesso!');
+}
+
 }

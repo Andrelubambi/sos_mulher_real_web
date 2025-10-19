@@ -15,7 +15,7 @@ class User extends Authenticatable
     
     protected $fillable = [
         'name',
-        'email', // ✅ Adicionado
+        'email', 
         'telefone',
         'password',
         'role', 
@@ -30,11 +30,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
-
-    // 🔥 MÉTODO ESSENCIAL PARA AUTENTICAÇÃO POR TELEFONE
+ 
       public function findForPassport($username)
     {
-        return $this->where('email', $username)->first(); // ✅ Mudado para email
+        return $this->where('email', $username)->first(); 
     }
 
     public function createTokenForUser(string $tokenName = 'default')

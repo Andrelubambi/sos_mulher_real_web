@@ -16,10 +16,10 @@ class AdminSeeder extends Seeder
 
 
          User::updateOrCreate( 
-            ['email' => 'andrelubambi36@gmail.com'], // ✅ Mudado para email
+            ['email' => 'andrelubambi36@gmail.com'],  
             [
                 'name' => 'André Lubambi',
-                'email' => 'andrelubambi36@gmail.com', // ✅ Adicionado
+                'email' => 'andrelubambi36@gmail.com', 
                 'telefone' => '999999990',
                 'password' => Hash::make('Admin@2025'),
                 'role' => 'admin',
@@ -30,7 +30,7 @@ class AdminSeeder extends Seeder
             ['email' => 'andre.d.lubambi@gmail.com'],  
             [
                 'name' => 'André Lubambi',
-                'email' => 'andre.d.lubambi@gmail.com', / 
+                'email' => 'andre.d.lubambi@gmail.com', 
                 'telefone' => '999999999',
                 'password' => Hash::make('Admin@2025'),
                 'role' => 'admin',

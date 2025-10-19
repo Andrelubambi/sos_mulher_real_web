@@ -15,6 +15,7 @@ use App\Http\Controllers\VideoCallController;
 use App\Http\Controllers\ParceriaController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\ProfileController;
 
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -105,6 +106,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/mensagem_lida',[MensagemSosController::class,'mensagemLida'])->name('mensagem_lida');
     Route::get('/mensagens_nao_lidas',[MensagemSosController::class,'pegarMensagensNaoLidas'])->name('mensagens_nao_lidas');
     Route::get('/responder_mensagem_sos/{id}', [ChatController::class, 'responderMensagemSos'])->name('responder_mensagem_sos');
+
+
+        Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
 
 

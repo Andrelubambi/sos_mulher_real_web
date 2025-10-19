@@ -3,6 +3,8 @@
 namespace App\Providers;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use App\Models\Grupo;
+use Illuminate\Support\Facades\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,5 +26,10 @@ class AppServiceProvider extends ServiceProvider
     if (env('APP_ENV') === 'production') {
         URL::forceScheme('https'); 
     }
+
+    View::composer('*', function ($view) {
+        $grupos = Grupo::all(); // pega todos os grupos
+        $view->with('grupos', $grupos);
+    });
 }
 }
