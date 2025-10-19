@@ -1,0 +1,90 @@
+/* Foto de perfil pequena (menu superior) */
+.profile-photo-small {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e3e3e3;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.profile-photo-small:hover {
+    transform: scale(1.05);
+    border-color: #bd2130;
+}
+
+/* Texto do nome do usuário */
+.user-name {
+    font-weight: 500;
+    font-size: 15px;
+    color: #333;
+    white-space: nowrap;
+}
+
+/* Dropdown do usuário */
+.user-info-dropdown .dropdown-toggle {
+    text-decoration: none;
+    color: inherit;
+}
+
+.user-info-dropdown .dropdown-menu {
+    min-width: 180px;
+    padding: 8px 0;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Itens do dropdown */
+.user-info-dropdown .dropdown-item {
+    display: flex;
+    align-items: center;
+    color: #333;
+    font-weight: 500;
+    padding: 8px 16px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.user-info-dropdown .dropdown-item i {
+    margin-right: 8px;
+    color: #666;
+    transition: color 0.2s ease;
+}
+
+
+
+/* Link de logout */
+.user-info-dropdown .dropdown-item.text-danger {
+    color: #bd2130 !important;
+}
+
+.user-info-dropdown .dropdown-item.text-danger:hover {
+    background-color: #fde8e9;
+    color: #bd2130 !important;
+}
+a.dropdown-item:hover {
+    color: #bd2130 !important;
+    background-color: #f8d7da !important;
+}
+
+
+/* Forçar hover vermelho em todos os itens do menu do usuário */
+.user-info-dropdown .dropdown-item:hover {
+    background-color: #fde8e9 !important;
+    color: #bd2130 !important;
+}
+
+/* Corrigir ícone ao passar o mouse */
+.user-info-dropdown .dropdown-item:hover i {
+    color: #bd2130 !important;
+}
+
+/* Evitar qualquer azul padrão do Bootstrap */
+.user-info-dropdown .dropdown-item:focus,
+.user-info-dropdown .dropdown-item:active,
+.user-info-dropdown .dropdown-item:visited,
+.user-info-dropdown .dropdown-item:focus-visible {
+    color: #bd2130 !important;
+    background-color: #fde8e9 !important;
+    outline: none !important;
+    box-shadow: none !important;
+}

@@ -18,62 +18,23 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('src/plugins/datatables/css/dataTables.bootstrap4.min.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('src/plugins/datatables/css/responsive.bootstrap4.min.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/profile-photo.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}" />
+
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-GBZ3SGGX85"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2973766580778258"
         crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <style>
-.pre-loader {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    width: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background: #fff; /* ou a cor de fundo que preferir */
-    z-index: 9999;
-}
-
-.pre-loader-box {
-    text-align: center;
-    max-width: 400px;
-    width: 100%;
-    padding: 20px;
-}
-
-.loader-progress {
-    margin: 20px auto;
-    max-width: 300px;
-}
-
-.percent {
-    margin: 10px 0;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.loading-text {
-    margin-top: 10px;
-    font-size: 16px;
-    color: #666;
-}
-</style>
+   
+ 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body>
-  <div class="pre-loader">
-    <div class="pre-loader-box">
-        <div class="loader-logo">
-            <img src="{{ asset('vendors/images/sos-progress.jpg') }}" alt="" style="width: 120px; height: auto;" />
-        </div>
-        <div class="loader-progress" id="progress_div">
-            <div class="bar" id="bar1"></div>
-        </div>
-        <div class="percent" id="percent1">0%</div>
-        <div class="loading-text">Por favor, aguarde ...</div>
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-content">
+        <div class="spinner"></div>
+        <p>Carregando, por favor aguarde...</p>
     </div>
 </div>
     <div class="header">
@@ -112,28 +73,38 @@
                     </div>
                 </div>
             </div>
+<div class="user-info-dropdown">
+    <div class="dropdown">
+        <a class="dropdown-toggle d-flex align-items-center" href="#" role="button" data-toggle="dropdown">
+            <img src="{{ $user->profile_photo ? asset('storage/'.$user->profile_photo) : asset('vendors/images/user-default.png') }}"
+                alt="Foto de perfil"
+                class="profile-photo-small me-2">
+            @guest
+                <span class="user-name text-muted">Olá, visitante</span>
+            @else
+                <span class="user-name">Olá, seja bem-vindo {{ Auth::user()->name }}</span>
+            @endguest
+        </a>
+     <div class="dropdown-menu custom-user-dropdown">
 
-            <div class="user-info-dropdown">
-                <div class="dropdown">
-                    <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown">
-                        <span class="user-icon">
-                            <i class="fa fa-user-circle" style="font-size: 35px; color: #555;"></i>
-                        </span>
-                        @guest
-                            <p>Olá, seja bem-vindo visitante! Faça login para acessar suas informações.</p>
-                        @else
-                            <span class="user-name">Olá, seja bem-vindo {{ Auth::user()->name }}!</span>
-                        @endguest
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf</form>
-                        <a class="dropdown-item" href="#"
-                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i
-                                class="dw dw-logout"></i>Sair</a>
-                    </div>
-                </div>
-            </div>
+            @auth
+                <a class="dropdown-item" href="{{ route('profile', Auth::user()->id) }}">
+                    <i class="fa fa-user-circle"></i> Ver Perfil
+                </a>
+            @endauth
+
+            <a class="dropdown-item text-danger" href="#"
+                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <i class="fa fa-sign-out"></i> Sair
+            </a>
+
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                @csrf
+            </form>
+        </div>
+    </div>
+</div>
+
         </div>
     </div>
 
@@ -260,10 +231,8 @@
         @yield('content')
     </div>
     
-    <script src="{{ asset('vendors/scripts/core.js') }}"></script>
+        <script src="{{ asset('vendors/scripts/core.js') }}"></script>
     <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>
-    <script src="{{ asset('vendors/scripts/process.js') }}"></script>
-    <script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
     <script>
         let mensagensPendentes = [];
         let carregamentoConcluido = false;
@@ -372,5 +341,36 @@
             }
         });
     </script>
+
+
+<script>
+function showLoading(show = true) {
+    const overlay = document.getElementById('loadingOverlay');
+    if (!overlay) return;
+    if (show) {
+        overlay.classList.add('active');
+    } else {
+        overlay.classList.remove('active');
+    }
+}
+
+// Exibir enquanto a página carrega
+document.addEventListener('readystatechange', () => {
+    if (document.readyState === 'loading') {
+        showLoading(true);
+    }
+});
+
+window.addEventListener('load', () => {
+    setTimeout(() => showLoading(false), 600);
+});
+
+// Mostrar enquanto envia formulários
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('submit', () => showLoading(true));
+    });
+});
+</script>
 </body>
 </html>
