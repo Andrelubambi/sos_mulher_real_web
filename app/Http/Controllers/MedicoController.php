@@ -40,7 +40,7 @@ class MedicoController extends Controller
         $medico->save();
     
         return response()->json(['success' => true]);
-    }
+    } 
 
     public function listar()
 {

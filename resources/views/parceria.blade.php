@@ -240,7 +240,7 @@
             </div>
           </div>
         </div>
-
+                    
         <!-- Email -->
         <div class="input-group">
           <div class="input-group-prepend">

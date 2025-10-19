@@ -15,6 +15,7 @@ class User extends Authenticatable
     
     protected $fillable = [
         'name',
+        'email', // ✅ Adicionado
         'telefone',
         'password',
         'role', 
@@ -31,15 +32,15 @@ class User extends Authenticatable
     ];
 
     // 🔥 MÉTODO ESSENCIAL PARA AUTENTICAÇÃO POR TELEFONE
-    public function findForPassport($username)
+      public function findForPassport($username)
     {
-        return $this->where('telefone', $username)->first();
+        return $this->where('email', $username)->first(); // ✅ Mudado para email
     }
 
     public function createTokenForUser(string $tokenName = 'default')
     {
         return $this->createToken($tokenName)->plainTextToken;
-    }
+    }  
 
     public function isMedico()
     {

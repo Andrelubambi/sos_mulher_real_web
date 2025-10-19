@@ -122,55 +122,95 @@
                     </div>
                 @endif
                 
-                <form class="tab-wizard2 wizard-circle wizard" action="{{ route('users.vitima.store') }}" method="POST" id="vitima-form">
-                    @csrf
-                    <h2 class="text-center text-danger">Crie a sua conta</h2>
-                    
-                    <div class="login-card"> 
-                        <!-- Campo Telefone -->
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">
-                                    <i class="fa fa-phone"></i>
-                                </span>
-                            </div>
-                            <input type="tel" pattern="[0-9]+" inputmode="numeric" 
-                                   name="telefone" id="telefone"
-                                   class="form-control" placeholder="Telefone" required>
-                        </div>
+              <form class="tab-wizard2 wizard-circle wizard" 
+      action="{{ route('users.vitima.store') }}" 
+      method="POST" 
+      id="vitima-form">
+    @csrf
+    <h2 class="text-center text-danger">Crie a sua conta</h2>
+    
+    <div class="login-card"> 
+        <!-- Campo Telefone -->
+        <div class="input-group">
+            <div class="input-group-prepend">
+                <span class="input-group-text">
+                    <i class="fa fa-phone"></i>
+                </span>
+            </div>
+            <input type="tel" 
+                   pattern="[0-9]+" 
+                   inputmode="numeric" 
+                   name="telefone" 
+                   id="telefone"
+                   class="form-control" 
+                   placeholder="Telefone" 
+                   required>
+        </div>
 
-                        <!-- Campo Nome -->
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">
-                                    <i class="icon-copy dw dw-user1"></i>
-                                </span>
-                            </div>
-                            <input type="text" class="form-control" 
-                                   name="name" id="name" placeholder="Nome completo" required>
-                        </div>
+        <!-- Campo Email -->
+        <div class="input-group mt-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">
+                    <i class="fa fa-envelope"></i>
+                </span>
+            </div>
+            <input type="email" 
+                   name="email" 
+                   id="email" 
+                   class="form-control" 
+                   placeholder="Email" 
+                   required>
+        </div>
 
-                        <!-- Campo Senha -->
-                        <div class="input-group">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">
-                                    <i class="icon-copy dw dw-padlock1"></i>
-                                </span>
-                            </div>
-                            <input type="password" class="form-control" 
-                                   name="password" id="password" placeholder="Senha" required>
-                            <div class="input-group-append">
-                                <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
-                                    <i class="fa fa-eye"></i>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Campo Nome -->
+        <div class="input-group mt-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">
+                    <i class="icon-copy dw dw-user1"></i>
+                </span>
+            </div>
+            <input type="text" 
+                   class="form-control" 
+                   name="name" 
+                   id="name" 
+                   placeholder="Nome completo" 
+                   required>
+        </div>
 
-                    <input type="hidden" name="role" value="vitima">
-                    <button type="submit" class="btn btn-danger btn-block mt-4">Criar conta</button>
-                    <p class="text-center mt-4 mb-0">Já tem uma conta? <a href="{{ route('login.form') }}" class="text-danger">Faça login</a></p>
-                </form>
+        <!-- Campo Senha -->
+        <div class="input-group mt-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">
+                    <i class="icon-copy dw dw-padlock1"></i>
+                </span>
+            </div>
+            <input type="password" 
+                   class="form-control" 
+                   name="password" 
+                   id="password" 
+                   placeholder="Senha" 
+                   required>
+            <div class="input-group-append">
+                <span class="input-group-text" 
+                      id="togglePassword" 
+                      style="cursor: pointer;">
+                    <i class="fa fa-eye"></i>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <input type="hidden" name="role" value="vitima">
+
+    <button type="submit" class="btn btn-danger btn-block mt-4">
+        Criar conta
+    </button>
+
+    <p class="text-center mt-4 mb-0">
+        Já tem uma conta? 
+        <a href="{{ route('login.form') }}" class="text-danger">Faça login</a>
+    </p>
+</form>
 
                 <div id="response-message"></div>
             </div>

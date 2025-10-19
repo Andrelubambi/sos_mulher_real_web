@@ -24,7 +24,7 @@
                     </div>
                     <button type="submit" class="btn btn-danger">Salvar</button>
                 </form>
-            </div>
+            </div>           
         </div>
         <div class="col-md-6">
             <div class="card-box p-3">

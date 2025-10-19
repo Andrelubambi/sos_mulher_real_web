@@ -13,6 +13,8 @@ use App\Http\Controllers\EstagiarioDashboardController;
 use App\Http\Controllers\VitimaDashboardController; 
 use App\Http\Controllers\VideoCallController;  
 use App\Http\Controllers\ParceriaController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -33,9 +35,17 @@ Route::view('/faq', 'faq')->name('faq');
 Route::view('/blog', 'blog')->name('blog');
 Route::view('/blog-detail', 'blog-detail')->name('blog-detail');
 Route::view('/gallery', 'gallery')->name('gallery');
+
+
     //Parceiros
 Route::get('/parceria', [ParceriaController::class, 'create'])->name('parceria.form');
 Route::post('/parceria', [ParceriaController::class, 'store'])->name('parceria.enviar');
+
+
+Route::get('password/forgot', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 Route::middleware('auth:sanctum')->group(function () {
 

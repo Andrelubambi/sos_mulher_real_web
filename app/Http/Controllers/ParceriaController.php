@@ -43,7 +43,7 @@ class ParceriaController extends Controller
             . "🌐 Website/Redes: {$website}";
 
         // Email diferente para dev/prod
-        $toEmail = app()->environment('production') 
+        $toEmail = app()->environment('production')  
             ? 'parcerias@sosmulherreal.com'
             : 'andrelubambi36@gmail.com';
 

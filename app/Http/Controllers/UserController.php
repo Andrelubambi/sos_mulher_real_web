@@ -24,7 +24,8 @@ class UserController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'telefone' => "required|regex:/^(\+?[1-9]{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{5,15}$/|unique:users,telefone,$id",
+             'email' => "required|email|unique:users,email,$id", 
+                    'telefone' => "nullable|regex:/^(\+?[1-9]{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{5,15}$/",
         ]);
 
         $user->update($validated);
@@ -65,13 +66,15 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+              'email' => 'required|email|unique:users,email', // ✅ Mudado para email
             'telefone' => 'required|unique:users,telefone|regex:/^(\+?[1-9]{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{5,15}$/',
             'password' => 'required|string|min:6',
         ]);
 
         try {
-            $user = User::create([
+            $user = User::create([  
                 'name' => $validated['name'],
+                      'email' => $validated['email'], // ✅ Adicionado
                 'telefone' => $validated['telefone'],
                 'password' => Hash::make($validated['password']),
                 'role' => 'doutor',
@@ -99,6 +102,7 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+                        'email' => 'required|email|unique:users,email', // ✅ Mudado para email
             'telefone' => 'required|unique:users,telefone|regex:/^(\+?[1-9]{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{5,15}$/',
             'password' => 'required|string|min:6',
         ]);
@@ -106,6 +110,7 @@ class UserController extends Controller
         try {
             User::create([
                 'name' => $validated['name'],
+                    'email' => $validated['email'], // ✅ Adicionado
                 'telefone' => $validated['telefone'],
                 'password' => Hash::make($validated['password']),
                 'role' => 'estagiario',
@@ -134,6 +139,7 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+                    'email' => 'required|email|unique:users,email', // ✅ Mudado para email
             'telefone' => 'required|unique:users,telefone|regex:/^(\+?[1-9]{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{5,15}$/',
             'password' => 'required|string|min:6',
         ]);
@@ -141,6 +147,7 @@ class UserController extends Controller
         try {
             $user = User::create([
                 'name' => $validated['name'],
+                       'email' => $validated['email'], // ✅ Adicionado
                 'telefone' => $validated['telefone'],
                 'password' => Hash::make($validated['password']),
                 'role' => 'vitima',
@@ -148,14 +155,14 @@ class UserController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Vitima criada com sucesso!',
+                'message' => 'Utilizador criado com sucesso!',
                 'user' => $user
             ], 201);
 
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false, 
-                'message' => 'Falha ao criar vitima: ' . $e->getMessage()
+                'message' => 'Falha ao criar Utilizador: ' . $e->getMessage()
             ], 500);
         }
     }

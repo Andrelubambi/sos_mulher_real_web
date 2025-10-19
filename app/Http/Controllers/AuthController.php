@@ -18,14 +18,14 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         // 1. Validação dos dados
-        $credentials = $request->validate([
-            'telefone' => 'required|string',
+        $credentials = $request->validate([  
+            'email' => 'required|email',
             'password' => 'required|string',
         ]);
  
     
         // 2. Tenta autenticar o usuário
-       if (Auth::attempt(['telefone' => $credentials['telefone'], 'password' => $credentials['password']])) {
+         if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
             $request->session()->regenerate();
             $user = Auth::user();
 
@@ -47,7 +47,7 @@ class AuthController extends Controller
         }
 
         // 4. Retorna com erro se a autenticação falhar
-        return back()->with('error', 'Telefone ou senha incorretos.');
+        return back()->with('error', 'Email ou senha incorretos.'); // ✅ Mensagem atualizada
     }
 
     public function logout(Request $request)

@@ -276,7 +276,7 @@
                                 </tbody>
                             </table>
                         </div>
-                    </div>
+                    </div>  
                 </div>
                 <script>
                     document.getElementById('searchVitima').addEventListener('keyup', function() {

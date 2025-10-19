@@ -360,7 +360,7 @@
                                         <td>{{ $estagiario->email ?? 'N/A' }}</td>
                                         <td>{{ $estagiario->telefone ?? 'N/A' }}</td>
                                         <td>Estagiário</td>
-                                    </tr>
+                                             </tr>
                                 @endforeach
                             </tbody>
                         </table>

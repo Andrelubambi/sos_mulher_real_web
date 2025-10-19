@@ -124,7 +124,7 @@
                         </span>
                         @guest
                             <p>Olá, seja bem-vindo visitante! Faça login para acessar suas informações.</p>
-                        @else
+                         @else
                             <span class="user-name">Olá, seja bem-vindo {{ Auth::user()->name }}!</span>
                         @endguest
                     </a>
@@ -345,7 +345,7 @@
                                         <td>Estagiário</td>
                                     </tr>
                                 @endforeach
-                            </tbody>
+                               </tbody>
                         </table>
                     </div>
                 </div>

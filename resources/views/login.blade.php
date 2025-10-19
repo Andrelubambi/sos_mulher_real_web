@@ -25,9 +25,9 @@
         }
         
         .login-box {
-            max-width: 600px; /* Aumentado significativamente */
+            max-width: 500px; /* Aumentado significativamente */
             width: 90%;
-            min-width: 500px;
+            min-width: 400px;
             margin: 0 auto;
             padding: 40px !important; /* Muito mais espaço interno */
         }
@@ -143,12 +143,16 @@
                                 <i class="fa fa-phone"></i>
                             </span>
                         </div>
-                        <input type="tel" pattern="[0-9]+" inputmode="numeric" 
-                               name="telefone" id="telefone"
-                               class="form-control" placeholder="Telefone" required>
+                        <input type="email" 
+       name="email" 
+       id="email" 
+       class="form-control" 
+       placeholder="Email" 
+       required>
+
                     </div>
 
-                    <!-- Campo Senha -->
+                    <!-- Campo Senha -->   
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text">
@@ -163,6 +167,12 @@
                             </span>
                         </div>
                     </div>
+
+                    <p class="text-right">
+    <a href="{{ route('password.request') }}" class="text-danger font-weight-bold">
+        Esqueceu a senha?
+    </a>
+</p>
                 </div>
 
                 <div class="row">

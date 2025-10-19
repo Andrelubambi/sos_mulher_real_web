@@ -433,8 +433,8 @@
                                             <p><strong>Email:</strong> {{ $paciente->email ?? 'N/A' }}</p>
                                             <p><strong>Telefone:</strong> {{ $paciente->telefone ?? 'N/A' }}</p>
                                         </div>
-                                    </div>
-                                </div>
+                                    </div>   
+                                </div>    
                             @empty
                                 <div class="col-12 text-center p-4">
                                     <p>Não há pacientes cadastrados</p>

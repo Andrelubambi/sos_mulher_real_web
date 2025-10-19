@@ -324,7 +324,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">Criar</button>
-                        </div>
+                        </div>   
                     </form>
                 </div>
             </div>
@@ -339,8 +339,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
                         <div class="modal-body">
-                            <div class="mb-3"><input type="text" class="form-control" id="name" name="name" required></div>
-                            <div class="mb-3"><input type="telefone" class="form-control" id="telefone" name="telefone" required></div>
+                                              <div class="mb-3"><input type="telefone" class="form-control" id="telefone" name="telefone" required></div>
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">Salvar</button>

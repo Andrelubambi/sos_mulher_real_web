@@ -283,7 +283,7 @@
                         @foreach ($users as $estagiario)
                             <tr>
                                 <td>{{ $estagiario->name }}</td>
-                                <td>{{ $estagiario->telefone }}</td>
+                                <td>{{ $estagiario->telefone }}</td>    
                                 <td>
                               <div class="d-flex" style="gap: 20px !important;">
                                         <button type="button"
@@ -351,13 +351,13 @@
                             <div class="mb-3"><input type="text" class="form-control" id="name"
                                     name="name" required></div>
                             <div class="mb-3"><input type="telefone" class="form-control" id="telefone"
-                                    name="telefone" required></div>
+                                         name="telefone" required></div>
                         </div>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-primary">Salvar</button>
                         </div>
                     </form>
-                </div>
+                </div>   
             </div>
 
             <script>

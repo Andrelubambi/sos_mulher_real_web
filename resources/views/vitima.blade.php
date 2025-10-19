@@ -385,7 +385,7 @@
                         .then(data => {
                             document.getElementById('name').value = data.name;
                             document.getElementById('telefone').value = data.telefone;
-                            document.getElementById('editForm').action = `/users/${id}`;
+                                    document.getElementById('editForm').action = `/users/${id}`;
                         });
                 }
             </script>
