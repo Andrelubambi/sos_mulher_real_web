@@ -41,26 +41,13 @@
 
         <button type="submit" class="btn btn-danger btn-block mt-3">Salvar Alterações</button>
     </form>
-
-    {{-- Formulário de senha --}}
-    <div class="bg-white p-4 shadow rounded mt-4">
-        <h4 class="text-danger">Alterar Senha</h4>
-        <form action="{{ route('profile') }}" method="POST">
-            @csrf
-            <div class="form-group">
-                <label>Senha Atual</label>
-                <input type="password" name="current_password" class="form-control">
-            </div>
-            <div class="form-group">
-                <label>Nova Senha</label>
-                <input type="password" name="password" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label>Confirmar Nova Senha</label>
-                <input type="password" name="password_confirmation" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-danger btn-block mt-3">Atualizar Senha</button>
-        </form>
+   <div class="bg-white p-4 shadow rounded mt-4 text-center">
+        <h4 class="text-danger mb-3">Segurança</h4>
+        <p class="mb-3">Se desejar alterar sua senha, clique abaixo para redefini-la.</p>
+        <a href="{{ route('password.request') }}" class="btn btn-outline-danger">
+            Redefinir Senha
+        </a>
+    </div>
     </div>
 </div>
 @endsection
