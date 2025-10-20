@@ -17,7 +17,7 @@
     .login-page .login-box {
         max-width: 800px !important;
         margin: 20px auto;
-        width: 100%;
+        width: 95%;
     }
     
     .form-row {
