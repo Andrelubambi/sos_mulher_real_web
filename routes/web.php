@@ -60,6 +60,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/doutor', [UserController::class, 'createDoutor'])->name('users.doutor');
     Route::post('/users/doutor/store', [UserController::class, 'storeDoutor'])->name('users.doutor.store');
 
+
+    Route::get('/medicos', [MedicoController::class, 'index'])->name('medico.index');
+
     Route::get('/estagiario', [UserController::class, 'createEstagiario'])->name('users.estagiario');
     Route::post('/users/estagiario/store', [UserController::class, 'storeEstagiario'])->name('users.estagiario.store');
 

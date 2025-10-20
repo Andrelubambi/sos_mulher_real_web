@@ -59,7 +59,7 @@ class UserController extends Controller
     { 
         $grupos = Grupo::all();
         $users = User::where('role', 'doutor')->get();
-        return view('doutor', compact('users','grupos'));
+        return view('medicos.index', compact('users','grupos'));
     }
 
     public function storeDoutor(Request $request)

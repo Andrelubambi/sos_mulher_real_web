@@ -38,8 +38,8 @@
     <div class="card-box pb-10">
         <div class="h5 pd-20 mb-0">Consultas Recentes</div>
 
-        <div class="pl-20 mb-3">
-            <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal"
+        <div class="pl-20 mb-3"> 
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                 data-bs-target="#modalAdicionarConsulta">
                 <i class="bi bi-plus-circle"></i> Adicionar Consulta
             </button>

@@ -1,25 +1,31 @@
-@foreach ($medicos as $medico)
-<tr>
-    <td class="table-plus">
-        <div class="name-avatar d-flex align-items-center">
-            <div class="avatar mr-2 flex-shrink-0">
-                <img src="{{ asset('vendors/images/photo4.jpg') }}" class="border-radius-100 shadow" width="40" height="40" alt="" />
-            </div>
-            <div class="txt">
-                <div class="weight-600">{{ $medico->name }}</div>
-            </div>
-        </div>
-    </td>
-    <td>{{ $medico->telefone }}</td>
-    <td>
-        <div class="table-actions">
-            <a href="#" data-color="#265ed7">     
-                <i class="icon-copy dw dw-edit2"></i>
-            </a>
-            <a href="#" data-color="#e95959">
-                <i class="icon-copy dw dw-delete-3"></i>
-            </a>
-        </div>
-    </td>
-</tr>
-@endforeach
+<table class="table table-hover mb-0 align-middle">
+    <thead class="table-light">
+        <tr>
+            <th>Nome</th>
+            <th>Telefone</th>
+            <th>Email</th>
+            <th class="text-center">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ($medicos as $doutor)
+        <tr>
+            <td>{{ $doutor->name }}</td>
+            <td>{{ $doutor->telefone }}</td>
+            <td>{{ $doutor->email }}</td>
+            <td class="text-center">
+                <button class="btn btn-outline-danger btn-sm me-2"
+                    data-bs-toggle="modal"
+                    data-bs-target="#editModal"
+                    onclick="editDoutor({{ $doutor->id }})">
+                    <i class="bi bi-pencil-square"></i> Editar
+                </button>
+                <button class="btn btn-outline-dark btn-sm"
+                    onclick="confirmDelete('{{ route('users.destroy', $doutor->id) }}')">
+                    <i class="bi bi-trash"></i> Excluir
+                </button>
+            </td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
