@@ -8,6 +8,44 @@
     <link rel="stylesheet" type="text/css" href="/vendors/styles/core.css" />
     <link rel="stylesheet" type="text/css" href="/vendors/styles/icon-font.min.css" />
     <link rel="stylesheet" type="text/css" href="/vendors/styles/style.css" />
+
+    <style>
+        /*
+         * Define a altura mínima do corpo como 100% da viewport
+         * e configura o display como flex para usar as propriedades de centralização.
+         * A propriedade `margin: 0` garante que não haverá margem extra no corpo,
+         * o que poderia quebrar a centralização de altura total.
+         */
+        body.login-page {
+            min-height: 100vh; /* 100% da altura da viewport */
+            display: flex;
+            flex-direction: column; /* Organiza os itens em coluna */
+            margin: 0; /* Remove margem padrão */
+        }
+
+        /*
+         * O `login-wrap` deve ocupar o espaço restante (flex-grow: 1)
+         * e também usar flexbox para centralizar seu conteúdo (`login-box`).
+         * `align-items: center` centraliza verticalmente.
+         * `justify-content: center` centraliza horizontalmente.
+         */
+        .login-wrap {
+            flex-grow: 1; /* Ocupa todo o espaço vertical disponível */
+            display: flex;
+            align-items: center; /* Centraliza verticalmente o login-box */
+            justify-content: center; /* Centraliza horizontalmente o login-box */
+            padding: 20px; /* Adiciona um padding para telas menores */
+        }
+
+        /*
+         * É bom definir uma largura máxima para o formulário, caso ele não tenha.
+         * Se `core.css` ou `style.css` já define uma largura, este pode ser ignorado.
+         */
+        .login-box {
+            max-width: 450px; /* Exemplo de largura máxima */
+            width: 100%; /* Garante que ele use a largura total até o max-width */
+        }
+    </style>
 </head>
 
 <body class="login-page custom-background">
@@ -64,6 +102,6 @@
                 </p>
             </form>
         </div>
-    </div>
-</body>
+    </div>  
+    </body>
 </html>

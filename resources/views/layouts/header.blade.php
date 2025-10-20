@@ -15,7 +15,7 @@
             </form>
         </div>
     </div>
-
+    
     <div class="header-right">
         <!-- SOS Button for Victims -->
         @if (auth()->user()->role == 'vitima')

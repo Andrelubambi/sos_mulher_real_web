@@ -49,7 +49,7 @@ class ParceriaController extends Controller
 
         // Use a API Resend diretamente - USA CONFIG DO .ENV
         $resend = Resend::client(config('resend.api_key'));
-        
+         
         try {
             $result = $resend->emails->send([
                 'from' => config('mail.from.address'), // Usa do .env

@@ -8,6 +8,37 @@
     <link rel="stylesheet" type="text/css" href="/vendors/styles/core.css" />
     <link rel="stylesheet" type="text/css" href="/vendors/styles/icon-font.min.css" />
     <link rel="stylesheet" type="text/css" href="/vendors/styles/style.css" />
+
+    <style>
+        /*
+         * 1. Define a altura mínima do corpo como 100% da viewport e configura o Flexbox.
+         */
+        body.login-page {
+            min-height: 100vh; /* 100% da altura da viewport */
+            display: flex;
+            flex-direction: column; /* Organiza o header e o formulário em coluna */
+            margin: 0; /* Remove margem padrão */
+        }
+
+        /*
+         * 2. Faz o login-wrap ocupar o espaço restante e usa Flexbox para centralizar seu conteúdo.
+         */
+        .login-wrap {
+            flex-grow: 1; /* Ocupa todo o espaço vertical disponível */
+            display: flex;
+            align-items: center; /* Centraliza verticalmente o login-box */
+            justify-content: center; /* Centraliza horizontalmente o login-box */
+            padding: 20px; /* Adiciona padding para telas menores */
+        }
+
+        /*
+         * 3. Garante que o box do formulário se ajuste a uma largura máxima.
+         */
+        .login-box {
+            max-width: 450px; /* Exemplo de largura máxima */
+            width: 100%;
+        }
+    </style>
 </head>
 
 <body class="login-page custom-background">
