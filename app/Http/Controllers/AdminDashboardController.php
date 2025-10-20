@@ -30,7 +30,7 @@ class AdminDashboardController extends Controller
 
         // Agrupamentos ou outras estatísticas
         $consultasPorDoutor = Consulta::select('medico_id')
-            ->with('medico')
+            ->with('medico') 
             ->groupBy('medico_id')
             ->selectRaw('medico_id, COUNT(*) as total')
             ->get();

@@ -49,10 +49,10 @@
                     </span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                    <a class="dropdown-item" href="{{ route('profile.edit') }}">
+                    <a class="dropdown-item" href="{{ route('profile') }}">
                         <i class="fas fa-user"></i> Perfil
                     </a>
-                    <a class="dropdown-item" href="{{ route('settings') }}">
+                    <a class="dropdown-item" href="{{ route('profile') }}">
                         <i class="fas fa-cog"></i> Configurações
                     </a>  
                     <div class="dropdown-divider"></div>

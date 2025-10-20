@@ -3,7 +3,7 @@
 @section('title', 'Cadastro')
 
 @section('content')
-
+ 
     <div class="login-wrap">
         <div class="register-box bg-white box-shadow border-radius-10">
             
