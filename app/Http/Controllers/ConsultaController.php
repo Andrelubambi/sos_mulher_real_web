@@ -46,7 +46,7 @@ class ConsultaController extends Controller
         }
 
         $medicos = User::where('role', 'doutor')->get();
-        return view('consulta', compact('consultas', 'medicos', 'grupos'));
+        return view('consultas.consulta', compact('consultas', 'medicos', 'grupos'));
     }
 
     public function store(Request $request)
