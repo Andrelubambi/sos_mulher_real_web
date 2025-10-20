@@ -1,7 +1,7 @@
 @extends('layouts.app')
 <style>
     #profilePreview {
-    cursor: pointer;
+    cursor: pointer; 
     transition: transform 0.3s ease;
 }
 #profilePreview:hover {
@@ -12,11 +12,9 @@
 @section('content')
 <div class="container py-5">
     <h2 class="mb-4 text-danger text-center">Meu Perfil</h2>
-
-    {{-- Componentes de alerta --}}
+ 
     @include('components.alert')
-
-    {{-- Formulário de atualização de perfil --}}
+ 
     <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="bg-white p-4 shadow rounded">
         @csrf
         <div class="text-center mb-3">
