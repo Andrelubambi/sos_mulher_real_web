@@ -54,7 +54,7 @@
                     </a>
                     <a class="dropdown-item" href="{{ route('settings') }}">
                         <i class="fas fa-cog"></i> Configurações
-                    </a>
+                    </a>  
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="{{ route('logout') }}" 
                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
