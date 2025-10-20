@@ -95,14 +95,14 @@ class UserController extends Controller
     { 
         $grupos = Grupo::all();
         $users = User::where('role', 'estagiario')->get();
-        return view('estagiario', compact('users','grupos'));
+        return view('estagiarios.index', compact('users','grupos'));
     }
 
     public function storeEstagiario(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-                        'email' => 'required|email|unique:users,email', // ✅ Mudado para email
+            'email' => 'required|email|unique:users,email', 
             'telefone' => 'required|unique:users,telefone|regex:/^(\+?[1-9]{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{5,15}$/',
             'password' => 'required|string|min:6',
         ]);
@@ -110,7 +110,7 @@ class UserController extends Controller
         try {
             User::create([
                 'name' => $validated['name'],
-                    'email' => $validated['email'], // ✅ Adicionado
+                'email' => $validated['email'], // ✅ Adicionado
                 'telefone' => $validated['telefone'],
                 'password' => Hash::make($validated['password']),
                 'role' => 'estagiario',
