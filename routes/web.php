@@ -88,7 +88,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/grupos/{grupo}/mensagens', [GrupoController::class, 'sendMessage'])->name('grupos.mensagens.send');
     Route::post('/grupos/{grupo}/entrar', [GrupoController::class, 'entrar'])->name('grupos.entrar');
     Route::post('/grupos/{grupo}/sair', [GrupoController::class, 'sair'])->name('grupos.sair');
-    Route::delete('/grupos/{grupo}/remover/{user}', [GrupoController::class, 'removerUsuario'])->name('grupos.removerUsuario');
+    Route::post('/grupos/{grupo}/adicionar-membros', [GrupoController::class, 'adicionarMembros'])->name('grupos.adicionarMembros');
+Route::post('/grupos/{grupo}/remover-usuario/{user}', [GrupoController::class, 'removerUsuario'])->name('grupos.removerUsuario');
     Route::post('/grupos', [GrupoController::class, 'store'])->name('grupos.store');
     Route::delete('/grupos/{grupo}', [GrupoController::class, 'destroy'])->name('grupos.destroy');
     Route::get('/grupos', [GrupoController::class, 'index'])->name('grupos.index');

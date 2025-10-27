@@ -21,29 +21,63 @@ class GrupoController extends Controller
         // Pega todos os usuários, exceto o usuário logado
         $usuariosDisponiveis = User::where('id', '!=', auth()->id())->get();
         
-        // Pega todos os grupos para a barra lateral
         $grupos = Grupo::all(); 
 
         // Retorna a view e passa os dados
         return view('grupos.create', compact('usuariosDisponiveis', 'grupos'));
     }
+ 
+ 
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'nome' => 'required|string|max:255',
-            'descricao' => 'nullable|string',
-        ]);
 
+public function store(Request $request)
+{
+    // 1. Validação (Adicionando validação para 'membros' como array)
+    $validatedData = $request->validate([
+        'nome' => 'required|string|max:255',
+        'descricao' => 'nullable|string',
+        'membros' => 'nullable|array', // Adicionado: 'membros' é opcional e deve ser um array
+        'membros.*' => 'exists:users,id', // Opcional: Garante que os IDs existam na tabela users
+    ]);
+    
+    try {
+        // 2. Criação do Grupo
         $grupo = Grupo::create([
-            'nome' => $request->nome,
-            'descricao' => $request->descricao,
+            'nome' => $validatedData['nome'],
+            'descricao' => $validatedData['descricao'] ?? null, // Use nullish coalescing para nullable
             'admin_id' => auth()->id(),
         ]);
 
-        return redirect()->route('index')->with('success', 'Grupo criado com sucesso!');
-    }
+        // 3. Lógica para adicionar membros
+        $membrosIds = [];
+        
+        if ($request->has('membros')) {
+            // Se houver membros no request, inclua-os
+            $membrosIds = $request->membros;
+        }
 
+        // Garante que o administrador (usuário logado) esteja sempre incluído e remove duplicatas
+        $membrosParaSincronizar = array_unique(array_merge($membrosIds, [auth()->id()]));
+
+        // Sincroniza os membros na tabela pivot
+        $grupo->users()->sync($membrosParaSincronizar); 
+        
+        // 4. Retorno JSON de sucesso
+        return response()->json([
+            'success' => true,
+            'message' => 'Grupo **' . $grupo->nome . '** criado com sucesso! 🎉',
+            'grupo_id' => $grupo->id
+        ], 201);
+
+    } catch (\Exception $e) { 
+        // 5. Retorno JSON de erro
+        return response()->json([
+            'success' => false,
+            'message' => 'Erro interno ao salvar o grupo. Por favor, tente novamente.',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
 
     public function getMensagens(Grupo $grupo)
 {
@@ -66,7 +100,12 @@ class GrupoController extends Controller
 
         $usuarios = $grupo->users;
 
-        return view('grupos.show', compact('grupo','grupos', 'mensagens', 'usuarios'));
+        // --- CORREÇÃO: Define e passa $usuariosDisponiveis para a view ---
+        // Pega todos os usuários, exceto o usuário logado
+        $usuariosDisponiveis = User::where('id', '!=', auth()->id())->get();
+
+        // Retorna a view e passa os dados, incluindo agora $usuariosDisponiveis
+        return view('grupos.show', compact('grupo','grupos', 'mensagens', 'usuarios', 'usuariosDisponiveis'));
     }
 
     
@@ -114,7 +153,7 @@ class GrupoController extends Controller
     {
         $grupo->users()->detach(auth()->id());
         return redirect()->route('grupos.index')->with('success', 'Você saiu do grupo!');
-    }
+    } 
 
 
 
@@ -126,5 +165,35 @@ class GrupoController extends Controller
 
         $grupo->users()->detach($user->id);
         return redirect()->route('grupos.show', $grupo->id)->with('success', 'Usuário removido do grupo.');
+    }
+
+    public function adicionarMembros(Request $request, Grupo $grupo)
+    {
+        // 1. Apenas o admin pode adicionar
+        if (auth()->id() !== $grupo->admin_id) {
+            return response()->json(['success' => false, 'message' => 'Apenas o administrador do grupo pode adicionar membros.'], 403);
+        }
+
+        // 2. Validação
+        $validatedData = $request->validate([
+            'membros' => 'required|array',
+            'membros.*' => 'exists:users,id',
+        ]);
+        
+        $membrosParaAdicionar = collect($validatedData['membros'])->map(fn($id) => (int)$id)->toArray();
+
+        // 3. Obtém os IDs dos membros atuais
+        $membrosAtuais = $grupo->users->pluck('id')->toArray();
+        
+        // 4. Junta os novos membros com os atuais (garantindo que o admin continue lá)
+        $novosMembros = array_unique(array_merge($membrosAtuais, $membrosParaAdicionar));
+
+        // 5. Sincroniza (Anexa) os novos membros sem remover os existentes
+        $grupo->users()->sync($novosMembros);
+
+        return response()->json([
+            'success' => true,
+            'message' => count($membrosParaAdicionar) . ' membro(s) adicionado(s) com sucesso.',
+        ], 200);
     }
 } 

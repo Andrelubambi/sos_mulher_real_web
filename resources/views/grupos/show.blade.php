@@ -1,411 +1,480 @@
-<!DOCTYPE html>
-<html>
+@extends('layouts.app') 
+  
+@section('title', 'Chat do Grupo | ' . $grupo->nome)
 
-<head>
-
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="user-id" content="{{ auth()->user()->id }}">
-
-
-    <!-- Basic Page Info -->
-    <meta charset="utf-8" />
-    <title> Dashboard | SOS-MULHER</title>
-
-    <!-- Site favicon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('vendors/images/apple-touch-icon.png') }}" />
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('vendors/images/favicon-32x32.png') }}" />
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('vendors/images/favicon-16x16.png') }}" />
-    <!-- Mobile Specific Metas -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <!-- Link Font Awesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/core.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/icon-font.min.css') }}" />
+@section('head_scripts_styles')
+    {{-- Scripts/Styles existentes --}}
     <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/dataTables.bootstrap4.min.css" />
     <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/responsive.bootstrap4.min.css" />
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}" />
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GBZ3SGGX85"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2973766580778258"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    
+    {{-- CSS para o SelectPicker (Adicionar Membros) --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+
+
     <style>
-.pre-loader {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    width: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
-    background: #fff; /* ou a cor de fundo que preferir */
-    z-index: 9999;
-}
+        /* Estilos do Chat (você pode movê-los para um arquivo CSS dedicado se preferir) */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            /* Ajustado para não quebrar o layout se estiver muito alto */
+            height: calc(100vh - 120px); 
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
-.pre-loader-box {
-    text-align: center;
-    max-width: 400px;
-    width: 100%;
-    padding: 20px;
-}
+        .chat-header {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 15px;
+            font-weight: bold;
+            border-bottom: 1px solid #ccc;
+        }
 
-.loader-progress {
-    margin: 20px auto;
-    max-width: 300px;
-}
+        .chat-messages {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #f8f9fa;
+            display: flex; /* Adicionado display flex para alinhamento */
+            flex-direction: column;
+        }
 
-.percent {
-    margin: 10px 0;
-    font-size: 18px;
-    font-weight: bold;
-}
+        .message {
+            margin-bottom: 10px;
+            max-width: 80%;
+            padding: 8px 12px;
+            border-radius: 15px;
+            line-height: 1.4;
+            word-wrap: break-word;
+        }
 
-.loading-text {
-    margin-top: 10px;
-    font-size: 16px;
-    color: #666;
-}
-</style>
-    <!-- Vite -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
+        .message.sent {
+            align-self: flex-end;
+            margin-left: auto;
+            background-color: #f8d7da; /* Vermelho mais claro para 'sent' */
+            color: #721c24; /* Texto escuro */
+            text-align: right;
+        }
+        
+        .message.sent strong {
+            color: #dc3545; /* Admin/Eu em destaque */
+        }
 
-<body>
-  <div class="pre-loader">
-    <div class="pre-loader-box">
-        <div class="loader-logo">
-            <img src="{{ asset('vendors/images/sos-progress.jpg') }}" alt="" style="width: 120px; height: auto;" />
-        </div>
-        <div class="loader-progress" id="progress_div">
-            <div class="bar" id="bar1"></div>
-        </div>
-        <div class="percent" id="percent1">0%</div>
-        <div class="loading-text">Por favor, aguarde ...</div>
+        .message.received {
+            align-self: flex-start;
+            margin-right: auto;
+            background-color: #fff; /* Branco */
+            border: 1px solid #e9e9e9;
+            color: #000;
+            text-align: left;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            background-color: #fff;
+        }
+
+        .chat-input textarea {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+            margin-right: 10px;
+            resize: none;
+            height: 40px; /* Altura inicial */
+            overflow-y: hidden;
+        }
+
+        /* Estilos do Modal/Gerenciamento de Grupo */
+        .admin-label {
+            background-color: #dc3545;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.75em;
+            margin-left: 5px;
+        }
+
+        .member-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        /* Estilo do Modal (Nav Links Ativos) */
+        .modal-body .nav-link.active {
+            background-color: #dc3545 !important; 
+            color: white !important;
+            border-color: #dc3545 !important; 
+        }
+        /* Estilo do Hover para Abas Não Selecionadas */
+        .modal-body .nav-link:not(.active):hover {
+            background-color: #f8d7da !important; /* Vermelho claro */
+            color: #dc3545 !important; /* Texto em vermelho */
+            border-color: #f8d7da !important;
+        }
+    </style>
+@endsection
+
+@section('content')
+    <div class="pd-ltr-20 xs-pd-20-10">
+        <div class="min-height-200px">
+            <div class="chat-container">
+
+                {{-- --- CHAT HEADER E BOTÕES DE AÇÃO --- --}}
+                <div
+    class="chat-header d-flex justify-content-between align-items-center bg-danger text-white px-3 py-2 rounded-top text-white">
+    
+    {{-- O nome do grupo pode envolver o texto para não forçar quebra --}}
+    <span class="h5 mb-0 text-white me-2">Grupo: {{ $grupo->nome }}</span>
+    
+    {{-- AQUI ESTÁ A CORREÇÃO PRINCIPAL: --}}
+    <div class="d-flex align-items-center flex-wrap gap-2">
+        @if (auth()->id() === $grupo->admin_id)
+            {{-- 1. Botão Gerenciar (Apenas Admin) - Removido o me-2, pois o gap-2 faz o trabalho --}}
+            <button class="btn btn-sm btn-light text-danger" data-toggle="modal"
+                data-target="#groupManagementModal">
+                <i class="icon-copy fa fa-cog" aria-hidden="true"></i> Gerenciar Grupo
+            </button>
+
+            {{-- 2. Botão Excluir (Apenas Admin) --}}
+            <form action="{{ route('grupos.destroy', $grupo->id) }}" method="POST"
+                onsubmit="return confirm('ATENÇÃO: Tem certeza que deseja excluir este grupo? Esta ação é irreversível.')">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-sm btn-light text-danger">
+                    <i class="icon-copy fa fa-trash" aria-hidden="true"></i> Excluir
+                </button>
+            </form>
+        @elseif (!$grupo->users->contains(auth()->id()))
+            {{-- Botão Entrar (Se o usuário NÃO for membro) --}}
+            <form action="{{ route('grupos.entrar', $grupo->id) }}" method="POST">
+                @csrf
+                <button type="submit" class="btn btn-sm btn-light text-success">
+                    <i class="icon-copy fa fa-sign-in" aria-hidden="true"></i> Entrar no Grupo
+                </button>
+            </form>
+        @else
+            {{-- Botão Sair (Se o usuário for membro, mas não o admin) --}}
+            <form action="{{ route('grupos.sair', $grupo->id) }}" method="POST"
+                onsubmit="return confirm('Tem certeza que deseja sair deste grupo?')">
+                @csrf
+                <button type="submit" class="btn btn-sm btn-light text-danger">
+                    <i class="icon-copy fa fa-sign-out" aria-hidden="true"></i> Sair do Grupo
+                </button>
+            </form>
+        @endif
     </div>
 </div>
-    <div class="header">
-        <div class="header-left">
-            <div class="menu-icon bi bi-list"></div>
-            <div class="search-toggle-icon bi bi-search" data-toggle="header_search"></div>
-            <div class="header-search">
-
-            </div>
-        </div>
-
-        <div class="header-right">
-            <!-- Settings Icon -->
-
-            @if (auth()->user()->role == 'vitima')
-                <!-- SOS Button -->
-                <div class="user-notification">
-                    <form action="{{ route('mensagem_sos.send') }}" method="POST"
-                        style="display:inline-block; margin-left: 10px;">
-                        @csrf
-                        <input type="hidden" name="mensagem" value="conteudo da mensagem sos">
-                        <button type="submit" title="Enviar SOS" style="background:none; border:none; cursor:pointer;">
-                            <i class="fa fa-exclamation-triangle" style="color:red; font-size: 20px;"></i>
-                        </button>
-                    </form>
+                {{-- --- CHAT MESSAGES --- --}}
+                <div id="messages" class="chat-messages">
+                    @forelse ($mensagens as $mensagem)
+                        <div class="message {{ $mensagem->user_id === auth()->id() ? 'sent' : 'received' }}">
+                            <div class="message-content">
+                                <strong>{{ $mensagem->user_id === auth()->id() ? 'Você' : $mensagem->user->name }}:</strong>
+                                {{ $mensagem->conteudo }}
+                            </div>
+                            <small class="text-muted" style="font-size: 0.65em;">
+                                {{ $mensagem->created_at->format('H:i') }}
+                            </small>
+                        </div>
+                    @empty
+                        <div class="text-muted text-center w-100">Nenhuma mensagem ainda. Envie a primeira!</div>
+                    @endforelse
                 </div>
-            @endif
 
-            <div id="mensagemAlerta" class="mensagem-alerta hidden" style="cursor:pointer;">
-                <span class="mensagem-icone"><i class="fa fa-envelope"></i></span>
-                <span id="mensagemTextoCompleto" class="mensagem-texto"></span>
-            </div>
-
-            <div id="mensagemModal" class="mensagem-modal hidden" data-mensagem-id="">
-                <div class="mensagem-modal-conteudo">
-                    <h4>Mensagem Recebida</h4>
-                    <p id="mensagemConteudo"></p>
-                    <small id="mensagemData" style="display:block;margin-top:10px;color:#666;"></small>
-
-                    <div style="margin-top: 10px; text-align: right;">
-                        <button id="enviarResposta" style="margin-right: 10px;">Responder</button>
-                        <button id="fecharModal">OK</button>
-                    </div>
-                </div>
-            </div>
-
-
-            <!-- User Info -->
-            <div class="user-info-dropdown">
-                <div class="dropdown">
-                    <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown">
-                        <span class="user-icon">
-                            <i class="fa fa-user-circle" style="font-size: 35px; color: #555;"></i>
+                {{-- --- CHAT INPUT --- --}}
+                <form id="sendMessageForm" class="chat-input" data-grupo-id="{{ $grupo->id }}">
+                    @csrf
+                    <textarea name="conteudo" id="conteudo" placeholder="Digite sua mensagem..." required></textarea>
+                    <button type="submit" class="btn btn-danger btn-sm" id="sendBtn">
+                        <span id="sendBtnText"><i class="icon-copy fa fa-send" aria-hidden="true"></i> Enviar</span>
+                        <span id="sendBtnLoading" class="d-none">
+                            <span class="spinner-border spinner-border-sm" role="status"
+                                aria-hidden="true"></span>
+                            Enviando...
                         </span>
-                        @guest
-                            <p>Olá, seja bem-vindo visitante! Faça login para acessar suas informações.</p>
-                        @else
-                            <span class="user-name">Olá, seja bem-vindo {{ Auth::user()->name }}!</span>
-                        @endguest
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-icon-list">
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf</form>
-                        <a class="dropdown-item" href="#"
-                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i
-                                class="dw dw-logout"></i>Sair</a>
-                    </div>
-                </div>
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 
-    <div class="left-side-bar">
-        <div class="brand-logo">
-             <a href="">
-                <img src="{{ asset('vendors/images/android-chrome-192x192.png') }}" alt="Logo" style="height: 60px;" />
-            </a>
-        </div>
-       <div class="menu-block customscroll">
-    <div class="sidebar-menu">
-        <ul id="accordion-menu">
-            <!-- Dashboard (todos têm acesso) -->
-            <li class="dropdown">
-                <a href="javascript:;" class="dropdown-toggle">
-                    <span class="micon bi bi-speedometer2"></span>
-                    <span class="mtext">Dashboard</span>
-                </a>
-                <ul class="submenu">
-                    @if(auth()->user()->role === 'admin')
-                        <li><a href="{{ route('admin.dashboard') }}">Dashboard Admin</a></li>
-                    @elseif(auth()->user()->role === 'doutor')
-                        <li><a href="{{ route('doutor.dashboard') }}">Dashboard Médico</a></li>
-                    @elseif(auth()->user()->role === 'estagiario')
-                        <li><a href="{{ route('estagiario.dashboard') }}">Dashboard Assistente</a></li>
-                    @elseif(auth()->user()->role === 'vitima')
-                        <li><a href="{{ route('vitima.dashboard') }}">Dashboard Vítima</a></li>
-                    @endif
-                </ul>
-            </li>
-
-            <!-- Consultas -->
-        @if(in_array(auth()->user()->role, ['admin', 'doutor', 'vitima']))
-                <li class="dropdown">
-                    <a href="javascript:;" class="dropdown-toggle">
-                        <span class="micon"><i class="fas fa-calendar-check"></i></span>
-                        <span class="mtext">Consultas</span>
-                    </a>
-                    <ul class="submenu">
-                        <li><a href="{{ route('consulta') }}"><i class="fa fa-calendar" aria-hidden="true" style="margin-right:6px;"></i> Todas as Consultas</a></li>
-                    @if(in_array(auth()->user()->role, ['admin', 'doutor', 'estagiario,vitima']))
-                        <li><a href="{{ route('consulta') }}">Minhas Consultas</a></li>
+    {{-- --- MODAL DE GERENCIAMENTO DE GRUPO --- --}}
+    <div class="modal fade" id="groupManagementModal" tabindex="-1" role="dialog" aria-labelledby="groupManagementModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title text-white" id="groupManagementModalLabel">Gerenciar Grupo: {{ $grupo->nome }}</h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    {{-- Nav Tabs --}}
+                    <ul class="nav nav-tabs customtab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#details" role="tab"
+                                aria-selected="true">Detalhes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#members" role="tab"
+                                aria-selected="false">Membros ({{ $usuarios->count() }})</a>
+                        </li>
+                        @if (auth()->id() === $grupo->admin_id)
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#addRemove" role="tab"
+                                    aria-selected="false">Adicionar/Remover</a>
+                            </li>
                         @endif
                     </ul>
-                </li>
-                @endif
 
-            <!-- Médicos (apenas admin) -->
-            @if(auth()->user()->role === 'admin')
-            <li class="dropdown">
-                <a href="javascript:;" class="dropdown-toggle">
-                    <span class="micon bi bi-person-badge"></span>
-                    <span class="mtext">Médico</span>
-                </a>
-                <ul class="submenu">
-                    <li><a href="{{ route('users.doutor') }}">Lista de Médicos</a></li>
-                </ul>
-            </li>
-            @endif
+                    {{-- Tab Content --}}
+                    <div class="tab-content pt-3">
+                        {{-- 1. Detalhes do Grupo --}}
+                        <div class="tab-pane fade show active" id="details" role="tabpanel">
+                            <p><strong>Nome:</strong> {{ $grupo->nome }}</p>
+                            <p><strong>Descrição:</strong> {{ $grupo->descricao ?: 'Nenhuma descrição fornecida.' }}</p>
+                            <p><strong>Admin:</strong> {{ $grupo->admin->name }} 
+                                <span class="admin-label">Admin</span>
+                            </p>
+                            <p><strong>Criado em:</strong> {{ $grupo->created_at->format('d/m/Y H:i') }}</p>
+                        </div>
 
-            <!-- Assistentes (apenas admin) -->
-            @if(auth()->user()->role === 'admin')
-            <li class="dropdown">
-                <a href="javascript:;" class="dropdown-toggle">
-                    <span class="micon bi bi-person-workspace"></span>
-                    <span class="mtext">Lista de Assistentes</span>
-                </a>
-                <ul class="submenu">
-                    <li><a href="{{ route('users.estagiario') }}">Assistentes</a></li>
-                </ul>
-            </li> 
-            @endif
+                        {{-- 2. Membros --}}
+                        <div class="tab-pane fade" id="members" role="tabpanel">
+                            <div class="member-list list-group">
+                                @foreach ($usuarios as $usuario)
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>
+                                            {{ $usuario->name }} ({{ $usuario->role }})
+                                            @if ($usuario->id === $grupo->admin_id)
+                                                <span class="admin-label">Admin</span>
+                                            @endif
+                                        </span>
+                                        {{-- Botão de Remover Membro (Visível apenas para o Admin e se não for ele mesmo) --}}
+                                        @if (auth()->id() === $grupo->admin_id && $usuario->id !== auth()->id())
+                                            <button type="button" class="btn btn-sm btn-outline-danger remove-member-btn"
+                                                data-user-id="{{ $usuario->id }}"
+                                                data-user-name="{{ $usuario->name }}">
+                                                <i class="icon-copy fa fa-user-times" aria-hidden="true"></i> Remover
+                                            </button>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+                            @if($usuarios->isEmpty())
+                                <p class="text-center text-muted mt-3">Nenhum membro neste grupo além do administrador.</p>
+                            @endif
+                        </div>
 
-            <!-- Vítimas (admin e médicos) -->
-            @if(in_array(auth()->user()->role, ['admin', 'doutor']))
-            <li class="dropdown">
-                <a href="javascript:;" class="dropdown-toggle">
-                    <span class="micon bi bi-people"></span>
-                    <span class="mtext">Vítimas</span>
-                </a>
-                <ul class="submenu">
-                    <li><a href="{{ route('users.vitima') }}">Lista de Vítimas</a></li>
-                </ul>
-            </li>
-            @endif
-
-            <!-- Grupos (admin, médicos e assistentes) -->
-            @if(in_array(auth()->user()->role, ['admin', 'doutor', 'estagiario']))
-            <li class="dropdown">
-                <a href="javascript:;" class="dropdown-toggle">
-                    <span class="micon bi bi-collection"></span>
-                    <span class="mtext">Grupos</span>
-                </a>
-                <ul class="submenu">
-                    @if(auth()->user()->role === 'admin')
-                       <li><a href="{{ route('grupos.create') }}">Criar Grupo</a></li>
-                    @endif
-                    @foreach ($grupos as $grupo)
-                        <li>
-                            <a href="{{ route('grupos.show', $grupo->id) }}">{{ $grupo->nome }}</a>
-                        </li>
-                    @endforeach
-                </ul>
-            </li>
-            @endif
-
-            <!-- Chat (todos têm acesso) -->
-            <li>
-                <a href="{{ route('chat') }}" class="dropdown-toggle no-arrow">
-                    <span class="micon bi bi-chat-right-dots"></span>
-                    <span class="mtext">Chat</span>
-                </a>
-            </li>
-        </ul>
-    </div>
-</div>
-    
-    </div>
-    <div class="mobile-menu-overlay"></div>
-
-    <div class="main-container">
-        <div class="pd-ltr-20 xs-pd-20-10">
-            <div class="min-height-200px">
-                <div class="chat-container">
-
-                    <div
-                        class="chat-header d-flex justify-content-between align-items-center bg-danger text-white px-3 py-2 rounded-top">
-                        <span>Grupo: {{ $grupo->nome }}</span>
-
-                        @if ($grupo->podeSerExcluidoPelo(auth()->user()))
-                            <form action="{{ route('grupos.destroy', $grupo->id) }}" method="POST"
-                                onsubmit="return confirm('Tem certeza que deseja excluir este grupo?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-light text-danger">
-                                    <i class="bi bi-trash"></i> Excluir Grupo
-                                </button>
-                            </form>
+                        {{-- 3. Adicionar/Remover Membros (Apenas Admin) --}}
+                        @if (auth()->id() === $grupo->admin_id)
+                            <div class="tab-pane fade" id="addRemove" role="tabpanel">
+                                <h5>Adicionar Novos Membros</h5>
+                                <form id="addMembersForm" data-grupo-id="{{ $grupo->id }}">
+                                    @csrf
+                                    <div class="form-group">
+                                        <select name="new_members[]" class="form-control selectpicker" multiple
+                                            data-live-search="true"
+                                            title="Selecione usuários para adicionar">
+                                            @foreach ($usuariosDisponiveis as $usuario)
+                                                {{-- Garante que o usuário não esteja na lista de membros atuais --}}
+                                                @if (!$usuarios->contains($usuario->id))
+                                                    <option value="{{ $usuario->id }}">{{ $usuario->name }} ({{ $usuario->role }})</option>
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-danger">Adicionar Selecionados</button>
+                                </form>
+                                <p class="text-muted mt-3">Você pode remover membros usando o botão "Remover" na aba "Membros".</p>
+                            </div>
                         @endif
                     </div>
-
-                    <div id="messages" class="chat-messages">
-                        @forelse ($mensagens as $mensagem)
-                            <div class="message {{ $mensagem->user_id === auth()->id() ? 'sent' : 'received' }}">
-                                <div class="message-content">
-                                    <strong>{{ $mensagem->user_id === auth()->id() ? 'Você' : $mensagem->user->name }}:</strong>
-                                    {{ $mensagem->conteudo }}
-                                </div>
-                            </div>
-
-                        @empty
-                            <div class="text-muted">Nenhuma mensagem ainda.</div>
-                        @endforelse
-                    </div>
-
-                    <!-- Formulário de Envio -->
-                    <form id="sendMessageForm" class="chat-input">
-                        @csrf
-                        <textarea name="conteudo" id="conteudo" placeholder="Digite sua mensagem..." required></textarea>
-                        <button type="submit" class="btn btn-danger btn-sm" id="sendBtn">
-                            <span id="sendBtnText"><i class="bi bi-send"></i> Enviar</span>
-                            <span id="sendBtnLoading" class="d-none">
-                                <span class="spinner-border spinner-border-sm" role="status"
-                                    aria-hidden="true"></span>
-                                Enviando...
-                            </span>
-                        </button>
-
-                    </form>
                 </div>
             </div>
         </div>
     </div>
+@endsection
 
-    <!-- JS -->
-    <script src="{{ asset('vendors/scripts/core.js') }}"></script>
-    <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>
-    <script src="{{ asset('vendors/scripts/process.js') }}"></script>
-    <script src="{{ asset('vendors/scripts/layout-settings.js') }}"></script>
-    <script src="https://js.pusher.com/7.2/pusher.min.js"></script>
-    
+@push('scripts')
+    {{-- Scripts do Bootstrap-Select para a funcionalidade de Adicionar Membros --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
     
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const messagesDiv = document.getElementById('messages');
-        const sendMessageForm = document.getElementById('sendMessageForm');
-        const conteudoInput = document.getElementById('conteudo');
-        const sendBtn = document.getElementById('sendBtn');
-        const sendBtnText = document.getElementById('sendBtnText');
-        const sendBtnLoading = document.getElementById('sendBtnLoading');
+        const currentUserId = '{{ auth()->id() }}';
+        const groupId = '{{ $grupo->id }}';
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
+        // Função para rolar para a última mensagem
+        function scrollToBottom() {
+            const messages = document.getElementById('messages');
+            messages.scrollTop = messages.scrollHeight;
+        }
 
-        window.Echo.private('grupo.{{ $grupo->id }}')
-            .listen('.GroupMessageSent', function(data) {
-                const isCurrentUser = data.user_id === {{ auth()->id() }};
-                const messageDiv = document.createElement('div');
-                messageDiv.classList.add('message', isCurrentUser ? 'sent' : 'received');
+        // Função de notificação (apenas um placeholder, você deve ter a implementação real)
+        function showToast(message, type) {
+            // Implementação de um Toast/SweetAlert/Notificação aqui. 
+            // Ex: alert(`${type.toUpperCase()}: ${message}`); 
+            console.log(`${type.toUpperCase()}: ${message}`);
+        }
 
-                messageDiv.innerHTML = `
-                    <div class="message-content">
-                        <strong>${isCurrentUser ? 'Você' : data.user.name}:</strong>
-                        ${data.conteudo}
-                    </div>
-                `;
+        // Função para renderizar uma nova mensagem no chat
+        function renderMessage(message, isSent) {
+            const messagesContainer = document.getElementById('messages');
+            // ... (restante da função renderMessage)
+            const messageEl = document.createElement('div');
+            messageEl.classList.add('message', isSent ? 'sent' : 'received');
+            messageEl.innerHTML = `
+                <div class="message-content">
+                    <strong>${isSent ? 'Você' : message.user.name}:</strong>
+                    ${message.conteudo}
+                </div>
+                <small class="text-muted" style="font-size: 0.65em;">
+                    ${new Date(message.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                </small>
+            `;
+            messagesContainer.appendChild(messageEl);
+            scrollToBottom();
+        }
 
-                messagesDiv.appendChild(messageDiv);
-                messagesDiv.scrollTop = messagesDiv.scrollHeight;
-            });
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializa o selectpicker dentro do modal (se for admin)
+            $('.selectpicker').selectpicker();
+            
+            // Rola para a última mensagem ao carregar
+            scrollToBottom();
 
-        sendMessageForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const conteudo = conteudoInput.value;
-
-            // Mostrar loading
-            sendBtn.disabled = true;
-            sendBtnText.classList.add('d-none');
-            sendBtnLoading.classList.remove('d-none');
-
-
-            fetch(`/grupos/{{ $grupo->id }}/mensagens`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                },
-                body: JSON.stringify({
-                    conteudo
-                }),
-            }).then(response => response.json())
-            .then(message => {
-                // Limpa o input
-                conteudoInput.value = '';
-
-                // Esconde loading e reativa o botão
-                sendBtn.disabled = false;
-                sendBtnText.classList.remove('d-none');
-                sendBtnLoading.classList.add('d-none');
-            })
-            .catch(error => {
-                console.error('Erro ao enviar mensagem:', error);
+            // --- CHAT MESSAGE SUBMISSION (AJAX) ---
+            const form = document.getElementById('sendMessageForm');
+            const textarea = document.getElementById('conteudo');
+            const sendBtn = document.getElementById('sendBtn');
+            const sendBtnText = document.getElementById('sendBtnText');
+            const sendBtnLoading = document.getElementById('sendBtnLoading');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
                 
-                // Em caso de erro, reativa o botão
-                sendBtn.disabled = false;
-                sendBtnText.classList.remove('d-none');
-                sendBtnLoading.classList.add('d-none');
+                const content = textarea.value.trim();
+                if (!content) return;
+
+                sendBtn.disabled = true;
+                sendBtnText.classList.add('d-none');
+                sendBtnLoading.classList.remove('d-none');
+
+                fetch(`/grupos/${groupId}/send`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ conteudo: content })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    renderMessage(data, true); 
+                    textarea.value = ''; 
+                })
+                .catch(error => {
+                    console.error('Erro ao enviar mensagem:', error);
+                    showToast('Não foi possível enviar a mensagem.', 'error');
+                })
+                .finally(() => {
+                    sendBtn.disabled = false;
+                    sendBtnText.classList.remove('d-none');
+                    sendBtnLoading.classList.add('d-none');
+                });
             });
+
+            // --- Lógica de Auto-Resize para a textarea ---
+            textarea.addEventListener('input', function() {
+                this.style.height = '40px'; // Altura mínima
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+
+
+            // --- LÓGICA DE GERENCIAMENTO DE MEMBROS (REMOVER) ---
+            document.querySelectorAll('.remove-member-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const userIdToRemove = this.dataset.userId;
+                    const userName = this.dataset.userName;
+                    
+                    if (!confirm(`Tem certeza que deseja remover ${userName} do grupo?`)) {
+                        return;
+                    }
+
+                    showLoading(true);
+
+                    fetch(`/grupos/${groupId}/remover-usuario/${userIdToRemove}`, {
+                        method: 'POST', 
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Content-Type': 'application/json',
+                            'X-HTTP-Method-Override': 'DELETE' 
+                        },
+                        body: JSON.stringify({ _method: 'DELETE' }) 
+                    })
+                    .then(response => {
+                        if (response.ok || response.redirected) {
+                            showToast(`Usuário ${userName} removido com sucesso.`, 'success');
+                            setTimeout(() => {
+                                window.location.reload(); 
+                            }, 500); 
+                        } else {
+                            return response.json().then(error => Promise.reject(error));
+                        }
+                    })
+                    .catch(error => {
+                        showLoading(false);
+                        console.error('Erro ao remover usuário:', error);
+                        showToast('Erro ao remover usuário. Verifique se você é o Admin.', 'error');
+                    });
+                });
+            });
+            
+            // --- LÓGICA DE GERENCIAMENTO DE MEMBROS (ADICIONAR - Apenas Admin) ---
+            const addMembersForm = document.getElementById('addMembersForm');
+            if(addMembersForm) {
+                addMembersForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const selectedMembers = $(this).find('select[name="new_members[]"]').val();
+                    if (selectedMembers.length === 0) return;
+
+                    showLoading(true);
+
+                    fetch(`/grupos/${groupId}/adicionar-membros`, { 
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ membros: selectedMembers })
+                    })
+                    .then(response => {
+                         if (!response.ok) {
+                            return response.json().then(error => Promise.reject(error));
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        showLoading(false);
+                        showToast(data.message || 'Membros adicionados com sucesso!', 'success');
+                        setTimeout(() => { window.location.reload(); }, 500);
+                    })
+                    .catch(error => {
+                        showLoading(false);
+                        console.error('Erro ao adicionar membros:', error);
+                        showToast('Erro ao adicionar membros.', 'error');
+                    });
+                });
+            }
         });
-    });
-</script>
 
-    <script>
-        window.laravel_echo_port = '{{ env('LARAVEL_ECHO_PORT', 6001) }}';
     </script>
-    <script src="//{{ Request::getHost() }}:{{ env('LARAVEL_ECHO_PORT', 6001) }}/socket.io/socket.io.js"></script>
-
-</body>
-
-</html>
+@endpush
