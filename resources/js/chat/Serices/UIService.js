@@ -88,7 +88,6 @@ export class UIService {
     }
 
     showNotification(message, type = 'info') {
-        // Implementar sistema de notificação toast
         console.log(`[${type.toUpperCase()}] ${message}`);
     }
 

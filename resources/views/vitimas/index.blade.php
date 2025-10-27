@@ -8,7 +8,7 @@
             <h2 class="h3 mb-0 text-danger">
                 <i class="bi bi-person-badge"></i> Gerir Vítimas
             </h2>
-        </div>
+        </div> 
      <div class="card-box pb-10 shadow-sm rounded">
          <div class="h5 pd-20 mb-0">Vítimas Recentes</div>
 
@@ -60,6 +60,6 @@
 @endsection
 
 @push('scripts')
-<script src="{{ asset('js/notifications.js') }}"></script>
-<script src="{{ asset('js/vitimas.js') }}"></script>
+@vite('resources/js/vitimas.js')
+@vite('resources/js/notifications.js') 
 @endpush

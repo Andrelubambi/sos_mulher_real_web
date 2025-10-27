@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Medico; 
 use App\Models\Grupo; 
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log; 
+
 
 class UserController extends Controller
 {
@@ -46,8 +48,7 @@ class UserController extends Controller
     public function listNaoDoutores()
     {
         $usuariosNaoDoutores = User::where('role', '!=', 'doutor')->get();
-    
-        dd($usuariosNaoDoutores);
+     
         return view('usuarios.nao_doutores', compact('usuariosNaoDoutores'));
     }
 
@@ -161,17 +162,19 @@ class UserController extends Controller
 
     // =================================  Vítima  ============================================= //
 
-   public function indexVitima() 
-{ 
-    $users = User::where('role', 'vitima')->get(); 
-     
 
-    return view('vitimas.index', compact('users', 'grupos')); 
-}
+    public function indexVitima()
+   {
+       Log::info('--- INÍCIO: Método indexVitima ---'); // Log de início
 
+       $users = User::where('role', 'vitima')->get();
+      
+       $grupos = Grupo::all(); // 2. Carrega todos os grupos
+   
+       return view('vitimas.index', compact('users', 'grupos'));
 
-// No UserController.php
-// No UserController.php
+   }
+ 
 
 public function storeVitima(Request $request)
 {

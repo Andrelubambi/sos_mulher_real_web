@@ -2,11 +2,22 @@ import io from 'socket.io-client';
 
 export function initializeEcho() {
     try {
-        // CONEXÃO SOCKET.IO DIRETA (que está funcionando)
-        window.socket = io(`https://${window.location.hostname}`, {
+        // --- ⬇️ INÍCIO DA CORREÇÃO DE PROTOCOLO E PORTA ⬇️ ---
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const isHttps = window.location.protocol === 'https:';
+        
+        // Define o host: se for localhost/HTTP, usa ws://localhost:6001. Caso contrário, usa o host da página.
+        const hostUrl = (isLocalhost || !isHttps) 
+            ? 'http://localhost:6001' // Força HTTP/WS na porta do Socket.IO para ambientes de desenvolvimento
+            : `https://${window.location.hostname}`;
+            
+        window.socket = io(hostUrl, {
             path: '/socket.io',
             transports: ['websocket', 'polling'],
-            secure: true,
+            // O parâmetro 'secure' agora é dinâmico, baseado no protocolo da página
+            secure: isHttps, 
+            // --- ⬆️ FIM DA CORREÇÃO DE PROTOCOLO E PORTA ⬆️ ---
+
             auth: {
                 userId: document.querySelector('meta[name="user-id"]')?.getAttribute('content'),
                 token: localStorage.getItem('auth_token') || ''
@@ -16,7 +27,6 @@ export function initializeEcho() {
         window.socket.on('connect', () => {
             console.log('✅ CONECTADO ao WebSocket!');
             
-            // REGISTRAR USUÁRIO NO SERVIDOR
             const userId = document.querySelector('meta[name="user-id"]')?.getAttribute('content');
             window.socket.emit('user-online', { userId: userId });
             
@@ -36,18 +46,15 @@ export function initializeEcho() {
             updateConnectionStatus(false);
         });
 
-        // ESCUTAR MENSAGENS DIRETAS
         window.socket.on('new-message', (data) => {
             console.log('📨 NOVA MENSAGEM RECEBIDA via Socket.IO:', data);
             
-            // Disparar evento customizado para o chat
             const event = new CustomEvent('messageReceived', {
                 detail: data
             });
             document.dispatchEvent(event);
         });
 
-        // INTERFACE ECHO COMPATÍVEL
         window.Echo = {
             connector: { socket: window.socket },
             socketId: () => window.socket.id,
@@ -55,7 +62,6 @@ export function initializeEcho() {
             private: (channel) => {
                 console.log('🔐 Conectando ao canal:', channel);
                 
-                // JUNTAR-SE AO CANAL
                 window.socket.emit('join-channel', { 
                     channel: channel,
                     userId: document.querySelector('meta[name="user-id"]')?.getAttribute('content')
@@ -89,9 +95,7 @@ export function initializeEcho() {
                             callback(data);
                         });
                         
-                        // TAMBÉM ESCUTAR O EVENTO GLOBAL
-                        window.socket.on(`message:${eventName}`, (data) => {
-                            // Verificar se é para este canal
+                        window.socket.on(`message:${eventName}`, (data) => { 
                             if (data.channel === channel) {
                                 console.log(`📨 Mensagem global para ${channel}:`, data);
                                 callback(data);

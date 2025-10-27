@@ -1,23 +1,14 @@
 import './bootstrap';
 import { initializeEcho } from './chat/echo.js';        
 import { setupUI } from './chat/ui.js';                 
-import { setupChat } from './chat/chat.js';              
-import { setupVideoCall } from './chat/video.js';
+import { setupChat } from './chat/chat.js';         
 
 document.addEventListener('DOMContentLoaded', () => {
     initializeEcho();
     setupUI();
-    setupChat();
-    setupVideoCall();
+    setupChat(); 
 
-    window.addEventListener('beforeunload', () => {
-        if (window.isCallActive) {
-            window.endVideoCall();
-        }
-        if (window.currentChannel && window.Echo) {
-            window.Echo.leave(window.currentChannel);
-        }
-    });
+   
 
     setInterval(() => {
         if (!window.echoConnected && window.Echo) {
@@ -30,4 +21,3 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 10000);
 });
- 

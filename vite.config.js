@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => {
                 input: [ 
                     'resources/css/modern-chat.css',
                     'resources/js/app.js',
-                    'resources/js/chat/index.js',
+                    //'resources/js/chat/index.js',
                     'resources/js/chat/echo.js',
                     'resources/js/chat/ui.js',
                     'resources/js/chat/chat.js',
@@ -28,7 +28,7 @@ export default defineConfig(({ mode }) => {
                     'resources/js/bootstrap.js',
                     'resources/js/medicos.js',
                     'resources/js/consultas.js',
-                    'resources/js/dashboard-charts.js',
+                    'resources/js/dashboard-charts.js', 
                     'resources/js/notifications.js',
                     'resources/js/vitimas.js',
                 ],

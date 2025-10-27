@@ -1,17 +1,15 @@
-// Configuração do Laravel Echo para se conectar ao seu servidor Socket.IO
-// IMPORTANTE: Unificado com a lógica de chat para garantir a ordem de execução
-import Echo from 'laravel-echo';
+ import Echo from 'laravel-echo';
 import io from 'socket.io-client';
 
 window.io = io;
 
+// NO SEU ARQUIVO DE CONFIGURAÇÃO DO ECHO (chat.js)
 window.Echo = new Echo({
     broadcaster: 'socket.io',
-    // Use HTTPS através do Nginx, com path padrão do Socket.IO
     client: io,
     transports: ['websocket', 'polling'],
-    host: `https://${window.location.hostname}`,
-    // Garantir que o caminho combina com o bloco location do Nginx (/socket.io/)
+    // CORREÇÃO: Use ws://localhost:8080
+    host: `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.hostname}:8080`,
     path: '/socket.io/',
 });
 
@@ -31,8 +29,7 @@ export function setupChat() {
     const messageInput = document.getElementById('messageInput');
     const participantName = document.getElementById('participantName');
     const currentAvatar = document.getElementById('currentAvatar');
-    const participantStatus = document.getElementById('participantStatus');
-    const videoCallBtn = document.getElementById('videoCallBtn');
+    const participantStatus = document.getElementById('participantStatus'); 
     const sendBtn = sendMessageForm?.querySelector('.send-btn');
     const usuarioLogadoId = document.querySelector('meta[name="user-id"]')?.getAttribute('content');
     const typingIndicator = document.getElementById('typingIndicator');
@@ -43,8 +40,7 @@ export function setupChat() {
         messageInput: !!messageInput,
         participantName: !!participantName,
         currentAvatar: !!currentAvatar,
-        participantStatus: !!participantStatus,
-        videoCallBtn: !!videoCallBtn,
+        participantStatus: !!participantStatus, 
         sendBtn: !!sendBtn,
         usuarioLogadoId
     });
@@ -56,6 +52,12 @@ export function setupChat() {
 
     window.usuarioAtualId = null;
     window.currentChannel = null;
+
+    messageInput.addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();  
+            sendMessageForm.dispatchEvent(new Event('submit'));
+        }
+    });
 
     function appendMessage(message, sentByMe = false) {
         const welcomeMessage = messagesList.querySelector('.welcome-message');
@@ -196,7 +198,7 @@ export function setupChat() {
             participantName.textContent = userName;
             currentAvatar.textContent = userName.charAt(0);
             participantStatus.textContent = 'Online';
-            updateVideoCallButton();
+           
 
             // Mobile responsive
             if (window.innerWidth < 768) {
@@ -310,15 +312,5 @@ export function setupChat() {
         }
     });
 
-    function updateVideoCallButton() {
-        if (window.usuarioAtualId && window.usuarioAtualId != usuarioLogadoId) {
-            videoCallBtn.disabled = false;
-            videoCallBtn.style.opacity = '1';
-            videoCallBtn.title = 'Iniciar videochamada';
-        } else {
-            videoCallBtn.disabled = true;
-            videoCallBtn.style.opacity = '0.5';
-            videoCallBtn.title = 'Selecione um usuário para iniciar videochamada';
-        }
-    }
+    
 }

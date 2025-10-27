@@ -1,15 +1,24 @@
 const server = require('http').createServer();
 const io = require('socket.io')(server, {
   cors: {
-    origin: '*',
+    origin: ['*', 'http://localhost:8080'],
     methods: ['GET', 'POST'],
   },
   transports: ['websocket', 'polling'],
 });
 const Redis = require('ioredis');
 
+
+
+const redisHost = process.env.REDIS_HOST || 'redis'; 
+const redisPort = process.env.REDIS_PORT || 6379; 
+// ...
+const pubClient = new Redis(redisPort, redisHost);
+const subClient = new Redis(redisPort, redisHost);
+
+
 const redis = new Redis({
-  host: process.env.REDIS_HOST || 'laravel_redis',
+  host: process.env.REDIS_HOST || 'redis',
   port: process.env.REDIS_PORT || 6379,
 });
 

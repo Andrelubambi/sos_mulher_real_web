@@ -1,169 +1,204 @@
-// No ficheiro vitimas.js
+// Verifica se window.showToast está disponível (usado para notificações no estilo medicos.js)
+if (typeof showToast !== 'function') {
+    // Fallback: se showToast não existe, usa console.log, adaptando a assinatura (message, type)
+    window.showToast = (message, type) => console.log(`[Toast ${type.toUpperCase()}]: ${message}`);
+}
+if (typeof showLoading !== 'function') {
+    window.showLoading = (show) => console.log(`[Loading]: ${show ? 'Ativado' : 'Desativado'}`);
+}
+
+// =========================================================================
+// FUNÇÕES AUXILIARES DE MANIPULAÇÃO DE DOM (REMOVIDAS/SIMPLIFICADAS)
+// A recarga de página é usada em vez da manipulação direta da tabela.
+// =========================================================================
+
+
+// =========================================================================
+// LÓGICA DE CRUD (CREATE, READ, UPDATE, DELETE)
+// =========================================================================
 
 $(document).ready(function() {
 
-    // 1. REMOVA TODO O BLOCO $('#formAdicionarVitima').on('submit', ... )
-    // O formulário agora submete diretamente via HTML.
+    // --- VARIÁVEL GLOBAL PARA EXCLUSÃO ---
+    let victimIdToDelete = null; 
+    
+    // Tempo de espera antes de recarregar a página após o sucesso
+    const reloadDelay = 1000; 
 
-    // 2. Função de BUSCA e PREENCHIMENTO para Edição (Mantida, mas adaptada para o fluxo)
+    /**
+     * Auxiliar para extrair a primeira mensagem de erro de validação.
+     * @param {Object} xhr - Objeto XMLHttpRequest do erro.
+     * @param {string} defaultMessage - Mensagem padrão.
+     * @returns {string} Mensagem de erro mais específica ou a padrão.
+     */
+    function getErrorMessage(xhr, defaultMessage) {
+        if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+            const errorKeys = Object.keys(xhr.responseJSON.errors);
+            if (errorKeys.length > 0) {
+                return xhr.responseJSON.errors[errorKeys[0]][0]; 
+            }
+        }
+        return xhr.responseJSON && xhr.responseJSON.message 
+            ? xhr.responseJSON.message 
+            : defaultMessage;
+    }
+
+
+    // 1. CRIAÇÃO (CREATE)
+    $('#formAdicionarVitima').on('submit', function(e) {
+        e.preventDefault();
+        window.showLoading(true);
+        console.log('Tentativa de Criação de Vítima...', $(this).serialize()); 
+
+        $.ajax({
+            url: '/users', 
+            method: 'POST',
+            data: $(this).serialize(),
+            success: function(res) {
+                console.log('Sucesso na Criação:', res); 
+                window.showToast('Vítima criada com sucesso.', 'success');
+                $('#modalAdicionarVitima').modal('hide');
+                $('#formAdicionarVitima')[0].reset(); 
+                
+                // Recarrega a página para mostrar a nova vítima
+                setTimeout(() => { 
+                    window.location.reload(); 
+                }, reloadDelay); 
+            },
+            error: function(xhr) {
+                const message = getErrorMessage(xhr, 'Erro ao criar vítima.');
+                console.error('Erro na Criação:', xhr.responseJSON || xhr.responseText); 
+                window.showToast(message, 'error');
+            },
+            complete: function() {
+                window.showLoading(false);
+            }
+        });
+    });
+
+    // 2. LEITURA (READ) e PREENCHIMENTO para Edição
     window.editVitima = function(id) {
-        // Busca os dados da vítima via JSON (isto ainda é útil para UX)
+        window.showLoading(true);
+        console.log('Carregando dados da vítima ID:', id); 
         fetch(`/users/${id}/edit`) 
-          .then(r => r.json())
+          .then(r => {
+            if (!r.ok) throw new Error('Erro na resposta do servidor.');
+            return r.json();
+          })
           .then(data => {
-            $('#edit_vitima_name').val(data.name);
-            $('#edit_vitima_telefone').val(data.telefone);
-            $('#edit_vitima_email').val(data.email);
+            console.log('Dados da vítima carregados:', data.user); 
+            const user = data.user; 
+            
+            // Preenche os campos do modal de edição
+            $('#edit_vitima_id').val(user.id); 
+            $('#name_edit').val(user.name); 
+            $('#telefone_edit').val(user.telefone); 
+            $('#email_edit').val(user.email); 
 
-            // MUDANÇA CRÍTICA: Define a action do formulário para o PUT no Laravel
-            // A rota deve ser 'users.update' (que aponta para PUT /users/{id})
+            // Limpa os campos de senha
+            $('#password_edit').val('');
+            $('#password_confirmation_edit').val('');
+
+            // Define a action do formulário
             $('#formEditarVitima').attr('action', `/users/${id}`); 
             $('#editVitimaModal').modal('show');
           }).catch(e => {
-            // Em vez de notificações AJAX, pode usar um alert simples ou forçar um redirect para erro.
-            alert('Erro ao carregar dados da vítima.');
+            console.error('Erro ao carregar dados:', e); 
+            window.showToast('Erro ao carregar dados da vítima.', 'error');
+          })
+          .finally(() => {
+            window.showLoading(false);
           });
       };
       
-    // 3. REMOVA O BLOCO $('#formEditarVitima').on('submit', ... )
-    // O formulário agora submete diretamente via HTML.
+    // 3. ATUALIZAÇÃO (UPDATE)
+    $('#formEditarVitima').on('submit', function(e) {
+        e.preventDefault();
+        window.showLoading(true);
+        const action = $(this).attr('action');
+        console.log('Tentativa de Atualização da Vítima ID:', action.split('/').pop(), $(this).serialize());
 
-    // 4. REMOVA TODA A LÓGICA DE EXCLUSÃO AJAX (Mantenha o confirmDelete para forms)
-    // O formulário de exclusão agora é tradicional, conforme definido no Blade e no ConsultaController.
+        $.ajax({
+            url: action,
+            method: 'POST', // Usamos POST com _method=PUT/PATCH
+            data: $(this).serialize(),
+            success: function(res) {
+                 console.log('Sucesso na Atualização:', res);
+                window.showToast('Vítima atualizada com sucesso.', 'success');
+                $('#editVitimaModal').modal('hide');
+                
+                // Recarrega a página
+                setTimeout(() => { 
+                    window.location.reload(); 
+                }, reloadDelay); 
+            },
+            error: function(xhr) {
+                const message = getErrorMessage(xhr, 'Erro ao salvar alterações.');
+                console.error('Erro na Atualização:', xhr.responseJSON || xhr.responseText);
+                window.showToast(message, 'error');
+            },
+            complete: function() {
+                window.showLoading(false);
+            }
+        });
+    });
 
-    // Apenas mantenha a função auxiliar confirmDelete (se estiver a usá-la)
-    window.confirmDelete = function(actionUrl) {
-        $('#deleteForm').attr('action', actionUrl);
-        const modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
-        modal.show();
+
+    // 4. EXCLUSÃO (DELETE)
+    
+    // Auxiliar para abrir o modal de confirmação e guardar o ID
+    window.confirmDeleteAjax = function(id) {
+        victimIdToDelete = id; // Guarda o ID globalmente
+        console.log('ID de Vítima marcado para exclusão:', id); 
+        
+        // CORREÇÃO: Usamos o método jQuery do Bootstrap para maior robustez, 
+        // evitando o erro 'backdrop' que ocorre na inicialização nativa em alguns casos.
+        const modalElement = $('#confirmDeleteModal');
+        if (modalElement.length) {
+             modalElement.modal('show');
+        } else {
+             console.error("Elemento 'confirmDeleteModal' não encontrado no DOM.");
+        }
     };
 
+    // Handler para o botão "Excluir" dentro do modal de confirmação
+    $('#confirmDeleteButton').on('click', function() {
+        if (!victimIdToDelete) return;
+
+        window.showLoading(true);
+        console.log('Iniciando exclusão da Vítima ID:', victimIdToDelete); 
+
+        $.ajax({
+            url: `/users/${victimIdToDelete}`, 
+            method: 'POST', 
+            data: { 
+                _method: 'DELETE', 
+                _token: $('meta[name="csrf-token"]').attr('content') 
+            },
+            success: function(res) {
+                console.log('Sucesso na Exclusão:', res); 
+                window.showToast('Vítima excluída com sucesso.', 'success');
+                
+                // Fecha o modal (usando jQuery)
+                $('#confirmDeleteModal').modal('hide');
+
+                // Recarrega a página
+                setTimeout(() => { 
+                    window.location.reload(); 
+                }, reloadDelay);
+            },
+            error: function(xhr) {
+                const message = getErrorMessage(xhr, 'Erro ao excluir vítima.');
+                console.error('Erro na Exclusão:', xhr.responseJSON || xhr.responseText); 
+                window.showToast(message, 'error');
+                
+                // Fecha o modal em caso de erro (usando jQuery)
+                $('#confirmDeleteModal').modal('hide');
+            },
+            complete: function() {
+                window.showLoading(false);
+                victimIdToDelete = null; // Limpa o ID após a operação
+            }
+        });
+    });
 });
-
-// REMOVA a função prependVictimRow, pois a página será recarregada.
-
-  // Edit fetch (global function used by button onclick)
-  window.editVitima = function(id) {
-    fetch(`/users/${id}/edit`)
-      .then(r => r.json())
-      .then(data => {
-        $('#edit_vitima_name').val(data.name);
-        $('#edit_vitima_telefone').val(data.telefone);
-        $('#edit_vitima_email').val(data.email);
-        $('#formEditarVitima').attr('action', `/users/${id}`);
-        $('#editVitimaModal').modal('show');
-      }).catch(e => {
-        showNotification('danger', 'Erro ao carregar dados.');
-      });
-  };
-
-  // Submit edit
-  $('#formEditarVitima').on('submit', function(e) {
-    e.preventDefault();
-    const action = $(this).attr('action');
-    $.ajax({
-      url: action,
-      method: 'POST', // Laravel requires POST with _method=PUT already present in form partial
-      data: $(this).serialize(),
-      success: function(res) {
-        $('#editVitimaModal').modal('hide');
-        showNotification('success', 'Vítima atualizada.');
-        // optional: refresh a single row or reload partial
-        // Here, simple approach: reload page or request partial endpoint
-        location.reload(); // quick and safe
-      },
-      error: function(xhr) {
-        showNotification('danger', 'Erro ao salvar alterações.');
-      }
-    });
-  });
-
-      $(document).on('click', '.delete', function() {
-        let id = $(this).data('id');
-        if (confirm('Deseja realmente remover esta vítima?')) {
-            $.ajax({
-                url: '/users/' + id,
-                method: 'DELETE',
-                data: { _token: "{{ csrf_token() }}" },
-                success: function(response) {
-                    if (response.success) {
-                        $('#vitima-' + id).remove();
-                    } else {
-                        alert(response.message);
-                    }
-                },
-                error: function(err) {
-                    alert('Erro ao apagar vítima');
-                }
-            });
-        }
-    });
-
-
-  // Delete confirm helper
-    window.confirmDelete = function(actionUrl) {
-    $('#deleteForm').attr('action', actionUrl);
-    const modal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
-    modal.show();
-  };
-
-
-      // Delete victim (AJAX, works reliably even if modal is re-rendered)
-  $(document).on('submit', '#deleteForm', function(e) {
-    e.preventDefault();
-    const $form = $(this);
-    const action = $form.attr('action');
-
-    $.ajax({
-      url: action,
-      method: 'POST', // Laravel trata o _method=DELETE automaticamente
-      data: $form.serialize(),
-      success: function(res) {
-        $('#confirmDeleteModal').modal('hide');
-        showNotification('success', 'Vítima excluída com sucesso.');
-
-        // Remove the deleted row visually
-        const id = action.split('/').pop();
-        $(`tr[data-id="${id}"]`).fadeOut(300, function() { $(this).remove(); });
-      },
-      error: function(xhr) {
-        console.error(xhr.responseText);
-        showNotification('danger', 'Erro ao excluir vítima.');
-      }
-    });
-  });
-
-
-
-  // No ficheiro vitimas.js (Ficheiro 3) - Função CORRIGIDA
-
-function prependVictimRow(user) {
-    // Nota: 'user.telefone ?? '-'' é sintaxe PHP/Laravel, em JS é 'user.telefone || '-''.
-    const telefoneDisplay = user.telefone || '-'; 
-    const emailDisplay = user.email || '-'; 
-
-    const row = `<tr data-id="${user.id}">
-      <td>${user.name}</td>
-      <td>${telefoneDisplay}</td>
-      <td>${emailDisplay}</td>
-      <td class="text-center">
-          <div class="d-flex" style="gap: 20px !important;">
-              <button type="button" class="btn btn-outline-danger btn-sm me-2" 
-                      data-bs-toggle="modal" data-bs-target="#editVitimaModal" 
-                      onclick="editVitima(${user.id})">
-                  <i class="bi bi-pencil-square"></i> Editar
-              </button>
-
-              <button class="btn btn-outline-dark btn-sm" 
-                      onclick="confirmDelete('/users/${user.id}')">
-                  <i class="bi bi-trash"></i> Excluir
-              </button>
-          </div>
-      </td>
-    </tr>`;
-    
-    // Adiciona a nova linha no TOPO da tabela
-    $('#vitimasBody').prepend(row);
-}
-
-

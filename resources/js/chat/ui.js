@@ -1,4 +1,3 @@
- 
 export function setupUI() {
     const mobileMenuBtn = document.getElementById('mobileMenuBtn');
     const sidebar = document.getElementById('sidebar');
@@ -11,39 +10,59 @@ export function setupUI() {
     const listaUsuarios = document.getElementById('listaUsuarios');
     const newChatBtn = document.getElementById('newChatBtn');
 
-    mobileMenuBtn.addEventListener('click', () => {
-        sidebar.classList.add('active');
-        overlay.classList.add('active');
-        chatMain.classList.remove('active');
-    });
+    if (!mobileMenuBtn || !sidebar || !overlay || !chatMain) {
+        console.warn("UI Setup Warning: Elementos essenciais de navegação (mobileMenuBtn, sidebar, overlay ou chatMain) não encontrados. Navegação desativada.");
+    }
+    
+    if (mobileMenuBtn && sidebar && overlay && chatMain) {
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.add('active');
+            overlay.classList.add('active');
+            chatMain.classList.remove('active');
+        });
+    }
 
-    overlay.addEventListener('click', () => {
-        sidebar.classList.remove('active');
-        overlay.classList.remove('active');
-        chatMain.classList.remove('active');
-    });
+    if (overlay && sidebar && chatMain) {
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+            chatMain.classList.remove('active');
+        });
+    }
 
-    backBtn.addEventListener('click', () => {
-        sidebar.classList.add('active');
-        overlay.classList.add('active');
-        chatMain.classList.remove('active');
-    });
+   /* if (backBtn && sidebar && overlay && chatMain) {
+        backBtn.addEventListener('click', () => {
+            sidebar.classList.add('active');
+            overlay.classList.add('active');
+            chatMain.classList.remove('active');
+        });
+    }*/
 
-    tabMensagens.addEventListener('click', () => {
-        mensagensRecentes.classList.add('active');
-        listaUsuarios.classList.remove('active');
-        tabMensagens.classList.add('active');
-        tabUsuarios.classList.remove('active');
-    });
+    if (!tabMensagens || !tabUsuarios || !mensagensRecentes || !listaUsuarios) {
+        console.warn("UI Setup Warning: Elementos de tabulação (mensagens/usuários) não encontrados. Tabs desativadas.");
+    }
 
-    tabUsuarios.addEventListener('click', () => {
-        mensagensRecentes.classList.remove('active');
-        listaUsuarios.classList.add('active');
-        tabMensagens.classList.remove('active');
-        tabUsuarios.classList.add('active');
-    });
+    if (tabMensagens && mensagensRecentes && listaUsuarios && tabUsuarios) {
+        tabMensagens.addEventListener('click', () => {
+            mensagensRecentes.classList.add('active');
+            listaUsuarios.classList.remove('active');
+            tabMensagens.classList.add('active');
+            tabUsuarios.classList.remove('active');
+        });
+    }
 
-    newChatBtn.addEventListener('click', () => {
-        tabUsuarios.click();
-    });
+    if (tabUsuarios && mensagensRecentes && listaUsuarios && tabMensagens) {
+        tabUsuarios.addEventListener('click', () => {
+            mensagensRecentes.classList.remove('active');
+            listaUsuarios.classList.add('active');
+            tabMensagens.classList.remove('active');
+            tabUsuarios.classList.add('active');
+        });
+    }
+
+    if (newChatBtn && tabUsuarios) {
+        newChatBtn.addEventListener('click', () => {
+            tabUsuarios.click();
+        });
+    }
 }

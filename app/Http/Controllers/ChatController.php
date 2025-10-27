@@ -62,7 +62,7 @@ class ChatController extends Controller
             }
         }
 
-        return view('chat', compact('usuariosNaoDoutores', 'chatsRecentes'));
+        return view('chat.index', compact('usuariosNaoDoutores', 'chatsRecentes'));
     }
 
     public function getMessages($usuarioId)

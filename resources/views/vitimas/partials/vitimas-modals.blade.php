@@ -1,72 +1,107 @@
-<!-- Add Victim Modal (AJAX) -->
-<div class="modal fade" id="modalAdicionarVitima" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <form id="formAdicionarVitima" class="modal-content">
-      @csrf
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title text-white">Nova Vítima</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-
-      <div class="modal-body">
-        <input type="hidden" name="role" value="vitima">
-        <div class="mb-3"><label class="form-label">Nome</label><input type="text" name="name" class="form-control" required></div>
-        <div class="mb-3"><label class="form-label">Telefone</label><input type="tel" name="telefone" class="form-control"></div>
-        <div class="mb-3"><label class="form-label">Email</label><input type="email" name="email" class="form-control"></div>
-        <div class="mb-3"><label class="form-label">Senha</label><input type="password" name="password" class="form-control" required></div>
-        
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-light" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i> Cancelar</button>
-        <button type="submit" class="btn btn-danger"><i class="bi bi-check-circle"></i> Criar</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Edit Victim Modal -->
-<div class="modal fade" id="editVitimaModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <form id="formEditarVitima" class="modal-content">
-      @csrf
-      @method('PUT')
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title text-white">
-                    <i class="bi bi-pencil-square text-white"></i> Editar Vítima
-                </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <div class="mb-3"><label class="form-label">Nome</label><input type="text" id="edit_vitima_name" name="name" class="form-control" required></div>
-        <div class="mb-3"><label class="form-label">Telefone</label><input type="text" id="edit_vitima_telefone" name="telefone" class="form-control"></div>
-        <div class="mb-3"><label class="form-label">Email</label><input type="email" id="edit_vitima_email" name="email" class="form-control"></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-light" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i> Cancelar</button>
-        <button type="submit" class="btn btn-danger"><i class="bi bi-check-circle"></i> Salvar</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Delete Confirm Modal (generic) -->
-<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header bg-dark text-white">
-        <h5 class="modal-title"><i class="bi bi-exclamation-triangle"></i> Confirmar Exclusão</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body text-center">
-        <p class="fs-5">Tem certeza que deseja excluir este item?</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-light" data-bs-dismiss="modal"><i class="bi bi-x-circle"></i> Cancelar</button>
-        <form id="deleteForm" method="POST"><input type="hidden" name="_method" value="DELETE">@csrf
-          <button type="submit" class="btn btn-danger">Excluir</button>
-        </form>
-      </div>
+<!-- Modal Adicionar Vítima -->
+<div class="modal fade" id="modalAdicionarVitima" tabindex="-1" aria-labelledby="modalAdicionarVitimaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="modalAdicionarVitimaLabel">Adicionar Nova Vítima</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formAdicionarVitima">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Nome Completo</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="telefone" class="form-label">Telefone</label>
+                        <input type="tel" class="form-control" id="telefone" name="telefone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Senha</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password_confirmation" class="form-label">Confirmar Senha</label>
+                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
+                    </div>
+                    <input type="hidden" name="role" value="vitima">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Salvar Vítima</button>
+                </div>
+            </form>
+        </div>
     </div>
-  </div>
+</div>
+
+<!-- Modal Editar Vítima -->
+<div class="modal fade" id="editVitimaModal" tabindex="-1" aria-labelledby="editVitimaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="editVitimaModalLabel">Editar Vítima</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formEditarVitima">
+                @csrf
+                @method('PUT') {{-- O jQuery AJAX usará isto para simular o método PUT/PATCH --}}
+                <div class="modal-body">
+                    <input type="hidden" id="edit_vitima_id" name="id">
+                    <div class="mb-3">
+                        <label for="name_edit" class="form-label">Nome Completo</label>
+                        <input type="text" class="form-control" id="name_edit" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="telefone_edit" class="form-label">Telefone</label>
+                        <input type="tel" class="form-control" id="telefone_edit" name="telefone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email_edit" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email_edit" name="email" required>
+                    </div>
+                    
+                    {{-- Campos de Senha (Opcional) --}}
+                    <p class="mt-4 text-muted">Preencha os campos de senha apenas se desejar alterá-la.</p>
+                    <div class="mb-3">
+                        <label for="password_edit" class="form-label">Nova Senha</label>
+                        <input type="password" class="form-control" id="password_edit" name="password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password_confirmation_edit" class="form-label">Confirmar Nova Senha</label>
+                        <input type="password" class="form-control" id="password_confirmation_edit" name="password_confirmation">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal de Confirmação de Exclusão (CRÍTICO para vitimas.js) -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Tem certeza de que deseja excluir esta vítima? Esta ação não pode ser desfeita.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteButton">Sim, Excluir</button>
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,4 +1,3 @@
-// resources/js/chat/services/EchoService.js
 export class EchoService {
     constructor() {
         this.echo = null;
@@ -8,9 +7,11 @@ export class EchoService {
 
     initialize() {
         try {
+            const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+            const hostUrl = `${protocol}://${window.location.hostname}:6001`;
             window.Echo = new Echo({
                 broadcaster: 'socket.io',
-                host: `${window.location.hostname}:6001`,
+                host: hostUrl,
                 transports: ['websocket'],
                 autoConnect: true,
                 auth: {
