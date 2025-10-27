@@ -1,4 +1,8 @@
-// Verifica se window.showToast e window.showLoading estão disponíveis (de 'notifications.js')
+//==============================================================================
+// consultas.js — VERSÃO FINAL (AJAX, Toast, Modal Confirmação)
+// ==============================================================================
+
+// Funções globais de fallback para Toast e Loading (Garante compatibilidade)
 if (typeof showToast !== 'function') {
     window.showToast = (message, type) => console.log(`[Toast ${type.toUpperCase()}]: ${message}`);
 }
@@ -6,184 +10,225 @@ if (typeof showLoading !== 'function') {
     window.showLoading = (show) => console.log(`[Loading]: ${show ? 'Ativado' : 'Desativado'}`);
 }
 
-$(document).ready(function() {
+/**
+ * Garante que todos os modais abertos ou semi-abertos sejam fechados.
+ * ESSENCIAL para prevenir o erro 'reading backdrop' ao abrir modais em sequência.
+ */
+function closeOtherModals() {
+    const openModals = document.querySelectorAll('.modal.show');
+    openModals.forEach(modalEl => {
+        const instance = bootstrap.Modal.getInstance(modalEl);
+        if (instance) {
+            instance.hide(); // Fecha via Bootstrap JS
+        }
+    });
+}
 
-    // --- VARIÁVEL GLOBAL PARA EXCLUSÃO ---
-    let consultaIdToDelete = null; 
-    
-    // Tempo de espera antes de recarregar a página após o sucesso
-    const reloadDelay = 1000; 
+$(document).ready(function () {
+    let consultaIdToDelete = null;
+    const reloadDelay = 1000;
+    const $btnAddConsulta = $('#btnAbrirAdicionarConsulta');
 
-    /**
-     * Auxiliar para extrair a primeira mensagem de erro de validação.
-     * @param {Object} xhr - Objeto XMLHttpRequest do erro.
-     * @param {string} defaultMessage - Mensagem padrão.
-     * @returns {string} Mensagem de erro mais específica ou a padrão.
-     */
+    // ========================================================
+    // FUNÇÃO AUXILIAR: Extrai erro de validação (422)
+    // ========================================================
     function getErrorMessage(xhr, defaultMessage) {
         if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
             const errorKeys = Object.keys(xhr.responseJSON.errors);
             if (errorKeys.length > 0) {
-                return xhr.responseJSON.errors[errorKeys[0]][0]; 
+                return xhr.responseJSON.errors[errorKeys[0]][0];
             }
         }
-        return xhr.responseJSON && xhr.responseJSON.message 
-            ? xhr.responseJSON.message 
-            : defaultMessage;
+        return xhr.responseJSON?.message || defaultMessage;
     }
 
 
-    // 1. CRIAÇÃO (STORE) - Substituindo o submit padrão
-    $('#formAdicionarConsulta').on('submit', function(e) {
+    // ========================================================
+    // 1. CRIAR CONSULTA (AJAX)
+    // ========================================================
+
+    // Abertura do modal de criação (usando ID)
+    if ($btnAddConsulta.length) {
+        $btnAddConsulta.on('click', function(e) {
+            e.preventDefault();
+            closeOtherModals(); 
+            $('#modalAdicionarConsulta').modal('show');
+            $('#formAdicionarConsulta')[0].reset();
+        });
+    }
+
+    // Submissão do formulário de criação
+    $('#modalAdicionarConsulta form').on('submit', function (e) {
         e.preventDefault();
         window.showLoading(true);
-        console.log('Tentativa de Criação de Consulta...'); 
 
         $.ajax({
-            url: $(this).attr('action'), // Pega a URL do action do form Blade
+            url: $(this).attr('action'),
             method: 'POST',
             data: $(this).serialize(),
-            success: function(res) {
-                console.log('Sucesso na Criação:', res); 
+            success: function (res) {
                 window.showToast('Consulta criada com sucesso.', 'success');
-                $('#modalAdicionarConsulta').modal('hide');
-                $('#formAdicionarConsulta')[0].reset(); 
-                
-                setTimeout(() => { 
-                    window.location.reload(); 
-                }, reloadDelay); 
+                $('#modalAdicionarConsulta').modal('hide'); 
+                setTimeout(() => window.location.reload(), reloadDelay);
             },
-            error: function(xhr) {
-                const message = getErrorMessage(xhr, 'Erro ao criar consulta.');
-                console.error('Erro na Criação:', xhr.responseJSON || xhr.responseText); 
-                window.showToast(message, 'error');
+            error: function (xhr) {
+                const msg = getErrorMessage(xhr, 'Erro ao criar consulta.');
+                window.showToast(msg, 'error');
             },
-            complete: function() {
+            complete: function () {
                 window.showLoading(false);
-            }
+            },
         });
     });
 
 
-    // 2. LEITURA (READ) e PREENCHIMENTO para Edição
-    // Esta função é chamada via onclick no Blade
-    window.editConsulta = function(id) {
+    // ========================================================
+    // 2. EDITAR CONSULTA (AJAX)
+    // ========================================================
+    window.editConsulta = function (id) {
         window.showLoading(true);
-        console.log('Carregando dados da Consulta ID:', id); 
-        
-        // Rota de busca para edição (Ex: /consulta/1/edit)
-        fetch(`/consulta/${id}/edit`) 
-          .then(r => {
-            if (!r.ok) throw new Error('Erro na resposta do servidor.');
-            return r.json();
-          })
-          .then(data => {
-            console.log('Dados da consulta carregados:', data.consulta); 
-            const consulta = data.consulta; 
-            
-            // Preenche os campos do modal de edição
-            $('#edit_descricao').val(consulta.descricao); 
-            $('#edit_bairro').val(consulta.bairro); 
-            $('#edit_provincia').val(consulta.provincia); 
-            $('#edit_data').val(consulta.data); 
-            $('#edit_medico_id').val(consulta.medico_id); 
-            
-            // Define a action do formulário (Ex: /consulta/1)
-            $('#editForm').attr('action', `/consulta/${id}`); 
-            $('#editModal').modal('show');
-            
-          }).catch(e => {
-            console.error('Erro ao carregar dados:', e); 
-            window.showToast('Erro ao carregar dados da consulta.', 'error');
-          })
-          .finally(() => {
-            window.showLoading(false);
-          });
-      };
-      
-    // 3. ATUALIZAÇÃO (UPDATE) - Substituindo o submit padrão
-    $('#editForm').on('submit', function(e) {
+
+        fetch(`/consultas/${id}/edit`)
+            .then((r) => {
+                if (!r.ok) throw new Error('Erro na resposta do servidor.');
+                return r.json();
+            })
+            .then((data) => {
+                const consulta = data.consulta;
+
+                // Preenchimento dos campos
+                $('#edit_descricao').val(consulta.descricao);
+                $('#edit_bairro').val(consulta.bairro);
+                $('#edit_provincia').val(consulta.provincia);
+                $('#edit_data').val(consulta.data);
+                $('#edit_medico_id').val(consulta.medico_id);
+
+                $('#editForm').attr('action', `/consultas/${id}`); // Rota corrigida
+
+                closeOtherModals(); 
+                
+               // Timeout para abertura
+               setTimeout(() => {
+                    window.showLoading(false);
+                    $('#editModal').modal('show');
+                }, 100); 
+            })
+            .catch((e) => {
+                window.showToast('Erro ao carregar dados da consulta.', 'error');
+                window.showLoading(false);
+            })
+    };
+
+    // Submissão do formulário de edição
+    $('#editForm').on('submit', function (e) {
         e.preventDefault();
         window.showLoading(true);
         const action = $(this).attr('action');
-        console.log('Tentativa de Atualização da Consulta ID:', action.split('/').pop());
 
         $.ajax({
             url: action,
-            method: 'POST', // Usamos POST com _method=PUT/PATCH
-            data: $(this).serialize(),
-            success: function(res) {
-                 console.log('Sucesso na Atualização:', res);
+            method: 'POST', // Envia como POST
+            data: $(this).serialize() + '&_method=PUT', // Simula o método PUT
+            success: function (res) {
                 window.showToast('Consulta atualizada com sucesso.', 'success');
-                $('#editModal').modal('hide');
-                
-                setTimeout(() => { 
-                    window.location.reload(); 
-                }, reloadDelay); 
+                $('#editModal').modal('hide'); 
+                setTimeout(() => window.location.reload(), reloadDelay);
             },
-            error: function(xhr) {
-                const message = getErrorMessage(xhr, 'Erro ao salvar alterações na consulta.');
-                console.error('Erro na Atualização:', xhr.responseJSON || xhr.responseText);
-                window.showToast(message, 'error');
+            error: function (xhr) {
+                const msg = getErrorMessage(xhr, 'Erro ao atualizar consulta.');
+                window.showToast(msg, 'error');
             },
-            complete: function() {
+            complete: function () {
                 window.showLoading(false);
-            }
+            },
         });
     });
 
 
-    // 4. EXCLUSÃO (DELETE)
-    
-    // Auxiliar para abrir o modal de confirmação e guardar o ID
-    window.confirmDeleteConsulta = function(id) {
-        consultaIdToDelete = id; // Guarda o ID globalmente
-        console.log('ID de Consulta marcado para exclusão:', id); 
-        
-        const modalElement = $('#confirmDeleteConsultaModal');
-        if (modalElement.length) {
-             modalElement.modal('show');
-        } else {
-             console.error("Elemento 'confirmDeleteConsultaModal' não encontrado no DOM.");
-        }
-    };
+    // ========================================================
+    // 3. EXCLUIR CONSULTA (AJAX com Modal de Confirmação)
+    // ========================================================
 
-    // Handler para o botão "Excluir" dentro do modal de confirmação
-    $('#confirmDeleteConsultaButton').on('click', function() {
+    // Abre o modal de confirmação
+    window.confirmDeleteConsulta = function (id) {
+        consultaIdToDelete = id;
+
+        closeOtherModals(); 
+        
+        // Timeout para abertura
+        setTimeout(() => {
+            $('#confirmDeleteConsultaModal').modal('show');
+        }, 100);
+    };
+    
+    // Executa a exclusão (clique no botão 'Sim, Excluir')
+    $('#confirmDeleteConsultaButton').on('click', function () {
         if (!consultaIdToDelete) return;
 
         window.showLoading(true);
-        console.log('Iniciando exclusão da Consulta ID:', consultaIdToDelete); 
 
         $.ajax({
-            // Rota de exclusão (Ex: /consulta/1)
-            url: `/consulta/${consultaIdToDelete}`, 
-            method: 'POST', 
-            data: { 
-                _method: 'DELETE', 
-                _token: $('meta[name="csrf-token"]').attr('content') 
+            url: `/consultas/${consultaIdToDelete}`, // Rota corrigida
+            method: 'POST', // Envia como POST
+            data: {
+                _method: 'DELETE', // Simula o método DELETE
+                _token: $('meta[name="csrf-token"]').attr('content'),
             },
-            success: function(res) {
-                console.log('Sucesso na Exclusão:', res); 
+            success: function (res) {
                 window.showToast('Consulta excluída com sucesso.', 'success');
-                
                 $('#confirmDeleteConsultaModal').modal('hide');
-
-                setTimeout(() => { 
-                    window.location.reload(); 
-                }, reloadDelay);
+                setTimeout(() => window.location.reload(), reloadDelay);
             },
-            error: function(xhr) {
-                const message = getErrorMessage(xhr, 'Erro ao excluir consulta.');
-                console.error('Erro na Exclusão:', xhr.responseJSON || xhr.responseText); 
-                window.showToast(message, 'error');
-                
+            error: function (xhr) {
+                const msg = getErrorMessage(xhr, 'Erro ao excluir consulta.');
+                window.showToast(msg, 'error');
                 $('#confirmDeleteConsultaModal').modal('hide');
             },
-            complete: function() {
+            complete: function () {
                 window.showLoading(false);
-                consultaIdToDelete = null; // Limpa o ID após a operação
-            }
+                consultaIdToDelete = null;
+            },
         });
     });
+
+    // ========================================================
+    // 4. LÓGICA DE VALIDAÇÃO DE DATA E LIMPEZA (MANTIDA)
+    // ========================================================
+    
+    // Limpar formulário ao fechar (apenas para garantir)
+    $('#editModal, #modalAdicionarConsulta').on('hidden.bs.modal', function () {
+        $(this).find('form')[0].reset();
+    });
+
+    // Validação de data (amanhã a 15 dias)
+    const inputData = document.getElementById('data');
+    const inputEditData = document.getElementById('edit_data');
+
+    if (inputData && inputEditData) {
+        const hoje = new Date();
+        const amanha = new Date(hoje);
+        amanha.setDate(hoje.getDate() + 1);
+
+        const limite = new Date(hoje);
+        limite.setDate(hoje.getDate() + 15);
+
+        const formatar = (data) => data.toISOString().split('T')[0];
+        
+        // Aplica limites para ambos os campos
+        inputData.min = formatar(amanha);
+        inputData.max = formatar(limite);
+        inputEditData.min = formatar(amanha);
+        inputEditData.max = formatar(limite);
+        
+        // Adiciona a validação em tempo real
+        function validarData(event) {
+            const selecionada = new Date(event.target.value);
+            if (selecionada < amanha || selecionada > limite) {
+                window.showToast('Por favor, selecione uma data entre amanhã e os próximos 15 dias.', 'error');
+                event.target.value = '';
+            }
+        }
+        inputData.addEventListener('input', validarData);
+        inputEditData.addEventListener('input', validarData);
+    }
 });

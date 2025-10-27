@@ -41,7 +41,7 @@
                                     <i class="bi bi-pencil-square"></i> Editar
                                 </button>
 
-                                 <button class="btn btn-outline-dark btn-sm" 
+                                 <button class="btn btn-outline-dark btn-sm"  
                                 onclick="confirmDelete({{ $vitima->id }})">
                                     <i class="bi bi-trash"></i> Excluir
                                 </button>

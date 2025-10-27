@@ -28,7 +28,7 @@ class ConsultaController extends Controller
                                      ->get();
                 break;
 
-            case 'doutor': // CORRIGIDO: era 'medico', mas no código usa 'doutor'
+            case 'doutor': 
                 $consultas = Consulta::with(['medico', 'criador'])
                                      ->where('medico_id', $user->id)
                                      ->get();
@@ -50,39 +50,50 @@ class ConsultaController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'descricao' => 'required|string|max:255',
-            'bairro' => 'required|string|max:255',
-            'provincia' => 'required|string|max:255',
-            'data' => 'required|date',
-            'medico_id' => 'required|exists:users,id',
-        ]);
-    
-        try {
-            if (!auth()->check()) {
-                return redirect()->back()->with('error', 'Você deve estar logado para criar uma consulta.');
-            }
+{
+    $validated = $request->validate([
+        'descricao' => 'required|string|max:255',
+        'bairro' => 'required|string|max:255',
+        'provincia' => 'required|string|max:255',
+        'data' => [
+            'required',
+            'date',
+            function ($attribute, $value, $fail) {
+                $data = \Carbon\Carbon::parse($value);
+                $amanha = now()->addDay();
+                $limite = now()->addDays(15);
 
-            $userId = auth()->user()->id;
+                if ($data->lessThan($amanha) || $data->greaterThan($limite)) {
+                    $fail('A data deve estar entre amanhã e os próximos 15 dias.');
+                }
+            },
+        ],
+        'medico_id' => 'required|exists:users,id',
+    ]);
 
-            Consulta::create([
-                'descricao' => $validated['descricao'],
-                'bairro' => $validated['bairro'],
-                'provincia' => $validated['provincia'],
-                'data' => $validated['data'],
-                'criada_por' => $userId,
-                'vitima_id' => $userId,
-                'medico_id' => $validated['medico_id'],
-                'status' => 'pendente',
-            ]);
-    
-            // CORRIGIDO: redirecionamento para a rota correta
-            return redirect()->route('consulta')->with('success', 'Consulta criada com sucesso!');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Falha ao criar consulta: ' . $e->getMessage());
+    try {
+        if (!auth()->check()) {
+            return redirect()->back()->with('error', 'Você deve estar logado para criar uma consulta.');
         }
+
+        $userId = auth()->user()->id;
+
+        Consulta::create([
+            'descricao' => $validated['descricao'],
+            'bairro' => $validated['bairro'],
+            'provincia' => $validated['provincia'],
+            'data' => $validated['data'],
+            'criada_por' => $userId,
+            'vitima_id' => $userId,
+            'medico_id' => $validated['medico_id'],
+            'status' => 'pendente',
+        ]);
+
+        return redirect()->route('consulta')->with('success', 'Consulta criada com sucesso!');
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Falha ao criar consulta: ' . $e->getMessage());
     }
+}
 
     public function criarConsulta()
     {
@@ -90,11 +101,16 @@ class ConsultaController extends Controller
         return view('consultas', compact('medicos'));
     }
 
-    public function edit($id)
-    {
-        $consulta = Consulta::findOrFail($id);
-        return response()->json($consulta);
+   public function edit($id)
+{
+    $consulta = Consulta::find($id);
+    if (!$consulta) {
+        return response()->json(['message' => 'Consulta não encontrada.'], 404);
     }
+
+    return response()->json(['consulta' => $consulta]);
+}
+
 
     public function update(Request $request, $id)
     {
@@ -105,7 +121,19 @@ class ConsultaController extends Controller
             'descricao' => 'required|string',
             'bairro' => 'required|string',
             'provincia' => 'required|string',
-            'data' => 'required|date'
+            'data' => [
+            'required',
+            'date',
+                function ($attribute, $value, $fail) {
+                    $data = \Carbon\Carbon::parse($value);
+                    $amanha = now()->addDay();
+                    $limite = now()->addDays(15);
+
+                if ($data->lessThan($amanha) || $data->greaterThan($limite)) {
+            $fail('A data deve estar entre amanhã e os próximos 15 dias.');
+                }
+            },
+        ],
         ]);
         
         $consulta->update($validated);

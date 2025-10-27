@@ -43,7 +43,8 @@
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
                 <h5 class="modal-title text-white" id="editVitimaModalLabel">Editar Vítima</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white"
+                 data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formEditarVitima">
                 @csrf
