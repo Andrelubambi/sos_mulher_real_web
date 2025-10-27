@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Editar Consulta
+ 
     window.editConsulta = function(id) {
         fetch(`/consultas/${id}/edit`)
             .then(response => response.json())
@@ -12,8 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('editForm').action = `/consultas/${id}`;
             });
     };
-
-    // Data mínima
+ 
     const hoje = new Date().toISOString().split('T')[0];
     document.getElementById('data').setAttribute('min', hoje);
     document.getElementById('edit_data').setAttribute('min', hoje);
@@ -28,8 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-
-    // Lógica de mensagens pendentes
+ 
     let mensagensPendentes = [];
     const userIdLogado = document.querySelector('meta[name="user-id"]').getAttribute('content');
 

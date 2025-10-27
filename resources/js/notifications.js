@@ -8,6 +8,4 @@ function showNotification(type, message) {
         alertDiv.fadeOut(500, () => alertDiv.remove());
     }, 3000);
 }
-
-// Exemplo de uso:
-// showNotification('success', 'Estagiário adicionado com sucesso!');
+ 

@@ -18,7 +18,7 @@
                     <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                         data-bs-target="#modalAdicionarMedico">
                         <i class="bi bi-plus-circle"></i> Adicionar Médico
-                    </button>
+                    </button> 
                 </div>
               
             <div id="tabela-medicos" class="table-responsive">
@@ -60,6 +60,7 @@
 @include('medicos.partials.modals')
 @endsection
 
-@push('scripts')
-<script src="{{ asset('js/medicos.js') }}"></script>
+@push('scripts') 
+{{-- Usando o @vite para injetar o seu script JS, que será compilado pelo Vite --}}
+@vite('resources/js/medicos.js')
 @endpush

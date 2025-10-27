@@ -2,7 +2,7 @@
 
 @section('title', 'Login')
 
-@section('content')
+@section('content') 
 
     <div class="login-wrap">
         <div class="login-box bg-white box-shadow border-radius-10">

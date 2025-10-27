@@ -115,8 +115,7 @@
 @section('scripts')
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function() {
-            // Script para Toggle Senha (mostrar/esconder)
+        $(document).ready(function() { 
             (function(){
                 var pwd = document.getElementById('password');
                 var btn = document.getElementById('togglePassword');
@@ -128,30 +127,106 @@
                     });
                 }
             })();
-
-            // Script para envio de formulário via AJAX
+ 
             $('#vitima-form').submit(function(event) {
                 event.preventDefault();
-                $('#response-message').html('');
-                var formData = $(this).serialize();
+                $('#response-message').html(''); 
+                
+                const form = $(this);
+                const formData = form.serialize();
+
+                console.log("--- INÍCIO DA SUBMISSÃO DO FORMULÁRIO ---");
+                console.log("URL de Destino:", form.attr('action'));
+                console.log("Dados Enviados:", formData);
+
+ 
+                if (typeof showLoading === 'function') {
+                    showLoading(true); 
+                    console.log("Ação: showLoading(true) chamado.");
+                } else {
+                    console.warn("Aviso: A função showLoading() não está definida globalmente!");
+                }
+                
                 $.ajax({
-                    url: $(this).attr('action'),
+                    url: form.attr('action'),
                     method: 'POST',
                     data: formData,
+                    
                     success: function(response) {
-                        if (response.success) {
-                            $('#response-message').html('<div class="alert alert-success">' +
-                                response.message + '</div>');
+                        console.log("Resposta AJAX Recebida (STATUS 200 - Sucesso/OK):", response);
+                        
+                        if (response.success) { 
+                            const successMessage = response.message || 'Conta criada com sucesso!';
+                            if (typeof showToast === 'function') {
+                                showToast(successMessage, 'success');
+                            } else {
+                                $('#response-message').html('<div class="alert alert-success">' + successMessage + '</div>');
+                            }
+                            
+                            console.log("Sucesso! Mensagem de Toast:", successMessage);
+                             
                             setTimeout(function() {
+                                console.log("Redirecionando para a página de login...");
                                 window.location.href = '{{ route('login.form') }}';
                             }, 3000);
+
+                        } else { 
+                            const errorMessage = response.message || 'Ocorreu um erro desconhecido após a submissão.';
+                            console.error("Erro Lógico (Status 200, mas sem sucesso):", errorMessage);
+
+                            if (typeof showToast === 'function') {
+                                showToast(errorMessage, 'error');
+                            } else {
+                                $('#response-message').html('<div class="alert alert-danger">' + errorMessage + '</div>');
+                            }
                         }
                     },
+                    
                     error: function(xhr) {
-                        var errors = xhr.responseJSON.message ||
-                            'Ocorreu um erro ao tentar criar a conta.';
-                        $('#response-message').html('<div class="alert alert-danger">' +
-                            errors + '</div>');
+                        console.log("Resposta AJAX Recebida (ERRO):", xhr);
+                        console.log("Status do Erro:", xhr.status);
+
+                        let errorMessage = 'Ocorreu um erro ao tentar criar a conta.';  
+                        
+                        if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+                        
+                            console.log("Tipo de Erro: 422 (Validação)");
+                            console.log("Detalhes dos Erros (Laravel):", xhr.responseJSON.errors);
+                            
+                            const errorKeys = Object.keys(xhr.responseJSON.errors);
+                            if (errorKeys.length > 0) {
+                       
+                                errorMessage = xhr.responseJSON.errors[errorKeys[0]][0]; 
+                            } else {
+                                errorMessage = xhr.responseJSON.message || errorMessage;
+                            }
+
+                        } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                      
+                            errorMessage = xhr.responseJSON.message;
+                            
+                        } else {
+                        
+                            errorMessage = 'Erro (' + xhr.status + '). Por favor, tente novamente.';
+                        }
+
+            
+                        console.log("Mensagem de Toast de Erro a ser exibida:", errorMessage);
+                        if (typeof showToast === 'function') {
+                            showToast(errorMessage, 'error');
+                        } else {
+                        
+                            $('#response-message').html('<div class="alert alert-danger">' + errorMessage + '</div>');
+                        }
+                    },
+                    
+                    complete: function() {
+        
+                        if (typeof showLoading === 'function') {
+                            showLoading(false);
+                            console.log("Ação: showLoading(false) chamado.");
+                        }
+                        console.log("--- FIM DA SUBMISSÃO DO FORMULÁRIO ---");
                     }
                 });
             });

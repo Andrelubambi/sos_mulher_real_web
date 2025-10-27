@@ -14,30 +14,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/core.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/icon-font.min.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ asset('src/plugins/datatables/css/dataTables.bootstrap4.min.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ asset('src/plugins/datatables/css/responsive.bootstrap4.min.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/icon-font.min.css') }}" /> 
     <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}" />
     <link rel="stylesheet" href="{{ asset('css/profile-photo.css') }}">
-<link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}" />
-
-
+    <link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}" />  
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-GBZ3SGGX85"></script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2973766580778258"
         crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <style> 
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7); /* Fundo escuro semitransparente */
+        display: none; /* Oculto por padrão */
+        justify-content: center;
+        align-items: center;
+        z-index: 9999; /* Garante que fique acima de tudo */
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .loading-overlay.active {
+        display: flex; /* Exibe quando ativo */
+        opacity: 1;
+    }
+
+    .loading-content {
+        text-align: center;
+        color: white;
+    }
+
+    /* Estilo do Spinner (exemplo básico) */
+    .spinner {
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top: 4px solid #fff;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 10px;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    /* Estilos para o Toast Container (usando classes Bootstrap/Custom) */
+    .toast-container {
+        z-index: 1090; /* Acima de modais Bootstrap */
+    }
+
+    /* Estilos para o Toast */
+    .custom-toast {
+        min-width: 250px;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 5px;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        margin-top: 10px;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s ease-in-out;
+    }
+
+    .custom-toast.show {
+        display: block;
+        opacity: 1;
+    }
+
+    .toast-success { background-color: #28a745; }  
+    .toast-error { background-color: #dc3545; } 
+</style>
    
  
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+   <!-- @vite(['resources/js/app.js']) -->
 </head>
 
-<body>
-  <div id="loadingOverlay" class="loading-overlay">
-    <div class="loading-content">
-        <div class="spinner"></div>
-        <p>Carregando, por favor aguarde...</p>
+<body> 
+    <div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3"></div>
+ 
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <p>Carregando, por favor aguarde...</p>
+        </div>
     </div>
-</div>
+
     <div class="header">
         <div class="header-left">
             <div class="menu-icon bi bi-list"></div>
@@ -76,17 +143,29 @@
             </div>
 <div class="user-info-dropdown">
     <div class="dropdown">
-        <a class="dropdown-toggle d-flex align-items-center" href="#" role="button" data-toggle="dropdown">
-            <img src="{{ Auth::user() && Auth::user()->profile_photo ? asset('storage/'.Auth::user()->profile_photo) : asset('vendors/images/user-default.png') }}"
-     alt="Foto de perfil"
-     class="profile-photo-small me-2">
-
-            @guest
-                <span class="user-name text-muted">Olá, visitante</span>
-            @else
-                <span class="user-name">Olá, seja bem-vindo {{ Auth::user()->name }}</span>
-            @endguest
-        </a>
+   <a class="dropdown-toggle d-flex align-items-center" href="#" role="button" data-toggle="dropdown">
+    {{-- 1. Check for authenticated user with a profile photo --}}
+    @if (Auth::check() && Auth::user()->profile_photo)
+        <img src="{{ Auth::user()->profile_photo }}"
+             alt="Foto de perfil"
+             class="profile-photo-small me-2">
+        <span class="user-name">Olá, seja bem-vindo {{ Auth::user()->name }}</span>
+        
+    {{-- 2. If no photo, or if the user is authenticated (but not a guest) --}}
+    @else
+        <i class="fa fa-user-circle"></i>  
+        
+        {{-- Check if the user is authenticated (using @auth for clarity) --}}
+        @auth
+            <span class="user-name">Olá, seja bem-vindo {{ Auth::user()->name }}</span>
+        @endauth
+        
+        {{-- Check if the user is a guest (not authenticated) --}}
+        @guest
+            <span class="user-name text-muted">Olá, visitante</span>
+        @endguest
+    @endif
+</a>
      <div class="dropdown-menu custom-user-dropdown">
 
             @auth
@@ -118,8 +197,73 @@
         @yield('content')
     </div>
     
-        <script src="{{ asset('vendors/scripts/core.js') }}"></script>
+    <script src="{{ asset('vendors/scripts/core.js') }}"></script>
     <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>
+    @vite(['resources/js/app.js'])
+    
+<script>
+  
+    function showLoading(show = true) {
+        const overlay = document.getElementById('loadingOverlay');
+        if (!overlay) return;
+        if (show) {
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        } else {
+            setTimeout(() => {
+                overlay.classList.remove('active');
+                document.body.style.overflow = ''; 
+            }, 300); 
+        }
+    }
+
+    
+    function showToast(message, type) { 
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+
+        const toastEl = document.createElement('div');
+        toastEl.classList.add('custom-toast', `toast-${type}`);
+        toastEl.setAttribute('role', 'alert');
+        toastEl.setAttribute('aria-live', 'assertive');
+        toastEl.setAttribute('aria-atomic', 'true');
+        toastEl.innerHTML = `
+            <div style="font-weight: bold;">${type === 'success' ? 'Sucesso! 🎉' : 'Erro! 🚨'}</div>
+            <div>${message}</div>
+        `;
+
+        container.appendChild(toastEl);
+
+        setTimeout(() => {
+            toastEl.classList.add('show');
+        }, 100);
+ 
+        setTimeout(() => {
+            toastEl.classList.remove('show');
+            setTimeout(() => {
+                toastEl.remove();
+            }, 300); 
+        }, 5000);
+    }
+     
+    document.addEventListener('DOMContentLoaded', () => { 
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', () => {
+                setTimeout(() => showLoading(true), 50); 
+            });
+        });
+ 
+        window.addEventListener('load', () => {
+             showLoading(false); 
+        }); 
+        if (document.readyState === 'loading') {
+            showLoading(true);
+        }
+    });
+ 
+</script>
+
+@stack('scripts')
     <script>
         let mensagensPendentes = [];
         let carregamentoConcluido = false;
@@ -134,30 +278,13 @@
                         atualizarAlerta();
                     }
                     carregamentoConcluido = true;
-                });
-            if (!window.echoRegistered) {
-                Echo.channel('mensagem_sos')
-                    .listen('.NovaMensagemSosEvent', (e) => {
-                        if (String(e.user_id) !== userIdLogado) {
-                            return;
-                        }
-                        const mensagem = {
-                            id: e.id,
-                            conteudo: e.conteudo,
-                            data: e.data
-                        };
-                        mensagensPendentes.unshift(mensagem);
-                        atualizarAlerta();
-                    });
-                window.echoRegistered = true;
-            }
+                }); 
             document.getElementById('mensagemAlerta').addEventListener('click', () => {
                 mostrarProximaMensagem();
-            });
+            }); 
             document.getElementById('fecharModal').addEventListener('click', () => {
                 const mensagemAtual = mensagensPendentes.shift();
                 document.getElementById('mensagemModal').classList.add('hidden');
-
                 fetch('/mensagem_lida', {
                     method: 'POST',
                     headers: {
@@ -229,36 +356,6 @@
         });
     </script>
 
-
-<script>
-function showLoading(show = true) {
-    const overlay = document.getElementById('loadingOverlay');
-    if (!overlay) return;
-    if (show) {
-        overlay.classList.add('active');
-    } else {
-        overlay.classList.remove('active');
-    }
-}
-
-// Exibir enquanto a página carrega
-document.addEventListener('readystatechange', () => {
-    if (document.readyState === 'loading') {
-        showLoading(true);
-    }
-});
-
-window.addEventListener('load', () => {
-    setTimeout(() => showLoading(false), 600);
-});
-
-// Mostrar enquanto envia formulários
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('form').forEach(form => {
-        form.addEventListener('submit', () => showLoading(true));
-    });
-});
-</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

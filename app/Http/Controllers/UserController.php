@@ -15,33 +15,31 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::findOrFail($id);
-        return response()->json($user);           
+        return response()->json([ 
+            'success' => true,
+            'user' => $user // Agora retorna o objeto User
+        ], 200); // Status 200 OK
     }
 
-    public function update(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
+     
+// No UserController.php
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-             'email' => "required|email|unique:users,email,$id", 
-                    'telefone' => "nullable|regex:/^(\+?[1-9]{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{5,15}$/",
-        ]);
-
-        $user->update($validated);
-
-        return redirect()->back()->with('success', 'Dados atualizados com sucesso!');
-    }
-
-    public function destroy($id)
+ public function destroy($id, Request $request)
     {
         $user = User::findOrFail($id);
         $user->delete();
 
-        return redirect()->back()->with('success', 'Usuário deletado com sucesso!');
+        $successMessage = 'Utilizador removido com sucesso!';
+        
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $successMessage
+            ], 200); // Status 200 OK
+        }
+    
+        return redirect()->route('users.doutor')->with('success', $successMessage); 
     }
-
-
     // ==================  Doutores  ============
 
 
@@ -62,31 +60,49 @@ class UserController extends Controller
         return view('medicos.index', compact('users','grupos'));
     }
 
-    public function storeDoutor(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-              'email' => 'required|email|unique:users,email', // ✅ Mudado para email
-            'telefone' => 'required|unique:users,telefone|regex:/^(\+?[1-9]{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{5,15}$/',
-            'password' => 'required|string|min:6',
+  public function storeDoutor(Request $request)
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email',
+        'telefone' => 'required|unique:users,telefone|regex:/^(\+?[1-9]{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{5,15}$/',
+        'password' => 'required|string|min:6',
+    ]);
+
+    $successMessage = 'Doutor adicionado com sucesso!';
+    $failMessage = 'Falha ao cadastrar doutor';
+
+    try {
+        User::create([  
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'telefone' => $validated['telefone'],
+            'password' => Hash::make($validated['password']),
+            'role' => 'doutor',
         ]);
 
-        try {
-            $user = User::create([  
-                'name' => $validated['name'],
-                      'email' => $validated['email'], // ✅ Adicionado
-                'telefone' => $validated['telefone'],
-                'password' => Hash::make($validated['password']),
-                'role' => 'doutor',
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $successMessage
             ]);
-
-            return redirect()->route('users.doutor')->with('success', 'Doutor adicionado com sucesso!');
-
-        } catch (\Exception $e) {
-            return redirect()->route('users.doutor')->with('error', 'Falha ao cadastrar doutor: ' . $e->getMessage());
         }
-    }
+        
+        return redirect()->route('users.doutor')->with('success', $successMessage);
 
+    } catch (\Exception $e) {
+        $failMessage .= ': ' . $e->getMessage();
+        
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => $failMessage
+            ], 500); // Erro de servidor ou BD
+        }
+        
+        return redirect()->route('users.doutor')->with('error', $failMessage);
+    }
+}
 
 
     // ==========================  Estagiário  =============================== //
@@ -98,74 +114,143 @@ class UserController extends Controller
         return view('estagiarios.index', compact('users','grupos'));
     }
 
-    public function storeEstagiario(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email', 
-            'telefone' => 'required|unique:users,telefone|regex:/^(\+?[1-9]{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{5,15}$/',
-            'password' => 'required|string|min:6',
+   public function storeEstagiario(Request $request)
+{
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email', 
+        'telefone' => 'required|unique:users,telefone|regex:/^(\+?[1-9]{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{5,15}$/',
+        'password' => 'required|string|min:6',
+    ]);
+
+    $successMessage = 'Estagiário adicionado com sucesso!';
+    $failMessage = 'Falha ao cadastrar estagiário';
+
+    try {
+        User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'telefone' => $validated['telefone'],
+            'password' => Hash::make($validated['password']),
+            'role' => 'estagiario',
         ]);
 
-        try {
-            User::create([
-                'name' => $validated['name'],
-                'email' => $validated['email'], // ✅ Adicionado
-                'telefone' => $validated['telefone'],
-                'password' => Hash::make($validated['password']),
-                'role' => 'estagiario',
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $successMessage
             ]);
-
-            return redirect()->route('users.estagiario')->with('success', 'Estagiário adicionado com sucesso!');
-
-        } catch (\Exception $e) {
-            return redirect()->route('users.estagiario')->with('error', 'Falha ao cadastrar estagiário: ' . $e->getMessage());
         }
+
+        return redirect()->route('users.estagiario')->with('success', $successMessage);
+
+    } catch (\Exception $e) {
+        $failMessage .= ': ' . $e->getMessage();
+        
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => $failMessage
+            ], 500);
+        }
+
+        return redirect()->route('users.estagiario')->with('error', $failMessage);
     }
-  
+}
 
 
     // =================================  Vítima  ============================================= //
 
-    public function createVitima()
-    {
-        $grupos = Grupo::all();
-        $users = User::where('role', 'vitima')->get();
-        return view('vitima', compact('users','grupos'));   
-    }
+   public function indexVitima() 
+{ 
+    $users = User::where('role', 'vitima')->get(); 
+     
+
+    return view('vitimas.index', compact('users', 'grupos')); 
+}
 
 
-    public function storeVitima(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-                    'email' => 'required|email|unique:users,email', // ✅ Mudado para email
-            'telefone' => 'required|unique:users,telefone|regex:/^(\+?[1-9]{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{5,15}$/',
-            'password' => 'required|string|min:6',
-        ]);
+// No UserController.php
+// No UserController.php
 
+public function storeVitima(Request $request)
+{
+    // 1. Validação
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email',
+        'telefone' => 'required|unique:users,telefone',
+        'password' => 'required|string|min:6',
+        'role' => 'required|in:vitima',
+    ]);
+
+    // 2. Verifica se a requisição é AJAX (vindo do seu jQuery)
+    if ($request->ajax() || $request->wantsJson()) {
         try {
-            $user = User::create([
+            User::create([
                 'name' => $validated['name'],
-                       'email' => $validated['email'], // ✅ Adicionado
+                'email' => $validated['email'],
                 'telefone' => $validated['telefone'],
                 'password' => Hash::make($validated['password']),
                 'role' => 'vitima',
             ]);
 
+            // Sucesso - Retorna JSON
             return response()->json([
                 'success' => true,
-                'message' => 'Utilizador criado com sucesso!',
-                'user' => $user
-            ], 201);
+                'message' => 'Conta criada com sucesso! Redirecionando para o Login.'
+            ], 200);
 
         } catch (\Exception $e) {
+            // Erro de BD, etc. - Retorna JSON com status 500
             return response()->json([
-                'success' => false, 
-                'message' => 'Falha ao criar Utilizador: ' . $e->getMessage()
-            ], 500);
+                'success' => false,
+                'message' => 'Falha ao criar conta: ' . $e->getMessage()
+            ], 500); // 500 Internal Server Error
         }
     }
+    
+    // Fallback: Se não for AJAX, faz o redirecionamento tradicional (menos comum para esta rota)
+    try {
+         User::create([
+             'name' => $validated['name'],
+             'email' => $validated['email'],
+             'telefone' => $validated['telefone'],
+             'password' => Hash::make($validated['password']),
+             'role' => 'vitima',
+         ]);
+        return redirect()->route('login.form')->with('success', 'Conta criada com sucesso! Faça login.');
+    } catch (\Exception $e) {
+        return redirect()->back()->withInput()->with('error', 'Falha ao criar conta: ' . $e->getMessage());
+    }
+}
+
+public function update(Request $request, $id)
+{
+    $user = User::findOrFail($id);
+
+    // Validação
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => "required|email|unique:users,email,{$id}",
+        'telefone' => 'nullable|string|max:20',
+    ]);
+
+    $user->update($validated);
+
+    $successMessage = 'Vítima atualizada com sucesso!';
+
+    if ($request->wantsJson() || $request->ajax()) {
+        return response()->json([
+            'success' => true,
+            'message' => $successMessage
+        ]);
+    }
+
+    // Fallback
+    // OBS: Rota 'vitimas.vitimas' parece incorreta
+    return redirect()->route('users.vitima')->with('success', $successMessage);
+}
 
 
     // ==================  Minhas Consultas  ============
@@ -185,26 +270,39 @@ class UserController extends Controller
      * Atualiza a senha do usuário (autenticado ou alvo específico)
      */
     public function updatePassword(Request $request, $id)
-    {
-        $user = User::findOrFail($id);
+{
+    $user = User::findOrFail($id);
 
-        $validated = $request->validate([
-            'current_password' => 'nullable|string',
-            'password' => 'required|string|min:6|confirmed',
-        ]);
+    $validated = $request->validate([
+        'current_password' => 'nullable|string',
+        'password' => 'required|string|min:6|confirmed',
+    ]);
 
-        if (!empty($validated['current_password'])) {
-            if (!Hash::check($validated['current_password'], $user->password)) {
-                return back()->with('error', 'Senha atual incorreta.');
-            }
+    $successMessage = 'Senha alterada com sucesso!';
+    
+    if (!empty($validated['current_password']) && !Hash::check($validated['current_password'], $user->password)) {
+        $errorMessage = 'Senha atual incorreta.';
+        
+        if ($request->wantsJson() || $request->ajax()) {
+             return response()->json([
+                'success' => false,
+                'message' => $errorMessage
+            ], 400); // Bad Request
         }
-
-        $user->password = Hash::make($validated['password']);
-        $user->save();
-
-        return back()->with('success', 'Senha alterada com sucesso!');
+        return back()->with('error', $errorMessage);
     }
 
+    $user->password = Hash::make($validated['password']);
+    $user->save();
+
+    if ($request->wantsJson() || $request->ajax()) {
+         return response()->json([
+            'success' => true,
+            'message' => $successMessage
+        ]);
+    }
+    return back()->with('success', $successMessage);
+}
 
  public function showProfile()
 {
@@ -223,14 +321,35 @@ public function updateProfile(Request $request)
         'photo' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
     ]);
 
-    if ($request->hasFile('photo')) {
-        $path = $request->file('photo')->store('profile_photos', 'public');
-        $user->photo = $path;
+    $successMessage = 'Perfil atualizado com sucesso!';
+    $failMessage = 'Falha ao atualizar perfil.';
+
+    try {
+        if ($request->hasFile('photo')) {
+            $path = $request->file('photo')->store('profile_photos', 'public');
+            $user->photo = $path;
+        }
+
+        $user->update($validated);
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $successMessage
+            ]);
+        }
+        return back()->with('success', $successMessage);
+    
+    } catch (\Exception $e) {
+        $failMessage .= ': ' . $e->getMessage();
+        
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => $failMessage
+            ], 500);
+        }
+        return back()->with('error', $failMessage);
     }
-
-    $user->update($validated);
-
-    return back()->with('success', 'Perfil atualizado com sucesso!');
 }
-
 }
