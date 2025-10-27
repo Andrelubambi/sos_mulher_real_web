@@ -66,7 +66,7 @@
             @endif
 
             <!-- Assistentes (apenas admin) -->
-            @if(auth()->user()->role === 'admin')
+         <!--   @if(auth()->user()->role === 'admin')
             <li class="dropdown">
                 <a href="javascript:;" class="dropdown-toggle">
                     <span class="micon bi bi-person-workspace"></span>
@@ -76,7 +76,7 @@
                     <li><a href="{{ route('users.estagiario') }}">Assistentes</a></li>
                 </ul>
             </li> 
-            @endif
+            @endif -->
 
             <!-- Vítimas (admin e médicos) -->
             @if(in_array(auth()->user()->role, ['admin', 'doutor']))

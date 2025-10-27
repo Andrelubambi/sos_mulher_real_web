@@ -42,7 +42,7 @@
                                 </button>
 
                                  <button class="btn btn-outline-dark btn-sm" 
-                                onclick="confirmDelete('{{ route('users.destroy', $vitima->id) }}')">
+                                onclick="confirmDelete({{ $vitima->id }})">
                                     <i class="bi bi-trash"></i> Excluir
                                 </button>
                             </div>
@@ -63,3 +63,4 @@
 @vite('resources/js/vitimas.js')
 @vite('resources/js/notifications.js') 
 @endpush
+  

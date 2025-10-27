@@ -218,7 +218,7 @@ public function storeVitima(Request $request)
          User::create([
              'name' => $validated['name'],
              'email' => $validated['email'],
-             'telefone' => $validated['telefone'],
+             'telefone' => $validated['telefone'], 
              'password' => Hash::make($validated['password']),
              'role' => 'vitima',
          ]);

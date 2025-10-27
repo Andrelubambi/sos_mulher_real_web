@@ -56,8 +56,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/estagiario', [UserController::class, 'createEstagiario'])->name('users.estagiario');
     Route::post('/users/estagiario/store', [UserController::class, 'storeEstagiario'])->name('users.estagiario.store');
     Route::get('/gerir-vitimas', [UserController::class, 'indexVitima'])->name('users.vitima');
-    Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
-    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update'); 
 });
 
     // Consultas

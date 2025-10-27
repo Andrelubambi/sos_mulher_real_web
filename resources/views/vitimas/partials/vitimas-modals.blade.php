@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="modalAdicionarVitimaLabel">Adicionar Nova Vítima</h5>
+                <h5 class="modal-title text-white" id="modalAdicionarVitimaLabel">Adicionar Nova Vítima</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formAdicionarVitima">
@@ -25,10 +25,7 @@
                         <label for="password" class="form-label">Senha</label>
                         <input type="password" class="form-control" id="password" name="password" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="password_confirmation" class="form-label">Confirmar Senha</label>
-                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
-                    </div>
+                    
                     <input type="hidden" name="role" value="vitima">
                 </div>
                 <div class="modal-footer">
@@ -45,7 +42,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-danger text-white">
-                <h5 class="modal-title" id="editVitimaModalLabel">Editar Vítima</h5>
+                <h5 class="modal-title text-white" id="editVitimaModalLabel">Editar Vítima</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="formEditarVitima">
@@ -65,17 +62,8 @@
                         <label for="email_edit" class="form-label">Email</label>
                         <input type="email" class="form-control" id="email_edit" name="email" required>
                     </div>
-                    
-                    {{-- Campos de Senha (Opcional) --}}
-                    <p class="mt-4 text-muted">Preencha os campos de senha apenas se desejar alterá-la.</p>
-                    <div class="mb-3">
-                        <label for="password_edit" class="form-label">Nova Senha</label>
-                        <input type="password" class="form-control" id="password_edit" name="password">
-                    </div>
-                    <div class="mb-3">
-                        <label for="password_confirmation_edit" class="form-label">Confirmar Nova Senha</label>
-                        <input type="password" class="form-control" id="password_confirmation_edit" name="password_confirmation">
-                    </div>
+                   
+                     
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
@@ -91,14 +79,14 @@
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmar Exclusão</h5>
+            <div class="modal-header bg-danger text-dark">
+                <h5 class="modal-title text-white" id="confirmDeleteModalLabel">Confirmar Exclusão</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 Tem certeza de que deseja excluir esta vítima? Esta ação não pode ser desfeita.
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer"> 
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <button type="button" class="btn btn-danger" id="confirmDeleteButton">Sim, Excluir</button>
             </div>

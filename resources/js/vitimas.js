@@ -51,7 +51,7 @@ $(document).ready(function() {
         console.log('Tentativa de Criação de Vítima...', $(this).serialize()); 
 
         $.ajax({
-            url: '/users', 
+            url: '/users/vitima/store',
             method: 'POST',
             data: $(this).serialize(),
             success: function(res) {
@@ -143,25 +143,17 @@ $(document).ready(function() {
         });
     });
 
-
-    // 4. EXCLUSÃO (DELETE)
-    
-    // Auxiliar para abrir o modal de confirmação e guardar o ID
-    window.confirmDeleteAjax = function(id) {
-        victimIdToDelete = id; // Guarda o ID globalmente
-        console.log('ID de Vítima marcado para exclusão:', id); 
-        
-        // CORREÇÃO: Usamos o método jQuery do Bootstrap para maior robustez, 
-        // evitando o erro 'backdrop' que ocorre na inicialização nativa em alguns casos.
+ 
+    window.confirmDelete = function(id) {
+        victimIdToDelete = id;  
+        console.log('ID de Vítima marcado para exclusão:', id);  
         const modalElement = $('#confirmDeleteModal');
         if (modalElement.length) {
              modalElement.modal('show');
         } else {
              console.error("Elemento 'confirmDeleteModal' não encontrado no DOM.");
         }
-    };
-
-    // Handler para o botão "Excluir" dentro do modal de confirmação
+    }; 
     $('#confirmDeleteButton').on('click', function() {
         if (!victimIdToDelete) return;
 
@@ -178,11 +170,10 @@ $(document).ready(function() {
             success: function(res) {
                 console.log('Sucesso na Exclusão:', res); 
                 window.showToast('Vítima excluída com sucesso.', 'success');
-                
-                // Fecha o modal (usando jQuery)
+                 
                 $('#confirmDeleteModal').modal('hide');
 
-                // Recarrega a página
+ 
                 setTimeout(() => { 
                     window.location.reload(); 
                 }, reloadDelay);
@@ -191,14 +182,14 @@ $(document).ready(function() {
                 const message = getErrorMessage(xhr, 'Erro ao excluir vítima.');
                 console.error('Erro na Exclusão:', xhr.responseJSON || xhr.responseText); 
                 window.showToast(message, 'error');
-                
-                // Fecha o modal em caso de erro (usando jQuery)
+                 
                 $('#confirmDeleteModal').modal('hide');
             },
             complete: function() {
                 window.showLoading(false);
-                victimIdToDelete = null; // Limpa o ID após a operação
+                victimIdToDelete = null;  
             }
         });
     });
 });
+ 
