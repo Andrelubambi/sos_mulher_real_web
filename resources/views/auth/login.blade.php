@@ -85,11 +85,7 @@
     </a>
 </p>
 
-               <!-- <p class="text-center">Ainda não tem uma conta? <a href="{{ route('register') }}" class="text-danger">Crie agora</a></p>
-                <p class="text-center">
-                    Quer ser nosso parceiro?  
-                    <a href="{{ route('parceria.form') }}" class="text-danger font-weight-bold">Clique aqui</a>
-                </p> -->
+               
             </form>
         </div>
     </div>

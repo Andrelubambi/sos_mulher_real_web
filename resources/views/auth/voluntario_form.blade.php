@@ -173,7 +173,7 @@
                                 <i class="icon-copy dw dw-user1"></i>
                             </span>
                         </div>
-                        <input type="text" name="nome" class="form-control" placeholder="Nome completo" required>
+                        <input type="text" name="nome_completo" class="form-control" placeholder="Nome completo" required>
                     </div>
                 </div>
 
@@ -223,7 +223,7 @@
                                 <i class="icon-copy dw dw-map"></i>
                             </span>
                         </div>
-                        <input type="text" name="localidade" class="form-control" placeholder="Província / Bairro" required>
+                        <input type="text" name="provincia" class="form-control" placeholder="Província / Bairro" required>
                     </div>
                 </div>
 
@@ -259,8 +259,8 @@
             <div class="form-group">
                 <label class="font-weight-bold">Tens alguma experiência prévia em voluntariado?</label>
                 <div>
-                    <label class="mr-3"><input type="radio" name="experiencia_voluntariado" value="sim" required> Sim</label>
-                    <label><input type="radio" name="experiencia_voluntariado" value="nao" required> Não</label>
+                    <label class="mr-3"><input type="radio" name="experiencia_previa" value="sim" required> Sim</label>
+                    <label><input type="radio" name="experiencia_previa" value="nao" required> Não</label>
                 </div>
             </div>
 
@@ -274,42 +274,42 @@
                 <div class="partnership-types">
                     
                     <div class="partnership-type-item" onclick="toggleCheckboxSelection(this)">
-                        <input type="checkbox" id="apoio_emocional" name="areas[]" value="Apoio emocional e escuta ativa">
+                        <input type="checkbox" id="apoio_emocional" name="areas_colaborar[]" value="Apoio emocional e escuta ativa">
                         <label for="apoio_emocional">
                             <i class="fas fa-hand-holding-heart"></i> Apoio emocional
                         </label>
                     </div>
                     
                     <div class="partnership-type-item" onclick="toggleCheckboxSelection(this)">
-                        <input type="checkbox" id="comunicacao" name="areas[]" value="Comunicação e sensibilização">
+                        <input type="checkbox" id="comunicacao" name="areas_colaborar[]" value="Comunicação e sensibilização">
                         <label for="comunicacao">
                             <i class="fas fa-bullhorn"></i> Comunicação
                         </label>
                     </div>
                     
                     <div class="partnership-type-item" onclick="toggleCheckboxSelection(this)">
-                        <input type="checkbox" id="eventos" name="areas[]" value="Eventos e campanhas">
+                        <input type="checkbox" id="eventos" name="areas_colaborar[]" value="Eventos e campanhas">
                         <label for="eventos">
                             <i class="fas fa-calendar-alt"></i> Eventos
                         </label>
                     </div>
                     
                     <div class="partnership-type-item" onclick="toggleCheckboxSelection(this)">
-                        <input type="checkbox" id="logistica" name="areas[]" value="Apoio logístico">
+                        <input type="checkbox" id="logistica" name="areas_colaborar[]" value="Apoio logístico">
                         <label for="logistica">
                             <i class="fas fa-truck"></i> Logística
                         </label>
                     </div>
                     
                     <div class="partnership-type-item" onclick="toggleCheckboxSelection(this)">
-                        <input type="checkbox" id="captacao" name="areas[]" value="Captação de recursos / parcerias">
+                        <input type="checkbox" id="captacao" name="areas_colaborar[]" value="Captação de recursos / parcerias">
                         <label for="captacao">
                             <i class="fas fa-hand-holding-usd"></i> Captação de recursos
                         </label>
                     </div>
                     
                     <div class="partnership-type-item" onclick="toggleCheckboxSelection(this)">
-                        <input type="checkbox" id="outras_areas" name="areas[]" value="Outras">
+                        <input type="checkbox" id="outras_areas_colaborar" name="areas_colaborar[]" value="Outras">
                         <label for="outras_areas">
                             <i class="fas fa-ellipsis-h"></i> Outras
                         </label>
@@ -340,7 +340,7 @@
         <a href="{{ route('login') }}" class="text-danger font-weight-bold">
             <i class="fa fa-arrow-left"></i> Voltar ao login
         </a>
-    </div>
+    </div> 
     </div>
 </div>
 @endsection

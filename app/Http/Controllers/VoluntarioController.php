@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Resend;
 use Illuminate\Support\Facades\Log;
-use App\Http\Requests\StoreUtilizadorRequest;
+use App\Http\Requests\StoreVoluntarioRequest;
 
 
 class VoluntarioController extends Controller
@@ -14,28 +14,13 @@ class VoluntarioController extends Controller
     {
         return view('auth.voluntario_form');
     }
+ 
 
-
-     public function StoreUtilizadorRequest(Request $request)
+     public function store(StoreVoluntarioRequest $request)
     {
-          $validated = $request->validate([
-            // Dados Pessoais
-            'nome_completo' => 'required|string|max:255',
-            'data_nascimento' => 'required|date',
-            'telefone' => 'required|string|max:30',
-            'email' => 'required|email|max:255',
-            'provincia' => 'required|string|max:255',
-            'profissao' => 'required|string|max:255',
-            'disponibilidade' => 'required|string|max:255',
-
-            // Motivação e Propósito
-            'motivacao' => 'required|string',
-            'experiencia_previa' => 'required|in:sim,nao',
-            'descricao_experiencia' => 'nullable|string',
-            'areas_colaborar' => 'required|array',
-            'areas_colaborar.*' => 'string',
-            'outras_areas' => 'nullable|string|max:255',
-        ]);
+        // 🚨 CORRIGIDO: Removida a validação redundante. O StoreVoluntarioRequest já lida com isso.
+        // Apenas chamamos $request->validated() para obter o array de dados seguros.
+        $validated = $request->validated();
 
         // Log dos dados recebidos
          Log::info('📥 Formulário de voluntariado recebido:', $validated);

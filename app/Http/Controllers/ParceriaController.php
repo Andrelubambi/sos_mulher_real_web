@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreParceriaRequest;
 use Resend;
 use Illuminate\Support\Facades\Log;
-use App\Http\Requests\StoreUtilizadorRequest;
+use App\Http\Requests\StoreParceriaRequest;
 
 class ParceriaController extends Controller
 {
@@ -14,7 +15,7 @@ class ParceriaController extends Controller
         return view('auth.parceria_form');
     }
 
-    public function store(StoreUtilizadorRequest $request)
+    public function store(StoreParceriaRequest $request)
     {
         $validated = $request->validate([
             'instituicao' => 'required|string|max:255',
@@ -46,7 +47,7 @@ class ParceriaController extends Controller
         // Email diferente para dev/prod
         $toEmail = app()->environment('production')  
             ? 'parcerias@sosmulherreal.com'
-            : 'andrelubambi36@gmail.com';
+            : 'andrelubambi36@gmail.com'; 
 
         // Use a API Resend diretamente - USA CONFIG DO .ENV
         $resend = Resend::client(config('resend.api_key'));
