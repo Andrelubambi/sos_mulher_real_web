@@ -10,7 +10,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Nome da Vítima</th>
-                        <th>Médico</th>
+                        <th>Médico</th> 
                         <th>Data</th>
                         <th>Status</th>
                     </tr>

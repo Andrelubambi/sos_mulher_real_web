@@ -33,5 +33,5 @@ class Consulta extends Model
       public function vitima()
     {
         return $this->belongsTo(User::class, 'vitima_id');
-    }
+    }  
 }

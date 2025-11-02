@@ -119,7 +119,7 @@
                     <thead class="thead-dark">
                         <tr>
                             <th>Nome</th>
-                            <th>ID</th>
+                            <!--<th>ID</th>-->
                             <th>Telefone</th>
                             <th>Email</th>
                         </tr>
@@ -128,7 +128,7 @@
                         @foreach ($vitimas as $vitima)
                             <tr>
                                 <td>{{ $vitima->name }}</td>
-                                <td>{{ $vitima->id }}</td>
+                            <!--    <td>{{ $vitima->id }}</td>-->
                                 <td>{{ $vitima->telefone ?? 'N/A' }}</td>
                                 <td>{{ $vitima->email ?? 'N/A' }}</td>
                             </tr>
@@ -146,8 +146,8 @@
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead class="thead-dark">
-                    <tr>
-                        <th>ID</th>
+                    <tr> 
+                      <!--  <th>ID</th>-->
                         <th>Nome da Vítima</th>
                         <th>Médico</th>
                         <th>Data</th>
@@ -157,8 +157,8 @@
                 <tbody id="consultaTableBody">
                     @foreach ($consultasMarcadas as $consulta)
                         <tr>
-                            <td>{{ $consulta->id }}</td>
-                            <td>{{ $consulta->vitima->nome ?? 'N/A' }}</td>
+                         <!--   <td>{{ $consulta->id }}</td> -->
+                            <td>{{ $consulta->criador->name ?? 'N/A' }}</td>
                             <td>{{ $consulta->medico->name ?? 'N/A' }}</td>
                             <td>{{ $consulta->created_at->format('d/m/Y') }}</td>
                             <td>{{ $consulta->status ?? 'Marcada' }}</td>

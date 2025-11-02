@@ -383,7 +383,7 @@
                         <div class="table-responsive">
                             <table class="table table-bordered">
                                 <thead class="thead-dark">
-                                    <tr>
+                                    <tr> 
                                         <th>ID</th>
                                         <th>Nome da Vítima</th>
                                         <th>Médico</th>

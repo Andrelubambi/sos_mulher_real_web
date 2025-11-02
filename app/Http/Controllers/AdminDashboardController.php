@@ -26,8 +26,7 @@ class AdminDashboardController extends Controller
         $estagiarios = User::where('role', 'estagiario')->get();
         $doutores = User::where('role', 'doutor')->get();
         $vitimas = Vitima::all();
-        $consultasMarcadas = Consulta::with(['medico', 'criador'])->get();
-
+        $consultasMarcadas = Consulta::with(['medico', 'vitima','criador'])->get();
         // Agrupamentos ou outras estatísticas
         $consultasPorDoutor = Consulta::select('medico_id')
             ->with('medico') 

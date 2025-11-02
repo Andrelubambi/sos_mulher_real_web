@@ -63,7 +63,7 @@ class User extends Authenticatable
         return $this->hasMany(Consulta::class, 'vitima_id');
     } 
 
-  public function grupos()
+  public function grupos()  
     {
         return $this->belongsToMany(Grupo::class, 'grupo_user', 'user_id', 'grupo_id');
     }
