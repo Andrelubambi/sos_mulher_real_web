@@ -1,0 +1,57 @@
+name: 🚀 Build & Deploy Laravel Docker
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/sosmulherreal
+
+jobs:
+  build:
+    name: 🏗️ Build & Push Docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📦 Clonar repositório
+        uses: actions/checkout@v4
+
+      - name: 🔐 Login no Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: 🏗️ Construir imagem Docker
+        run: |
+          docker build -t $IMAGE_NAME:latest .
+
+      - name: 🚀 Enviar imagem ao Docker Hub
+        run: |
+          docker push $IMAGE_NAME:latest
+
+  deploy:
+    name: 🌍 Deploy no servidor remoto
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🔐 Configurar acesso SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: 🚀 Atualizar containers no servidor
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            set -e
+            cd /var/www/sosmulherreal || exit 1
+
+            echo "🔄 Atualizando imagem..."
+            docker compose pull
+            docker compose up -d --remove-orphans
+
+            echo "🧹 Limpando imagens antigas..."
+            docker image prune -af
+
+            echo "✅ Deploy concluído!"
+          EOF
