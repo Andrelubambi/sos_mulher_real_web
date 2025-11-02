@@ -27,8 +27,8 @@ class StoreVoluntarioRequest extends FormRequest
             'nome_completo' => ['required', 'string', 'max:255'],
             'data_nascimento' => ['required', 'date'],
             
-            // Requer que a tabela 'voluntarios' exista na BD para verificação de unicidade
-            'telefone' => ['required', 'string', 'max:30', 'unique:voluntarios,telefone'],
+            // Regra corrigida para 'numeric' em vez de 'string'
+            'telefone' => ['required', 'numeric', 'regex:/^9\d{8}$/', 'unique:parcerias,telefone'],
             'email' => ['required', 'email', 'max:255', 'unique:voluntarios,email'],
             
             'provincia' => ['required', 'string', 'max:255'],
@@ -38,7 +38,9 @@ class StoreVoluntarioRequest extends FormRequest
             'motivacao' => ['required', 'string'],
             'experiencia_previa' => ['required', 'in:sim,nao'],
             'descricao_experiencia' => ['nullable', 'string'],
-            'areas_colaborar' => ['required', 'array'],
+            
+            // Regra ajustada para ser um array com mínimo de 1 item
+            'areas_colaborar' => ['required', 'array', 'min:1'],
             'areas_colaborar.*' => ['string'],
             'outras_areas' => ['nullable', 'string', 'max:255'],
         ];
@@ -52,10 +54,18 @@ class StoreVoluntarioRequest extends FormRequest
     public function messages(): array
     {
         return [
-            // Corrigido para incluir a validação de formato de e-mail (resolvendo 'validation.email')
+            // Validação de E-mail
             'email.unique' => 'O E-mail inserido já se encontra registado.',
-            'email.email' => 'O campo E-mail deve ser um endereço de e-mail válido.',
-            'telefone.unique' => 'O Telefone inserido já se encontra registado.',
+            'email.email' => 'O campo E-mail deve ser um endereço de E-mail válido.',
+            
+            // Validação de Telefone (adicionadas mensagens para 'numeric', 'unique', e 'max')
+            'telefone.required' => 'O Telefone é obrigatório.',
+'telefone.numeric' => 'O Telefone deve conter apenas números.',
+'telefone.regex' => 'O Telefone deve ter 9 dígitos e começar com o número 9 (ex: 923456789).',
+'telefone.unique' => 'O Telefone inserido já se encontra registado.',
+
+            
+            // Campos Obrigatórios
             'nome_completo.required' => 'O campo Nome Completo é obrigatório.',
             'data_nascimento.required' => 'A data de nascimento é obrigatória.',
             'provincia.required' => 'A província é obrigatória.',
@@ -63,7 +73,11 @@ class StoreVoluntarioRequest extends FormRequest
             'disponibilidade.required' => 'A disponibilidade é obrigatória.',
             'motivacao.required' => 'A motivação é obrigatória.',
             'experiencia_previa.required' => 'A experiência prévia é obrigatória.',
-            'areas_colaborar.required' => 'Selecione pelo menos uma área de colaboração.',
+            
+            // Validação de Áreas de Colaboração (adicionadas mensagens para 'array' e 'min')
+            'areas_colaborar.required' => 'É obrigatório selecionar pelo menos uma área de colaboração.',
+            'areas_colaborar.array' => 'Selecione pelo menos uma área de colaboração.',
+            'areas_colaborar.min' => 'É obrigatório selecionar pelo menos uma área de colaboração.',
         ];
     }
 }

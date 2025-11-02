@@ -27,8 +27,8 @@ class StoreVitimaRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             // Requer que a tabela 'users' exista na BD
             'email' => ['required', 'email', 'unique:users,email'],
-            // Requer que a tabela 'users' exista na BD
-            'telefone' => ['required', 'unique:users,telefone'],
+            // CORRIGIDO: O telefone deve ser 'numeric' e ter um limite máximo
+            'telefone' => ['required', 'numeric', 'max:30', 'unique:users,telefone'],
             'password' => ['required', 'string', 'min:6'],
             'role' => ['required', 'in:vitima'], // Garantir que a role é 'vitima'
         ];
@@ -46,8 +46,11 @@ class StoreVitimaRequest extends FormRequest
             'email.email' => 'Por favor, insira um E-mail válido.',
             'email.unique' => 'Este E-mail já está registado.',
             
+            // CORRIGIDO: Mensagens específicas para numeric e max
             'telefone.required' => 'O campo Telefone é obrigatório.',
             'telefone.unique' => 'Este Telefone já está registado.',
+            'telefone.numeric' => 'O Telefone deve conter apenas números.',
+            'telefone.max' => 'O Telefone não pode ter mais de :max dígitos.',
             
             'name.required' => 'O campo Nome é obrigatório.',
             'password.required' => 'O campo Password é obrigatório.',

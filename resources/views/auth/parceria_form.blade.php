@@ -209,7 +209,8 @@
                                 <i class="icon-copy dw dw-phone"></i>
                             </span>
                         </div>
-                        <input type="text" name="telefone" class="form-control" placeholder="Telefone" required>
+                        
+                         <input type="tel" name="telefone" class="form-control" placeholder="Telefone / Whatsapp" pattern="[0-9]*" title="Por favor, insira apenas números." required>
                     </div>
                 </div>
             </div>
@@ -229,31 +230,36 @@
                 <label class="font-weight-bold">Tipo de Parceria</label>
                 <div class="partnership-types">
                     <div class="partnership-type-item" onclick="toggleCheckboxSelection(this)">
-                        <input type="checkbox" id="institucional" name="tipo_parceria" value="Apoio institucional" required>
+                        {{-- CORRIGIDO: Removido 'required' para evitar "not focusable" warnings em campos ocultos. Validação passa a ser só no Laravel. --}}
+                        <input type="checkbox" id="institucional" name="tipo_parceria[]" value="Apoio institucional">
                         <label for="institucional">
                             <i class="fas fa-check-circle"></i> Apoio institucional
                         </label>
                     </div>
                     <div class="partnership-type-item" onclick="toggleCheckboxSelection(this)">
-                        <input type="checkbox" id="tecnico" name="tipo_parceria" value="Apoio técnico" required>
+                        {{-- CORRIGIDO: Removido 'required' --}}
+                        <input type="checkbox" id="tecnico" name="tipo_parceria[]" value="Apoio técnico">
                         <label for="tecnico">
                             <i class="fas fa-tools"></i> Apoio técnico
                         </label>
                     </div>
                     <div class="partnership-type-item" onclick="toggleCheckboxSelection(this)">
-                        <input type="checkbox" id="financeiro" name="tipo_parceria" value="Apoio financeiro" required>
+                        {{-- CORRIGIDO: Removido 'required' --}}
+                        <input type="checkbox" id="financeiro" name="tipo_parceria[]" value="Apoio financeiro">
                         <label for="financeiro">
                             <i class="fas fa-money-bill-wave"></i> Apoio financeiro
                         </label>
                     </div>
                     <div class="partnership-type-item" onclick="toggleCheckboxSelection(this)">
-                        <input type="checkbox" id="mediatico" name="tipo_parceria" value="Parceria mediática" required>
+                        {{-- CORRIGIDO: Removido 'required' --}}
+                        <input type="checkbox" id="mediatico" name="tipo_parceria[]" value="Parceria mediática">
                         <label for="mediatico">
                             <i class="fas fa-bullhorn"></i> Parceria mediática
                         </label>
-                    </div>
+                    </div> 
                     <div class="partnership-type-item" onclick="toggleCheckboxSelection(this)">
-                        <input type="checkbox" id="outros" name="tipo_parceria" value="Outros" required>
+                        {{-- CORRIGIDO: Removido 'required' --}}
+                        <input type="checkbox" id="outros" name="tipo_parceria[]" value="Outros">
                         <label for="outros">
                             <i class="fas fa-ellipsis-h"></i> Outros
                         </label>

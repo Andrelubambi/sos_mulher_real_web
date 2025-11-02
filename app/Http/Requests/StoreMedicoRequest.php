@@ -27,8 +27,8 @@ class StoreMedicoRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             // Requer que a tabela 'users' exista na BD
             'email' => ['required', 'email', 'unique:users,email'],
-            // Requer que a tabela 'users' exista na BD e use regex
-            'telefone' => ['required', 'unique:users,telefone', 'regex:/^(\+?[1-9]{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{5,15}$/'],
+            // Adicionado 'string' para compatibilidade com regex e 'max:30' para limitar o tamanho
+            'telefone' => ['required', 'string', 'max:30', 'unique:users,telefone', 'regex:/^(\+?[1-9]{1,4}[\s-]?)?(\(?\d{1,3}\)?[\s-]?)?[\d\s-]{5,15}$/'],
             'password' => ['required', 'string', 'min:6'],
         ];
     }
@@ -47,7 +47,10 @@ class StoreMedicoRequest extends FormRequest
             
             'telefone.required' => 'O campo Telefone é obrigatório.',
             'telefone.unique' => 'Este Telefone já está registado.',
-            'telefone.regex' => 'O formato do telefone não é válido.',
+            // Mensagem amigável para a falha de regex
+            'telefone.regex' => 'O formato do telefone não é válido. Por favor, insira um número válido com código de área.', 
+            // Adicionada mensagem para max (se usar regex/string, o max é por caracteres)
+            'telefone.max' => 'O Telefone não pode ter mais de :max caracteres.',
             
             'name.required' => 'O campo Nome é obrigatório.',
             'password.required' => 'O campo Password é obrigatório.',

@@ -198,7 +198,7 @@
                                 <i class="icon-copy dw dw-phone"></i>
                             </span>
                         </div>
-                        <input type="tel" name="telefone" class="form-control" placeholder="Telefone / Whatsapp" required>
+                         <input type="tel" name="telefone" class="form-control" placeholder="Telefone / Whatsapp" pattern="[0-9]*" title="Por favor, insira apenas números." required>
                     </div>
                 </div>
 
@@ -272,7 +272,7 @@
             <div class="form-group">
                 <label class="font-weight-bold">Em quais áreas gostarias de colaborar?</label>
                 <div class="partnership-types">
-                    
+                     
                     <div class="partnership-type-item" onclick="toggleCheckboxSelection(this)">
                         <input type="checkbox" id="apoio_emocional" name="areas_colaborar[]" value="Apoio emocional e escuta ativa">
                         <label for="apoio_emocional">

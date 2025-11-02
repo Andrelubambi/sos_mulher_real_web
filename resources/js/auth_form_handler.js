@@ -44,7 +44,7 @@ function setupVolunteerAreaSelection() {
             toggleCheckboxSelection(this);
         });
     });
-}
+} 
 
  
 document.addEventListener('DOMContentLoaded', function() {
@@ -56,3 +56,5 @@ document.addEventListener('DOMContentLoaded', function() {
     handleFormFeedback();
 });
 window.toggleCheckboxSelection = toggleCheckboxSelection;
+
+
