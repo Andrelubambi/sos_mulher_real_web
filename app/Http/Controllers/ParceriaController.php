@@ -10,7 +10,7 @@ class ParceriaController extends Controller
 {
     public function create()
     {
-        return view('parceria');
+        return view('auth.parceria_form');
     }
 
     public function store(Request $request)

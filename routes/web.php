@@ -13,6 +13,7 @@ use App\Http\Controllers\EstagiarioDashboardController;
 use App\Http\Controllers\VitimaDashboardController; 
 use App\Http\Controllers\VideoCallController;  
 use App\Http\Controllers\ParceriaController;
+use App\Http\Controllers\VoluntarioController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\ProfileController;
@@ -27,11 +28,18 @@ Route::middleware('auth:sanctum')->get('/admin/dashboard', [AdminDashboardContro
  
 Route::get('login', [AuthController::class, 'showLoginForm'])->name('login.form');
 Route::post('login', [AuthController::class, 'login'])->name('login');
+Route::get('/escolher-registro', function () {return view('auth.choose_register');})->name('choose.register');
+Route::view('/register', 'auth.register')->name('register'); 
 
-Route::view('/register', 'register')->name('register'); 
+
     //Parceiros
 Route::get('/parceria', [ParceriaController::class, 'create'])->name('parceria.form');
 Route::post('/parceria', [ParceriaController::class, 'store'])->name('parceria.enviar');
+
+    //Voluntários
+Route::get('/voluntario', [VoluntarioController::class, 'create'])->name('voluntario.form');
+Route::post('/voluntario', [VoluntarioController::class, 'store'])->name('voluntario.enviar');
+
 
 
 Route::get('password/forgot', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');

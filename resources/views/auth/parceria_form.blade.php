@@ -56,7 +56,7 @@
       background-color: #f8d7da;
     }
     
-    .partnership-type-item input[type="radio"] {
+    .partnership-type-item input[type="checkbox"] {
       display: none;
     }
     
@@ -183,7 +183,7 @@
                                 <i class="icon-copy dw dw-user1"></i>
                             </span>
                         </div>
-                        <input type="text" name="contacto" class="form-control" placeholder="Pessoa de Contacto" required>
+                        <input type="tel" name="contacto" class="form-control" placeholder="Pessoa de Contacto" required>
                     </div>
                 </div>
             </div>
@@ -228,32 +228,32 @@
             <div class="form-group">
                 <label class="font-weight-bold">Tipo de Parceria</label>
                 <div class="partnership-types">
-                    <div class="partnership-type-item" onclick="selectPartnershipType(this)">
-                        <input type="radio" id="institucional" name="tipo_parceria" value="Apoio institucional" required>
+                    <div class="partnership-type-item" onclick="toggleCheckboxSelection(this)">
+                        <input type="checkbox" id="institucional" name="tipo_parceria" value="Apoio institucional" required>
                         <label for="institucional">
                             <i class="fas fa-check-circle"></i> Apoio institucional
                         </label>
                     </div>
-                    <div class="partnership-type-item" onclick="selectPartnershipType(this)">
-                        <input type="radio" id="tecnico" name="tipo_parceria" value="Apoio técnico" required>
+                    <div class="partnership-type-item" onclick="toggleCheckboxSelection(this)">
+                        <input type="checkbox" id="tecnico" name="tipo_parceria" value="Apoio técnico" required>
                         <label for="tecnico">
                             <i class="fas fa-tools"></i> Apoio técnico
                         </label>
                     </div>
-                    <div class="partnership-type-item" onclick="selectPartnershipType(this)">
-                        <input type="radio" id="financeiro" name="tipo_parceria" value="Apoio financeiro" required>
+                    <div class="partnership-type-item" onclick="toggleCheckboxSelection(this)">
+                        <input type="checkbox" id="financeiro" name="tipo_parceria" value="Apoio financeiro" required>
                         <label for="financeiro">
                             <i class="fas fa-money-bill-wave"></i> Apoio financeiro
                         </label>
                     </div>
-                    <div class="partnership-type-item" onclick="selectPartnershipType(this)">
-                        <input type="radio" id="mediatico" name="tipo_parceria" value="Parceria mediática" required>
+                    <div class="partnership-type-item" onclick="toggleCheckboxSelection(this)">
+                        <input type="checkbox" id="mediatico" name="tipo_parceria" value="Parceria mediática" required>
                         <label for="mediatico">
                             <i class="fas fa-bullhorn"></i> Parceria mediática
                         </label>
                     </div>
-                    <div class="partnership-type-item" onclick="selectPartnershipType(this)">
-                        <input type="radio" id="outros" name="tipo_parceria" value="Outros" required>
+                    <div class="partnership-type-item" onclick="toggleCheckboxSelection(this)">
+                        <input type="checkbox" id="outros" name="tipo_parceria" value="Outros" required>
                         <label for="outros">
                             <i class="fas fa-ellipsis-h"></i> Outros
                         </label>
@@ -288,53 +288,17 @@
             </div>
         </form>
 
-        <p class="text-center mt-3 mb-0">
-            <a href="{{ route('login') }}" class="text-danger">
-                <i class="icon-copy dw dw-arrow-left"></i> Voltar para o login
-            </a>
-        </p>
+       <div class="mt-4">
+        <a href="{{ route('login') }}" class="text-danger font-weight-bold">
+            <i class="fa fa-arrow-left"></i> Voltar ao login
+        </a>
+    </div>
     </div>
 </div>
 @endsection
 
+
 @section('scripts')
-<script>
-    function selectPartnershipType(element) {
-        // Remove a seleção de todos os itens
-        document.querySelectorAll('.partnership-type-item').forEach(item => {
-            item.classList.remove('selected');
-        });
-        
-        // Adiciona a seleção ao item clicado
-        element.classList.add('selected');
-        
-        // Marca o radio button correspondente
-        const radio = element.querySelector('input[type="radio"]');
-        radio.checked = true;
-    }
-    
-    // Ajuste para garantir que o formulário ocupe o espaço correto
-    document.addEventListener('DOMContentLoaded', function() {
-        const loginWrap = document.querySelector('.login-wrap');
-        const loginBox = document.querySelector('.login-box');
-        
-        // Ajusta a altura se necessário para evitar scroll desnecessário
-        function adjustHeight() {
-            const viewportHeight = window.innerHeight;
-            const headerHeight = document.querySelector('.login-header').offsetHeight;
-            const boxHeight = loginBox.offsetHeight;
-            const availableHeight = viewportHeight - headerHeight - 40; // 40px de margem
-            
-            if (boxHeight < availableHeight) {
-                loginWrap.style.alignItems = 'center';
-            } else {
-                loginWrap.style.alignItems = 'flex-start';
-            }
-        }
-        
-        // Executa no carregamento e no redimensionamento da janela
-        adjustHeight();
-        window.addEventListener('resize', adjustHeight);
-    });
-</script>
+@vite('resources/js/form_logic.js')
+@vite('resources/js/auth_form_handler.js')
 @endsection

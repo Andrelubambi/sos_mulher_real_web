@@ -18,8 +18,8 @@ export default defineConfig(({ mode }) => {
             laravel({
                 input: [ 
                     'resources/css/modern-chat.css',
-                    'resources/js/app.js',
-                    //'resources/js/chat/index.js',
+                    'resources/css/global_ui.css',
+                    'resources/js/app.js', 
                     'resources/js/chat/echo.js',
                     'resources/js/chat/ui.js',
                     'resources/js/chat/chat.js',
@@ -31,6 +31,7 @@ export default defineConfig(({ mode }) => {
                     'resources/js/dashboard-charts.js', 
                     'resources/js/notifications.js',
                     'resources/js/vitimas.js',
+                    'resources/js/form_logic.js',
                 ],
                 refresh: true,
                 
