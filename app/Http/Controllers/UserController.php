@@ -8,6 +8,8 @@ use App\Models\Medico;
 use App\Models\Grupo; 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log; 
+use Illuminate\Routing\Controller;
+use App\Http\Requests\StoreUtilizadorRequest;
 
 
 class UserController extends Controller
@@ -61,7 +63,7 @@ class UserController extends Controller
         return view('medicos.index', compact('users','grupos'));
     }
 
-  public function storeDoutor(Request $request)
+  public function storeDoutor(StoreUtilizadorRequest $request)
 {
     $validated = $request->validate([
         'name' => 'required|string|max:255',
@@ -115,7 +117,7 @@ class UserController extends Controller
         return view('estagiarios.index', compact('users','grupos'));
     }
 
-   public function storeEstagiario(Request $request)
+   public function storeEstagiario(StoreUtilizadorRequest $request)
 {
     $validated = $request->validate([
         'name' => 'required|string|max:255',
@@ -176,7 +178,7 @@ class UserController extends Controller
    }
  
 
-public function storeVitima(Request $request)
+public function storeVitima(StoreUtilizadorRequest $request)
 {
     // 1. Validação
     $validated = $request->validate([

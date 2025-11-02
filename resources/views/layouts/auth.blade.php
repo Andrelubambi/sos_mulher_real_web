@@ -23,7 +23,9 @@
     
 </head>
 
-<body class="login-page custom-background @yield('body_class')">
+<body class="login-page custom-background @yield('body_class')"
+data-success-message="{{ session('success_message') }}"
+    data-error-messages="{{ json_encode($errors->all()) }}">
     
     <div class="login-header box-shadow">
         <div class="container-fluid d-flex justify-content-between align-items-center">
@@ -73,13 +75,24 @@
             const container = document.getElementById('toastContainer');
             if (!container) return;
 
+            let titleText = '';
+            if (type === 'success') {
+                titleText = 'Sucesso! 🎉';
+            } else if (type === 'error') {
+                titleText = 'Atenção! ⚠️'; 
+            } else {
+                titleText = 'Notificação';
+            }
+
             const toastEl = document.createElement('div');
             toastEl.classList.add('custom-toast', `toast-${type}`);
             toastEl.setAttribute('role', 'alert');
             toastEl.setAttribute('aria-live', 'assertive');
             toastEl.setAttribute('aria-atomic', 'true');
-            toastEl.innerHTML = `
-                <div style="font-weight: bold;">${type === 'success' ? 'Sucesso! 🎉' : 'Erro! 🚨'}</div>
+
+
+           toastEl.innerHTML = `
+                <div style="font-weight: bold;">${titleText}</div>
                 <div>${message}</div>
             `;
 
@@ -96,6 +109,8 @@
                 }, 530); // Tempo total: 5000ms de exibição + 300ms de transição
             }, 5000);
         }
+
+        window.showToast = showToast;
     </script>
     
     @yield('scripts')

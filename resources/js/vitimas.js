@@ -31,18 +31,41 @@ $(document).ready(function() {
      * @param {string} defaultMessage - Mensagem padrão.
      * @returns {string} Mensagem de erro mais específica ou a padrão.
      */
+// vitimas.js
+
+// ...
+
+// Linhas 29-30: Substitua a sua função getErrorMessage atual por esta
+    /**
+     * Auxiliar para extrair e consolidar TODAS as mensagens de erro de validação (422).
+     * @param {Object} xhr - Objeto XMLHttpRequest do erro.
+     * @param {string} defaultMessage - Mensagem padrão.
+     * @returns {string} Lista formatada de mensagens de erro ou a padrão.
+     */
     function getErrorMessage(xhr, defaultMessage) {
         if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
-            const errorKeys = Object.keys(xhr.responseJSON.errors);
-            if (errorKeys.length > 0) {
-                return xhr.responseJSON.errors[errorKeys[0]][0]; 
+            const errors = xhr.responseJSON.errors;
+            let messages = [];
+            
+            // Itera sobre o objeto de erros do Laravel
+            for (const key in errors) {
+                if (errors.hasOwnProperty(key)) {
+                    // Concatena todas as mensagens de erro para todos os campos
+                    messages = messages.concat(errors[key]); 
+                }
+            }
+            
+            // Retorna todas as mensagens formatadas com quebras de linha (<br>)
+            if (messages.length > 0) {
+                // Adiciona um título e formata cada item em nova linha para o Toast
+                return 'Por favor, corrija os seguintes erros:<br>- ' + messages.join('<br>- ');
             }
         }
-        return xhr.responseJSON && xhr.responseJSON.message 
-            ? xhr.responseJSON.message 
-            : defaultMessage;
+        
+        // Retorna a mensagem do servidor para outros erros (500, etc.)
+        return xhr.responseJSON?.message || defaultMessage;
     }
-
+// ...
 
     // 1. CRIAÇÃO (CREATE)
     $('#formAdicionarVitima').on('submit', function(e) {

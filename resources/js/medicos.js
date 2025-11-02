@@ -4,14 +4,51 @@
 // Garante que o código só é executado após o documento estar totalmente carregado
 // E o jQuery está disponível.
 $(function() { 
-    // O $(function(){ ... }) é um atalho para $(document).ready(function(){ ... })
     
-    // Teste de Log e Toast
     console.log("medicos.js: DOM Ready. Inicializando handlers de formulário AJAX.");
-    // showToast("medicos.js carregado com sucesso.","success"); // Descomente após o teste para limpar o console
     
-    // As funções globais showLoading e showToast foram movidas para o layout.
-    
+    // Funções globais (assumidas como existentes no layout.blade.php)
+    if (typeof showToast !== 'function') {
+        window.showToast = (message, type) => console.log(`[Toast ${type.toUpperCase()}]: ${message}`);
+    }
+    if (typeof showLoading !== 'function') {
+        window.showLoading = (show) => console.log(`[Loading]: ${show ? 'Ativado' : 'Desativado'}`);
+    }
+
+    // ===============================================
+    // FUNÇÃO AUXILIAR: Extrai e consolida erros 422
+    // ===============================================
+
+    /**
+     * Auxiliar para extrair e consolidar TODAS as mensagens de erro de validação (422).
+     * @param {Object} xhr - Objeto XMLHttpRequest do erro.
+     * @param {string} defaultMessage - Mensagem padrão para erros não-422.
+     * @returns {string} Lista formatada de mensagens de erro ou a padrão.
+     */
+    function getValidationErrorMessage(xhr, defaultMessage) {
+        if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
+            const errors = xhr.responseJSON.errors;
+            let messages = [];
+            
+            // Itera sobre o objeto de erros do Laravel
+            for (const key in errors) {
+                if (errors.hasOwnProperty(key)) {
+                    // Concatena todas as mensagens de erro para todos os campos (inclui unicidade)
+                    messages = messages.concat(errors[key]); 
+                }
+            }
+            
+            // Retorna todas as mensagens formatadas com quebras de linha (<br>- )
+            if (messages.length > 0) {
+                return 'Por favor, corrija os seguintes erros:<br>- ' + messages.join('<br>- ');
+            }
+        }
+        
+        // Fallback para erros não-422 ou sem resposta JSON
+        return xhr.responseJSON?.message || defaultMessage;
+    }
+
+
     // ===============================================
     // 1. SUBMISSÃO DO FORMULÁRIO DE ADIÇÃO (AJAX)
     // ===============================================
@@ -20,7 +57,6 @@ $(function() {
         
         const form = $(this);
         window.showLoading(true); 
-        console.log("AJAX Adicionar Doutor: Iniciando requisição para", form.attr('action'));
 
         $.ajax({
             url: form.attr('action'),
@@ -28,8 +64,7 @@ $(function() {
             data: form.serialize(),
             
             success: function(response) {
-                console.log("AJAX Adicionar Doutor: Sucesso.", response);
-                window.showToast(response.message, 'success');
+                window.showToast(response.message || 'Médico adicionado com sucesso.', 'success');
                 
                 $('#modalAdicionarMedico').modal('hide');
                 form[0].reset(); 
@@ -40,24 +75,13 @@ $(function() {
             },
             
             error: function(xhr) {
-                console.error("AJAX Adicionar Doutor: Erro.", xhr);
-                let errorMessage = 'Ocorreu um erro desconhecido ao adicionar o médico.'; 
-                
-                if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
-                    const errorKeys = Object.keys(xhr.responseJSON.errors);
-                    if (errorKeys.length > 0) {
-                        errorMessage = xhr.responseJSON.errors[errorKeys[0]][0]; 
-                    }
-                } else if (xhr.responseJSON && xhr.responseJSON.message) {
-                    errorMessage = xhr.responseJSON.message;
-                } 
-
+                // 💥 USAR A NOVA FUNÇÃO DE CONSOLIDAÇÃO AQUI
+                const errorMessage = getValidationErrorMessage(xhr, 'Ocorreu um erro desconhecido ao adicionar o médico.'); 
                 window.showToast(errorMessage, 'error');
             },
             
             complete: function() {
                 window.showLoading(false); 
-                console.log("AJAX Adicionar Doutor: Requisição concluída.");
             }
         });
     });
@@ -65,8 +89,6 @@ $(function() {
     // ===============================================
     // 2. FUNÇÃO CONFIRM DELETE (AJAX)
     // ===============================================
-    // Funções globais devem ser definidas fora do escopo de $(document).ready
-    // mas são redefinidas aqui para garantir o acesso ao jQuery.
     window.confirmDelete = function(deleteUrl) { 
         console.log(`Chamada global confirmDelete para URL: ${deleteUrl}.`);
  
@@ -77,9 +99,7 @@ $(function() {
             
             const formToDelete = $(this);
             window.showLoading(true); 
-            console.log("AJAX Deletar Doutor: Iniciando requisição DELETE para", deleteUrl);
  
-            // Laravel usa um campo oculto _method=DELETE para simular o método DELETE
             const dataWithMethod = formToDelete.serialize() + '&_method=DELETE';
 
             $.ajax({
@@ -88,8 +108,7 @@ $(function() {
                 data: dataWithMethod,  
                 
                 success: function(response) {
-                    console.log("AJAX Deletar Doutor: Sucesso.", response);
-                    window.showToast(response.message, 'success');
+                    window.showToast(response.message || 'Médico excluído com sucesso.', 'success');
  
                     $('#confirmDeleteModal').modal('hide'); 
                      
@@ -99,17 +118,12 @@ $(function() {
                 },
                 
                 error: function(xhr) {
-                    console.error("AJAX Deletar Doutor: Erro.", xhr);
-                    let errorMessage = 'Ocorreu um erro ao excluir. Tente novamente.'; 
-                    if (xhr.responseJSON && xhr.responseJSON.message) {
-                        errorMessage = xhr.responseJSON.message;
-                    } 
+                    let errorMessage = xhr.responseJSON?.message || 'Ocorreu um erro ao excluir. Tente novamente.'; 
                     window.showToast(errorMessage, 'error');
                 },
                 
                 complete: function() {
                     window.showLoading(false);
-                    console.log("AJAX Deletar Doutor: Requisição concluída.");
                 }
             });
         });
@@ -118,15 +132,12 @@ $(function() {
     // ===============================================
     // 3. CARREGAR DADOS DE EDIÇÃO E CONFIGURAR FORM
     // ===============================================
- 
     window.editDoutor = function(doctorId) {
-        console.log(`Chamada global editDoutor para ID: ${doctorId}.`);
         window.showLoading(true);
-        console.log("AJAX Editar Doutor: Buscando dados para ID:", doctorId);
         
         const editForm = $('#editForm'); 
-        const fetchUrl = `/users/${doctorId}/edit`; // Exemplo: Sua rota GET para buscar dados
-        const updateUrl = `/users/${doctorId}`;     // Exemplo: Sua rota PUT para atualizar dados
+        const fetchUrl = `/users/${doctorId}/edit`; 
+        const updateUrl = `/users/${doctorId}`;     
         
         editForm.attr('action', updateUrl); 
  
@@ -134,7 +145,6 @@ $(function() {
             url: fetchUrl, 
             method: 'GET',
             success: function(response) {
-                console.log("AJAX Editar Doutor: Dados recebidos.", response);
                 if (response.user) {  
                     $('#editForm #name').val(response.user.name);
                     $('#editForm #email').val(response.user.email);
@@ -146,12 +156,10 @@ $(function() {
                 }
             },
             error: function(xhr) {
-                console.error("AJAX Editar Doutor: Erro ao buscar dados.", xhr);
                 window.showToast('Erro ao buscar dados para edição. Verifique o console.', 'error');
             },
             complete: function() {
                 window.showLoading(false);
-                console.log("AJAX Editar Doutor: Busca de dados concluída.");
             }
         });
     };
@@ -163,7 +171,6 @@ $(function() {
         event.preventDefault(); 
         const form = $(this);
         window.showLoading(true);
-        console.log("AJAX Atualizar Doutor: Iniciando requisição PUT para", form.attr('action'));
  
         const dataWithMethod = form.serialize() + '&_method=PUT';
 
@@ -173,8 +180,7 @@ $(function() {
             data: dataWithMethod,
             
             success: function(response) {
-                console.log("AJAX Atualizar Doutor: Sucesso.", response);
-                window.showToast(response.message, 'success');
+                window.showToast(response.message || 'Médico atualizado com sucesso.', 'success');
                 $('#editModal').modal('hide'); 
                 
                 setTimeout(() => { 
@@ -183,24 +189,14 @@ $(function() {
             },
             
             error: function(xhr) {
-                console.error("AJAX Atualizar Doutor: Erro.", xhr);
-                let errorMessage = 'Ocorreu um erro ao atualizar o médico.'; 
-                if (xhr.status === 422 && xhr.responseJSON && xhr.responseJSON.errors) {
-                    const errorKeys = Object.keys(xhr.responseJSON.errors);
-                    if (errorKeys.length > 0) {
-                        errorMessage = xhr.responseJSON.errors[errorKeys[0]][0]; 
-                    }
-                } else if (xhr.responseJSON && xhr.responseJSON.message) {
-                    errorMessage = xhr.responseJSON.message;
-                } 
+                // 💥 USAR A NOVA FUNÇÃO DE CONSOLIDAÇÃO AQUI
+                const errorMessage = getValidationErrorMessage(xhr, 'Ocorreu um erro ao atualizar o médico.'); 
                 window.showToast(errorMessage, 'error');
             },
             
             complete: function() {
                 window.showLoading(false);
-                console.log("AJAX Atualizar Doutor: Requisição concluída.");
             }
         });
     });
-
 });

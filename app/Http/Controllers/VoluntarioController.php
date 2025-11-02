@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Resend;
 use Illuminate\Support\Facades\Log;
+use App\Http\Requests\StoreUtilizadorRequest;
 
 
 class VoluntarioController extends Controller
@@ -15,7 +16,7 @@ class VoluntarioController extends Controller
     }
 
 
-     public function store(Request $request)
+     public function StoreUtilizadorRequest(Request $request)
     {
           $validated = $request->validate([
             // Dados Pessoais

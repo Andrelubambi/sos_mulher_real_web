@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Resend;
 use Illuminate\Support\Facades\Log;
+use App\Http\Requests\StoreUtilizadorRequest;
 
 class ParceriaController extends Controller
 {
@@ -13,7 +14,7 @@ class ParceriaController extends Controller
         return view('auth.parceria_form');
     }
 
-    public function store(Request $request)
+    public function store(StoreUtilizadorRequest $request)
     {
         $validated = $request->validate([
             'instituicao' => 'required|string|max:255',

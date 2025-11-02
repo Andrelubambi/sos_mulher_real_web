@@ -95,14 +95,15 @@
    <!-- @vite(['resources/js/app.js']) -->
 </head>
 
-<body> 
+<body data-success-message="{{ session('success_message') }}"
+    data-error-messages="{{ json_encode($errors->all()) }}"> 
     <div id="toastContainer" class="toast-container position-fixed top-0 end-0 p-3"></div>
  
     <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-content">
             <div class="spinner"></div>
             <p>Carregando, por favor aguarde...</p>
-        </div>
+        </div> 
     </div>
 
     <div class="header">
@@ -245,6 +246,9 @@
             }, 300); 
         }, 5000);
     }
+
+    window.showLoading = showLoading;
+    window.showToast = showToast;
      
     document.addEventListener('DOMContentLoaded', () => { 
         document.querySelectorAll('form').forEach(form => {
