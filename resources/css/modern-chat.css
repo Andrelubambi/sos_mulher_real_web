@@ -486,16 +486,27 @@ body {
     gap: 8px;
 }
 
-.emoji-btn, .attach-btn, .send-btn {
+.emoji-btn, 
+.attach-btn, 
+.send-btn {
     background: none;
     border: none;
     font-size: 1.1rem;
     cursor: pointer;
+    
+    align-self: center; 
+    
 }
 
 .send-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+ 
+.composer-input-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
 }
  
  

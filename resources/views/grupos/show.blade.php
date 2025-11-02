@@ -104,18 +104,6 @@
             overflow-y: auto;
         }
 
-        /* Estilo do Modal (Nav Links Ativos) */
-        .modal-body .nav-link.active {
-            background-color: #dc3545 !important; 
-            color: white !important;
-            border-color: #dc3545 !important; 
-        }
-        /* Estilo do Hover para Abas Não Selecionadas */
-        .modal-body .nav-link:not(.active):hover {
-            background-color: #f8d7da !important; /* Vermelho claro */
-            color: #dc3545 !important; /* Texto em vermelho */
-            border-color: #f8d7da !important;
-        }
     </style>
 @endsection
 
@@ -132,7 +120,7 @@
     <span class="h5 mb-0 text-white me-2">Grupo: {{ $grupo->nome }}</span>
     
     {{-- AQUI ESTÁ A CORREÇÃO PRINCIPAL: --}}
-    <div class="d-flex align-items-center flex-wrap gap-2">
+    <div class="d-flex align-items-center flex-wrap header-buttons">
         @if (auth()->id() === $grupo->admin_id)
             {{-- 1. Botão Gerenciar (Apenas Admin) - Removido o me-2, pois o gap-2 faz o trabalho --}}
             <button class="btn btn-sm btn-light text-danger" data-toggle="modal"
@@ -477,4 +465,30 @@
         });
 
     </script>
+@endpush
+
+@push('scripts')
+<style>
+#groupManagementModal .nav.nav-tabs.customtab .nav-link.active {
+    background-color: #dc3545 !important;
+    color: #fff !important;
+    border: 1px solid #dc3545 !important;
+}
+#groupManagementModal .nav.nav-tabs.customtab .nav-link {
+    color: #dc3545 !important;
+    border: 1px solid transparent !important;
+}
+#groupManagementModal .nav.nav-tabs.customtab .nav-link:hover {
+    background-color: #f8d7da !important;
+    color: #dc3545 !important;
+    border-color: #f8d7da !important;
+}
+
+/* Espaçamento entre botões do cabeçalho */
+.header-buttons > *:not(:last-child) {
+    margin-right: 15px; /* ajusta o valor conforme quiser */
+}
+
+
+</style>
 @endpush

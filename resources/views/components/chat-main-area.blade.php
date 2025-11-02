@@ -60,14 +60,7 @@
                         rows="1"
                         disabled
                     ></textarea>
-                    <div class="composer-actions">
-                        <button type="button" class="emoji-btn" title="Emojis">
-                            <i class="fas fa-smile"></i>
-                        </button>
-                        <button type="button" class="attach-btn" title="Anexar arquivo">
-                            <i class="fas fa-paperclip"></i>
-                        </button>
-                    </div>
+                   
                 </div>
                 <button type="submit" class="send-btn" disabled>
                     <i class="fas fa-paper-plane"></i>
