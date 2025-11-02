@@ -377,7 +377,7 @@
             
             <div class="row mb-30">
                 <div class="col-md-12 col-xl-12 mb-30">
-                    <div class="card-box">
+                    <div class="card-box pt-4">
                         <h5 class="h5 text-dark mb-20 p-4">Minha Distribuição de Consultas</h5>
                         <div class="p-4">
                             <canvas id="consultasChart" width="400" height="400"></canvas>
@@ -388,7 +388,7 @@
             
             <div class="row">
                 <div class="col-md-12 col-xl-12 mb-30">
-                    <div class="card-box">
+                    <div class="card-box pt-4">
                         <h5 class="h5 text-dark mb-20 pl-20 mt-4">Todas as Minhas Consultas</h5>
                         <div class="row pl-20 pr-20">
                             @forelse($minhasConsultas as $consulta)

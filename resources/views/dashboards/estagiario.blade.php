@@ -251,7 +251,7 @@
         <div class="xs-pd-20-10 pd-ltr-20">
             <div class="row">
                 <div class="col-md-12 col-xl-12 mb-30">
-                    <div class="card-box">
+                    <div class="card-box pt-4">
                         <h5 class="h5 text-dark mb-20 pl-20 mt-4">Lista de Vítimas</h5>
                         <input type="text" id="searchVitima" class="form-control mb-3" placeholder="Pesquisar por nome ou ID">
                         <div class="table-responsive">

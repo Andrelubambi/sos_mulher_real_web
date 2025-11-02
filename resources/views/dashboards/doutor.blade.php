@@ -376,7 +376,7 @@
             
             <div class="row mb-30">
                 <div class="col-md-6 col-xl-6 mb-30">
-                    <div class="card-box">
+                    <div class="card-box pt-4">
                         <h5 class="h5 text-dark mb-20 p-4">Distribuição de Consultas</h5>
                         <div class="p-4">
                             <canvas id="consultasChart" width="400" height="400"></canvas>
@@ -385,7 +385,7 @@
                 </div>
                 
                 <div class="col-md-6 col-xl-6 mb-30">
-                    <div class="card-box">
+                    <div class="card-box pt-4">
                         <h5 class="h5 text-dark mb-20 p-4">Próximas Consultas (7 dias)</h5>
                         <div class="p-4">
                             <canvas id="proximasConsultasChart" width="400" height="400"></canvas>
@@ -396,7 +396,7 @@
             
             <div class="row mb-30">
                 <div class="col-md-12 col-xl-12 mb-30">
-                    <div class="card-box">
+                    <div class="card-box pt-4">
                         <h5 class="h5 text-dark mb-20 pl-20 mt-4">Próximas Consultas</h5>
                         <div class="row pl-20 pr-20">
                             @forelse($proximasConsultas as $consulta)
@@ -421,7 +421,7 @@
             
             <div class="row">
                 <div class="col-md-12 col-xl-12 mb-30">
-                    <div class="card-box">
+                    <div class="card-box pt-4">
                         <h5 class="h5 text-dark mb-20 pl-20 mt-4">Meus Pacientes</h5>
                         <input type="text" id="searchPaciente" class="form-control mb-3 ml-20 mr-20" placeholder="Pesquisar paciente por nome">
                         <div class="row pl-20 pr-20" id="pacientesContainer">
