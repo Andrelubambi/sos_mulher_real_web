@@ -44,8 +44,8 @@ class VoluntarioController extends Controller
             . "➕ Outras áreas: {$outras_areas}\n";
 
         // Email de destino (ambiente dev/prod)
-        $toEmail = app()->environment('production')  
-            ? 'voluntariado@sosmulherreal.com'
+        $toEmail = app()->environment('dev')  
+            ? 'geral@sosmulhereal.com'
             : 'andrelubambi36@gmail.com';
 
         $resend = Resend::client(config('resend.api_key'));

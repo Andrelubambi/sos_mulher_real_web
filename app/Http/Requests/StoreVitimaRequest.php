@@ -28,7 +28,7 @@ class StoreVitimaRequest extends FormRequest
             // Requer que a tabela 'users' exista na BD
             'email' => ['required', 'email', 'unique:users,email'],
             // CORRIGIDO: O telefone deve ser 'numeric' e ter um limite máximo
-            'telefone' => ['required', 'numeric', 'max:30', 'unique:users,telefone'],
+           // 'telefone' => ['required', 'numeric', 'max:30', 'unique:users,telefone'],
             'password' => ['required', 'string', 'min:6'],
             'role' => ['required', 'in:vitima'], // Garantir que a role é 'vitima'
         ];

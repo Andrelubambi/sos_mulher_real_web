@@ -35,9 +35,9 @@ class ParceriaController extends Controller
         . "📝 Descrição: {$validated['descricao']}\n"
         . "🌐 Website/Redes: {$website}";
 
-    $toEmail = app()->environment('production')  
-        ? 'parcerias@sosmulherreal.com'
-        : 'andrelubambi36@gmail.com'; 
+    $toEmail = app()->environment('dev')  
+        ? 'geral@sosmulhereal.com'
+        : 'andre.d.lubambi@gmail.com'; 
 
     $resend = Resend::client(config('resend.api_key'));
          

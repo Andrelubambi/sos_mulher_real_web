@@ -22,13 +22,13 @@ class StoreVoluntarioRequest extends FormRequest
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
-    {
+    { 
         return [
             'nome_completo' => ['required', 'string', 'max:255'],
             'data_nascimento' => ['required', 'date'],
             
             // Regra corrigida para 'numeric' em vez de 'string'
-            'telefone' => ['required', 'numeric', 'regex:/^9\d{8}$/', 'unique:parcerias,telefone'],
+            'telefone' => ['required', 'numeric', 'regex:/^9\d{8}$/', 'unique:voluntarios,telefone'],
             'email' => ['required', 'email', 'max:255', 'unique:voluntarios,email'],
             
             'provincia' => ['required', 'string', 'max:255'],

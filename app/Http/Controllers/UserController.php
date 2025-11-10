@@ -9,7 +9,7 @@ use App\Models\Grupo;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log; 
 use Illuminate\Routing\Controller;
-use App\Http\Requests\StoreVitimaRequest
+use App\Http\Requests\StoreVitimaRequest;
 use App\Http\Requests\StoreMedicoRequest;
 
 
@@ -180,8 +180,7 @@ class UserController extends Controller
 
    }
  
-
-public function storeVitima(StoreVitimaRequest
+ 
 public function storeVitima(StoreVitimaRequest $request)
 {
     // 1. Validação
