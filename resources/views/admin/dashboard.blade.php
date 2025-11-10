@@ -24,7 +24,7 @@
                         <div class="icon" data-color="{{ $card['color'] }}">
                             <i class="icon-copy {{ $card['icon'] }}" aria-hidden="true"></i>
                         </div>
-                    </div>
+                    </div> 
                 </div>
             </div>
         </div>

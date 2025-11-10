@@ -484,7 +484,7 @@
                     } else {
                         alerta.classList.add('hidden');
                         texto.textContent = '';
-                    }
+                    } 
                 }
                 function mostrarProximaMensagem() {
                     const mensagem = mensagensPendentes[0];

@@ -45,6 +45,15 @@ export function setupChat() {
         usuarioLogadoId
     });
 
+    const initialUserId = document.querySelector('meta[name="initial-chat-user-id"]')?.getAttribute('content');
+
+if (initialUserId) { 
+    const targetItem = document.querySelector(`.user-item[data-user-id="${initialUserId}"], .chat-item[data-user-id="${initialUserId}"]`);
+    if (targetItem) {
+        targetItem.click();
+    }
+}
+
     if (!sendMessageForm || !messageInput || !sendBtn || !usuarioLogadoId) {
         console.error('[setupChat] Elementos essenciais não encontrados!');
         return;
@@ -101,58 +110,40 @@ export function setupChat() {
                     } else if (badge) {
                         badge.remove();
                     }
-                }
+                } 
             })
             .catch(error => console.error('[Unread] Erro ao atualizar unread_count:', error));
     }
 
     function escutarMensagens(usuarioId) {
-        console.log('[Echo] 🎧 Escutando mensagens para usuário:', usuarioId);
-        
-        if (!window.Echo) {
-            console.error('[Echo] ❌ Echo não disponível!');
-            return;
+    if (!window.Echo) return;
+
+    try {
+        if (window.currentChannel) {
+            window.Echo.leave(window.currentChannel);
         }
 
-        try {
-            // Sair do canal anterior
-            if (window.currentChannel) {
-                window.Echo.leave(window.currentChannel);
-                console.log('[Echo] 👋 Saiu do canal anterior:', window.currentChannel);
-            }
+        const minId = Math.min(parseInt(usuarioLogadoId), parseInt(usuarioId));
+        const maxId = Math.max(parseInt(usuarioLogadoId), parseInt(usuarioId));
+        const canal = `chat.${minId}-${maxId}`;
+        window.currentChannel = canal;
 
-            // Calcular canal corretamente
-            const minId = Math.min(parseInt(usuarioLogadoId), parseInt(usuarioId));
-            const maxId = Math.max(parseInt(usuarioLogadoId), parseInt(usuarioId));
-            const canal = `chat.${minId}-${maxId}`;
-            window.currentChannel = canal;
-
-            console.log('[Echo] 🔐 Tentando conectar ao canal privado:', canal);
-            console.log('[Echo] 📤 ENVIANDO mensagem para canal:', canal);
-
-            // CONECTAR AO CANAL PRIVADO COM DEBUG COMPLETO
-            const channelRef = window.Echo.private(canal)
-                .subscribed(() => {
-                    console.log('[Echo] ✅ CANAL AUTENTICADO com sucesso!', canal);
-                })
-                .error((error) => {
-                    console.error('[Echo] ❌ ERRO na autenticação do canal:', canal, error);
-                })
-                .listen('MessageSent', (e) => {
-                    console.log('[Echo] 📨 MENSAGEM RECEBIDA:', e);
-                    console.log('[Echo] 📨 Detalhes da mensagem:', {
-                        de: e.de,
-                        para: e.para,
-                        conteudo: e.conteudo,
-                        usuarioLogado: parseInt(usuarioLogadoId)
-                    });
-                    
-                    // Só adicionar se não foi enviada pelo usuário logado
-                    if (e.de !== parseInt(usuarioLogadoId)) {
-                        appendMessage(e, false);
-                    }
-                })
-                .listenForWhisper('typing', (e) => {
+        window.Echo.private(canal)
+            .subscribed(() => {
+                console.log('[Echo] ✅ CANAL AUTENTICADO com sucesso!', canal);
+            })
+            .error((error) => {
+                console.error('[Echo] ❌ ERRO na autenticação do canal:', canal, error);
+            })
+            .listen('MessageSent', (e) => {
+                console.log('[Echo] 📨 MENSAGEM RECEBIDA:', e);
+                
+                // A lógica do servidor garante que só mensagens DE terceiros cheguem.
+                // Mas o Laravel pode enviar o evento DE volta. Testar esta condição:
+                if (e.de !== parseInt(usuarioLogadoId)) { 
+                    appendMessage(e, false);
+                }
+            }).listenForWhisper('typing', (e) => {
                     console.log('[Echo] ⌨️ Usuário digitando:', e);
                     if (e.userId !== parseInt(usuarioLogadoId)) {
                         typingIndicator.style.display = 'flex';

@@ -32,29 +32,23 @@ export default defineConfig(({ mode }) => {
                     'resources/js/notifications.js',
                     'resources/js/vitimas.js',
                     'resources/js/form_logic.js',
+                    'resources/js/sos/message.js',
                 ],
                 refresh: true,
-                
-                // ⬇️ ESTE É O BLOCO CRÍTICO ⬇️
-                // Força o Laravel a injetar esta URL completa no HTML do Blade,
-                // resolvendo o problema de URL incorreta ([::1]:5176).
+                 
                 assetUrl: viteAssetUrl,
             }),
         ],
         
-        server: {
-            // Permite que o servidor Vite seja acessível de fora do container
+        server: { 
             host: '0.0.0.0', 
-            
-            // Define a porta que está mapeada no docker-compose (5173:5173)
+             
             port: 5173,      
             
             watch: {
                 usePolling: true
             },
-
-            // O HMR (Hot Module Replacement) usa este host para se conectar,
-            // que deve ser acessível pelo seu navegador (localhost).
+ 
             hmr: {
                  host: 'localhost',
                  port: 5173

@@ -149,4 +149,4 @@ export function updateConnectionStatus(connected) {
         connectionDot?.classList.remove('connected');
         if (connectionText) connectionText.textContent = 'Desconectado';
     }
-}
+}  

@@ -10,7 +10,7 @@ use App\Events\MensagemSosEvent;
 class MensagemSosController extends Controller
 {
     public function enviarMensagemSos(Request $request){
-        $users_estagiarios = User::where('role','estagiario')->get();
+        $users_estagiarios = User::where('role','doutor')->get();
         foreach($users_estagiarios  as $user){
             $mensagem = MensagemSos::create([
                 'user_id' => $user->id,
@@ -21,7 +21,7 @@ class MensagemSosController extends Controller
         }
         return redirect()->back()->with('success','menagem enviada com sucesso');
     }
-
+ 
 
     public function mensagemLida(Request $request)
     {

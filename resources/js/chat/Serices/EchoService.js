@@ -8,11 +8,15 @@ export class EchoService {
     initialize() {
         try {
             const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-            const hostUrl = `${protocol}://${window.location.hostname}:6001`;
+            // Use window.location.hostname para funcionar tanto em localhost quanto em produção.
+            const hostUrl = `${protocol}://${window.location.hostname}:6001`; 
+            
+            // Verifique se o socket.io-client e o laravel-echo estão importados e disponíveis no global/webpack.
             window.Echo = new Echo({
                 broadcaster: 'socket.io',
                 host: hostUrl,
-                transports: ['websocket'],
+                // O servidor suporta 'polling', é bom manter como fallback.
+                transports: ['websocket', 'polling'], 
                 autoConnect: true,
                 auth: {
                     headers: {
@@ -54,18 +58,21 @@ export class EchoService {
         });
     }
 
-    listenToUser(userId1, userId2, callback) {
+listenToUser(userId1, userId2, callback) {
         if (!this.echo) return;
 
         try {
             if (this.currentChannel) {
-                this.echo.leave(this.currentChannel);
+                // Ao usar leave(), o Socket.IO Server recebe o 'unsubscribe'
+                this.echo.leave(this.currentChannel); 
             }
 
-            const channel = this.generateChatChannel(userId1, userId2);
-            this.currentChannel = channel;
+            // O canal privado deve ser 'private-chat.min-max' para a autenticação do Laravel,
+            // mas o método `this.echo.private()` já adiciona o prefixo 'private-'.
+            const baseChannel = this.generateChatChannel(userId1, userId2); // 'chat.min-max'
+            this.currentChannel = baseChannel; // Armazena sem o 'private-'
 
-            this.echo.private(channel)
+            this.echo.private(baseChannel) // Isto envia 'private-chat.min-max' para o servidor
                 .listen('MessageSent', callback)
                 .error((error) => {
                     console.error('Erro no canal:', error);
@@ -75,11 +82,17 @@ export class EchoService {
         }
     }
 
-    listenToSOS(callback) {
-        if (!this.echo) return;
+    // EchoService.js (Arquivo 1)
 
-        this.echo.channel('mensagem_sos')
-            .listen('.NovaMensagemSosEvent', callback);
+    listenToSOS(callback) {
+        if (!this.echo) return; 
+        this.echo.channel('mensagem_sos') 
+            .listen('.NovaMensagemSosEvent', callback)
+            .error((error) => {
+                console.error('Erro ao escutar canal SOS:', error);
+            });
+        
+        console.log('[EchoService] 🚨 Escutando canal SOS: mensagem_sos');
     }
 
     generateChatChannel(userId1, userId2) {
@@ -87,7 +100,7 @@ export class EchoService {
         const maxId = Math.max(userId1, userId2);
         return `chat.${minId}-${maxId}`;
     }
-
+ 
     updateConnectionStatus(connected) {
         const dot = document.getElementById('connectionDot');
         const text = document.getElementById('connectionText');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Mensagem;
+use App\Models\MensagemSos;
 use App\Events\MessageSent;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -71,7 +72,7 @@ class ChatController extends Controller
 
         if (!$usuario) {
             return response()->json(['error' => 'Usuário não encontrado'], 404);
-        }
+        } 
 
         $usuarioLogado = auth()->user();
 
@@ -121,4 +122,37 @@ class ChatController extends Controller
 
     return response()->json($mensagem);
 }
+
+public function responderMensagemSos($id)
+{
+    try { 
+        $mensagemSos = MensagemSos::findOrFail($id);
+         
+        if ($mensagemSos->status !== 'lido') {
+             $mensagemSos->status = 'lido';
+             $mensagemSos->save(); 
+        }
+         
+        $usuarioDeInteresse = User::find($mensagemSos->enviado_por);
+
+        if (!$usuarioDeInteresse) {
+            return redirect()->route('doutor.dashboard')->with('error', 'Remetente do SOS não encontrado.');
+        }
+ 
+        return view('chat.index', [
+            'initialChatUserId' => $usuarioDeInteresse->id, 
+            'chatWithUser' => $usuarioDeInteresse,          
+            'usuariosNaoDoutores' => User::where('role', '!=', 'doutor')->get(),
+            'chatsRecentes' => app(\App\Http\Controllers\ChatController::class)->index()->getData()['chatsRecentes']
+        ]);
+
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        return redirect()->back()->with('error', 'Mensagem SOS não encontrada.');
+    } catch (\Exception $e) {
+        // Logar o erro real para debug
+        \Log::error("Erro ao responder SOS {$id}: " . $e->getMessage()); 
+        return redirect()->back()->with('error', 'Ocorreu um erro ao iniciar a resposta.');
+    }
+}
+
 }
