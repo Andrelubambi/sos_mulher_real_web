@@ -13,7 +13,7 @@ class GrupoController extends Controller
     public function index()
     {
         $grupos = Grupo::with('admin')->get();
-        return view('index', compact('grupos'));
+        return view('grupos.index', compact('grupos'));
     }
 
  public function create()
@@ -113,12 +113,12 @@ public function store(Request $request)
     public function destroy(Grupo $grupo)
     {
     if (auth()->id() !== $grupo->admin_id) {
-        return redirect()->route('index')->with('error', 'Apenas o administrador do grupo pode excluir.');
+        return redirect()->route('grupos.index')->with('error', 'Apenas o administrador do grupo pode excluir.');
     }
 
     $grupo->delete();
 
-    return redirect()->route('index')->with('success', 'Grupo excluído com sucesso!');
+    return redirect()->route('grupos.index')->with('success', 'Grupo excluído com sucesso!');
     }
 
 

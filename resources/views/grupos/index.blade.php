@@ -14,7 +14,7 @@
                     <nav aria-label="breadcrumb" role="navigation">
                         <ol class="breadcrumb">
                             <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                            <li class="breadcrumb-item active" aria-current="page">Grupos</li>
+                            <li class="breadcrumb-item active" aria-current="page" style="color: red;">Grupos</li>
                         </ol>
                     </nav>
                 </div>
@@ -30,8 +30,8 @@
 
         <div class="card-box mb-30">
             <div class="pd-20">
-                <h4 class="text-blue h4">Todos os Grupos Disponíveis ({{ count($grupos) }})</h4>
-            </div>
+    <h4 class="h4" style="color: red;">Todos os Grupos Disponíveis ({{ count($grupos) }})</h4>
+</div>
 
             @if (count($grupos) > 0)
                 <div class="list-group list-group-flush">
