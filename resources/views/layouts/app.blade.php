@@ -347,7 +347,7 @@
             const data = document.getElementById('mensagemData');
             conteudo.textContent = mensagem.conteudo;
             data.textContent = mensagem.data;
-            modal.dataset.mensagemId = mensagem.id;
+            modal.dataset.mensagemId = mensagem.id; 
             modal.classList.remove('hidden');
         }
         document.getElementById('enviarResposta').addEventListener('click', () => {

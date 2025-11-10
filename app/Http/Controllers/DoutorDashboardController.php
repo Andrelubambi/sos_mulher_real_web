@@ -15,6 +15,8 @@ class DoutorDashboardController extends Controller
     {
         $doutorId = Auth::id();
 
+        $minhasConsultas = Consulta::where('medico_id', $doutorId)->get();
+
         // Conta o número de pacientes únicos
         $pacientesCount = Consulta::where('medico_id', $doutorId)
             ->distinct('vitima_id')
@@ -55,7 +57,8 @@ class DoutorDashboardController extends Controller
             'consultasRealizadas',
             'consultasHoje',
             'pacientes',
-            'grupos' // E adicione a variável 'grupos' aqui para passá-la para a view
+            'grupos',
+            'minhasConsultas'// E adicione a variável 'grupos' aqui para passá-la para a view
         ));
     }
 }

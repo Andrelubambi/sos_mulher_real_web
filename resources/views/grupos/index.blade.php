@@ -20,7 +20,7 @@
                 </div>
                 <div class="col-md-6 col-sm-12 text-right">
                     @if(auth()->user()->role === 'admin' || auth()->user()->role === 'doutor' || auth()->user()->role === 'estagiario')
-                        <a href="{{ route('grupos.create') }}" class="btn btn-primary">
+                        <a href="{{ route('grupos.create') }}" class="btn btn-danger">
                             <i class="fa fa-plus-circle"></i> Criar Novo Grupo
                         </a>
                     @endif
