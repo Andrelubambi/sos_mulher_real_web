@@ -23,9 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 1. Carrega mensagens não lidas no início (para não perder SOS recebidos offline)
     fetchMensagensNaoLidas();
-
-    // 2. CONFIGURAÇÃO DO LISTENER EM TEMPO REAL (SOS)
-    // Usaremos a lógica de escuta que já estava no seu Blade.
+ 
     if (typeof Echo !== 'undefined' && !window.echoRegistered) {
         
         console.log('[SOS RT] 🚨 Tentando escutar o canal SOS: mensagem_sos');
@@ -71,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-function fetchMensagensNaoLidas() {
+export function fetchMensagensNaoLidas() {
     fetch('/mensagens_nao_lidas')
         .then(res => res.json())
         .then(dados => {
@@ -187,8 +185,7 @@ function formatarData(dataString) {
 
 // --- Inicialização (Event Listeners) ---
 
-document.addEventListener('DOMContentLoaded', function() {
-    // 1. Carregar mensagens SOS ao iniciar
+document.addEventListener('DOMContentLoaded', function() { 
     fetchMensagensNaoLidas();
 
     // 2. Event Listeners para Interação

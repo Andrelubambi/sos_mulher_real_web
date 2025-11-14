@@ -85,7 +85,7 @@ listenToUser(userId1, userId2, callback) {
     // EchoService.js (Arquivo 1)
 
     listenToSOS(callback) {
-        if (!this.echo) return; 
+        if (!this.echo) return;  
         this.echo.channel('mensagem_sos') 
             .listen('.NovaMensagemSosEvent', callback)
             .error((error) => {

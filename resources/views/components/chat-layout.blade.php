@@ -1,4 +1,4 @@
-@props(['chatsRecentes', 'usuariosNaoDoutores'])
+@props(['chatsRecentes', 'usuariosNaoDoutores, 'initialChatUserId' => null])
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -45,14 +45,16 @@
             </div>
         </div>
     </header>
-
-    <div class="chat-container">
+@if (isset($initialChatUserId))
+<meta name="initial-chat-user-id" content="{{ $initialChatUserId }}">
+@endif
+    <div class="chat-container"> 
         
         {{-- CHAMADA DO COMPONENTE SIDEBAR --}}
         <x-chat-sidebar 
             :chats-recentes="$chatsRecentes" 
             :usuarios-nao-doutores="$usuariosNaoDoutores" 
-        />
+        /> 
 
         {{-- SLOT PRINCIPAL: A ÁREA DE MENSAGENS E COMPOSER --}}
         {{ $slot }}
@@ -79,5 +81,25 @@
         })();
     </script>
     {{ $scripts ?? '' }} {{-- Slot para scripts adicionais --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const initialUserIdMeta = document.querySelector('meta[name="initial-chat-user-id"]');
+            
+            if (initialUserIdMeta) {
+                const initialUserId = initialUserIdMeta.getAttribute('content');
+                 
+                setTimeout(() => { 
+                    const targetItem = document.querySelector(`.user-item[data-user-id="${initialUserId}"], .conversation-item[data-user-id="${initialUserId}"]`);
+                    
+                    if (targetItem) {
+                        console.log(`[SOS] Ativando chat para ID: ${initialUserId}`); 
+                        targetItem.click(); 
+                    } else {
+                        console.warn(`[SOS] Usuário ID ${initialUserId} não encontrado na lista de chats/usuários.`);
+                    }
+                }, 500); 
+            }
+        });
+    </script>
 </body>
 </html>

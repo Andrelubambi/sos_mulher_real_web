@@ -51,7 +51,9 @@
     </header>
 
     
-    {{-- CHAT CONTAINER ABAIXO DO HEADER, OCUPANDO O ESPAÇO RESTANTE --}}
+    @if (isset($initialChatUserId))
+<meta name="initial-chat-user-id" content="{{ $initialChatUserId }}">
+@endif
     <div class="chat-container">
         
         {{-- CHAMADA DO COMPONENTE SIDEBAR --}}
@@ -81,6 +83,6 @@
              
         })();
     </script>
-    {{ $scripts ?? '' }}
+    {{ $scripts ?? '' }}  
 </body>
-</html>
+</html>  

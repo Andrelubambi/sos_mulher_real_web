@@ -18,7 +18,7 @@ export class UIService {
         this.sidebar?.classList.remove('active');
     }
 
-    showChatArea() {
+    showChatArea() { 
         if (window.innerWidth < 992) {
             this.sidebar?.classList.remove('active');
             this.chatArea?.classList.add('active');

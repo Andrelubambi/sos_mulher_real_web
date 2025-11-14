@@ -1,45 +1,35 @@
-    import './bootstrap';
-    import './sos/message.js';
-    import { initializeEcho } from './chat/echo.js';        
-    import { setupUI } from './chat/ui.js';                 
-    import { setupChat } from './chat/chat.js';         
+// resources/js/app.js
 
-    document.addEventListener('DOMContentLoaded', () => {
-        initializeEcho();
+import './bootstrap';
+import { initializeEcho } from './chat/echo.js'; 
+import { setupUI } from './chat/ui.js';
+import { setupChat } from './chat/chat.js';
+// Importe a função SOS que será usada globalmente
+import { fetchMensagensNaoLidas } from './sos/message.js'; 
+
+document.addEventListener('DOMContentLoaded', () => { 
+    
+     initializeEcho(); 
+    
+     if (typeof window.Echo !== 'undefined') {
+        window.Echo.channel('mensagem_sos')
+            .listen('.NovaMensagemSosEvent', (e) => {
+                console.log('🔔 SOS RECEBIDO EM TEMPO REAL:', e);
+   
+                if (typeof window.showToast === 'function') {
+                    window.showToast(`SOS de urgência recebido! Enviado por: ${e.enviado_por}`, 'error'); 
+                }
+  
+                fetchMensagensNaoLidas(); 
+            });
+    }
+ 
+    const chatContainer = document.querySelector('.chat-container'); 
+    
+    if (chatContainer) {
+        
         setupUI();
         setupChat(); 
-
-    
-
-        setInterval(() => {
-            if (!window.echoConnected && window.Echo) {
-                console.log('Tentando reconectar...');
-                try {
-                    window.Echo.connector.socket.connect();
-                } catch (error) {
-                    console.error('Erro ao tentar reconectar:', error);
-                }
-            }
-        }, 10000);
-    });
-
-    
-
-    document.addEventListener('DOMContentLoaded', () => {
-        // Inicialize o Echo
-        const echoService = new EchoService();
-        echoService.initialize();
-        
-            
-            echoService.listenToSOS((data) => {
-                console.log('🔔 SOS RECEBIDO EM TEMPO REAL:', data);
-                
-                // 1. Mostrar o toast de alerta (usando sua função showToast)
-                if (typeof window.showToast === 'function') {
-                    window.showToast(`SOS de urgência recebido! Enviado por: ${data.enviado_por}`, 'error'); 
-                }
-                
-                fetchMensagensNaoLidas(); // Chamar a função do seu mensagens.js
-            });
-        // }
-    });
+         
+    }
+});

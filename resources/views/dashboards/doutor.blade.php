@@ -1,11 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard da Vítima | SOS-MULHER')
+@section('title', 'Dashboard do Doutor | SOS-MULHER')
 
 @push('styles')
 <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/dataTables.bootstrap4.min.css" />
 <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/responsive.bootstrap4.min.css" />
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
     .card-patient {
         border-radius: 8px;
@@ -282,4 +281,4 @@
         }
     });
 </script>
-@endpush
+@endpush 

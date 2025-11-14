@@ -53,7 +53,7 @@ if (initialUserId) {
         targetItem.click();
     }
 }
-
+ 
     if (!sendMessageForm || !messageInput || !sendBtn || !usuarioLogadoId) {
         console.error('[setupChat] Elementos essenciais não encontrados!');
         return;

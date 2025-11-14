@@ -12,11 +12,21 @@ use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
-    public function index()
+
+public function indexPendentes()
+{
+    $mensagensSos = MensagemSos::where('status', '!=', 'lido')
+                               ->with('remetente') 
+                               ->orderBy('created_at', 'desc')
+                               ->get();
+
+    return view('mensagens_sos.index', compact('mensagensSos'));
+}
+
+public function index()
     {
         $userId = auth()->id();
 
-        // Usuários que não são doutores e não é o usuário logado
         $usuariosNaoDoutores = User::where('role', '!=', 'doutor')
             ->where('id', '!=', $userId)
             ->get();
@@ -140,7 +150,7 @@ public function responderMensagemSos($id)
         }
  
         return view('chat.index', [
-            'initialChatUserId' => $usuarioDeInteresse->id, 
+            'initialChatUserId' => $usuarioDeInteresse->id,
             'chatWithUser' => $usuarioDeInteresse,          
             'usuariosNaoDoutores' => User::where('role', '!=', 'doutor')->get(),
             'chatsRecentes' => app(\App\Http\Controllers\ChatController::class)->index()->getData()['chatsRecentes']

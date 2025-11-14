@@ -1,152 +1,101 @@
+// resources/js/chat/echo.js
+import Echo from 'laravel-echo';
 import io from 'socket.io-client';
+
+window.io = io;
 
 export function initializeEcho() {
     try {
-        // --- ⬇️ INÍCIO DA CORREÇÃO DE PROTOCOLO E PORTA ⬇️ ---
-        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        const isHttps = window.location.protocol === 'https:';
+        console.log('🚀 [ECHO] Iniciando configuração do WebSocket...');
         
-        // Define o host: se for localhost/HTTP, usa ws://localhost:6001. Caso contrário, usa o host da página.
-        const hostUrl = (isLocalhost || !isHttps) 
-            ? 'http://localhost:6001' // Força HTTP/WS na porta do Socket.IO para ambientes de desenvolvimento
-            : `https://${window.location.hostname}`;
-            
-        window.socket = io(hostUrl, {
-            path: '/socket.io',
+        // CORREÇÃO CRÍTICA: Sempre usar a porta 6001 do Socket.IO
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const socketHost = isLocalhost ? 'http://localhost:6001' : `${window.location.protocol}//${window.location.hostname}:6001`;
+        
+        console.log(`🔌 [ECHO] Conectando em: ${socketHost}`);
+        
+        window.Echo = new Echo({
+            broadcaster: 'socket.io',
+            client: io,
+            host: socketHost,
+            path: '/socket.io/',
             transports: ['websocket', 'polling'],
-            // O parâmetro 'secure' agora é dinâmico, baseado no protocolo da página
-            secure: isHttps, 
-            // --- ⬆️ FIM DA CORREÇÃO DE PROTOCOLO E PORTA ⬆️ ---
-
+            autoConnect: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 3000,
             auth: {
-                userId: document.querySelector('meta[name="user-id"]')?.getAttribute('content'),
-                token: localStorage.getItem('auth_token') || ''
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'),
+                    'Authorization': `Bearer ${localStorage.getItem('auth_token') || ''}`
+                }
             }
         });
 
-        window.socket.on('connect', () => {
-            console.log('✅ CONECTADO ao WebSocket!');
+        // Eventos de conexão
+        window.Echo.connector.socket.on('connect', () => {
+            console.log('✅ [ECHO] CONECTADO ao WebSocket!');
+            console.log(`🆔 [ECHO] Socket ID: ${window.Echo.socketId()}`);
+            updateConnectionStatus(true);
             
             const userId = document.querySelector('meta[name="user-id"]')?.getAttribute('content');
-            window.socket.emit('user-online', { userId: userId });
-            
-            window.echoConnected = true;
+            if (userId) {
+                window.Echo.connector.socket.emit('user-online', { userId });
+                console.log(`👤 [ECHO] Usuário ${userId} marcado como online`);
+            }
+        });
+
+        window.Echo.connector.socket.on('disconnect', (reason) => {
+            console.warn(`🔌 [ECHO] Desconectado. Razão: ${reason}`);
+            updateConnectionStatus(false);
+        });
+
+        window.Echo.connector.socket.on('connect_error', (error) => {
+            console.error('❌ [ECHO] Erro de conexão:', error);
+            console.error('📍 [ECHO] Verifique se o Socket.IO está rodando na porta 6001');
+            updateConnectionStatus(false);
+        });
+
+        window.Echo.connector.socket.on('reconnect', (attemptNumber) => {
+            console.log(`🔄 [ECHO] Reconectado após ${attemptNumber} tentativa(s)`);
             updateConnectionStatus(true);
         });
 
-        window.socket.on('disconnect', (reason) => {
-            console.log('🔌 Desconectado:', reason);
-            window.echoConnected = false;
-            updateConnectionStatus(false);
+        window.Echo.connector.socket.on('reconnect_attempt', (attemptNumber) => {
+            console.log(`🔄 [ECHO] Tentativa de reconexão ${attemptNumber}...`);
         });
 
-        window.socket.on('connect_error', (error) => {
-            console.error('💥 Erro:', error);
-            window.echoConnected = false;
-            updateConnectionStatus(false);
+        window.Echo.connector.socket.on('reconnect_error', (error) => {
+            console.error('❌ [ECHO] Erro na reconexão:', error);
         });
 
-        window.socket.on('new-message', (data) => {
-            console.log('📨 NOVA MENSAGEM RECEBIDA via Socket.IO:', data);
-            
-            const event = new CustomEvent('messageReceived', {
-                detail: data
-            });
-            document.dispatchEvent(event);
-        });
-
-        window.Echo = {
-            connector: { socket: window.socket },
-            socketId: () => window.socket.id,
-            
-            private: (channel) => {
-                console.log('🔐 Conectando ao canal:', channel);
-                
-                window.socket.emit('join-channel', { 
-                    channel: channel,
-                    userId: document.querySelector('meta[name="user-id"]')?.getAttribute('content')
-                });
-
-                const channelObj = {
-                    subscribed: (callback) => {
-                        window.socket.on(`${channel}:subscribed`, () => {
-                            console.log(`✅ Canal ${channel} autenticado!`);
-                            callback();
-                        });
-                        return channelObj;
-                    },
-                    
-                    error: (callback) => {
-                        window.socket.on(`${channel}:error`, (error) => {
-                            console.log(`❌ Erro no canal ${channel}:`, error);
-                            callback(error);
-                        });
-                        return channelObj;
-                    },
-                    
-                    listen: (event, callback) => {
-                        const eventName = event.startsWith('.') ? event.substring(1) : event;
-                        const fullEventName = `${channel}:${eventName}`;
-                        
-                        console.log(`👂 Escutando: ${fullEventName}`);
-                        
-                        window.socket.on(fullEventName, (data) => {
-                            console.log(`📨 Evento recebido ${fullEventName}:`, data);
-                            callback(data);
-                        });
-                        
-                        window.socket.on(`message:${eventName}`, (data) => { 
-                            if (data.channel === channel) {
-                                console.log(`📨 Mensagem global para ${channel}:`, data);
-                                callback(data);
-                            }
-                        });
-                        
-                        return channelObj;
-                    },
-                    
-                    listenForWhisper: (event, callback) => {
-                        window.socket.on(`whisper:${event}`, callback);
-                        return channelObj;
-                    },
-                    
-                    whisper: (event, data) => {
-                        window.socket.emit(`whisper:${event}`, data);
-                        return channelObj;
-                    },
-                    
-                    stopListening: (event, callback) => {
-                        const eventName = event.startsWith('.') ? event.substring(1) : event;
-                        window.socket.off(`${channel}:${eventName}`, callback);
-                        return channelObj;
-                    }
-                };
-                
-                return channelObj;
-            },
-            
-            leave: (channel) => {
-                console.log(`👋 Saindo do canal: ${channel}`);
-                window.socket.emit('leave-channel', { channel });
-            }
-        };
-
-        console.log('🚀 WebSocket com real-time implementado!');
+        console.log('✅ [ECHO] Configuração concluída!');
         
     } catch (error) {
-        console.error('❌ Erro:', error);
+        console.error('💥 [ECHO] Erro fatal na inicialização:', error);
         updateConnectionStatus(false);
     }
 }
 
 export function updateConnectionStatus(connected) {
-    const connectionDot = document.getElementById('connectionDot');
-    const connectionText = document.getElementById('connectionText');
-    if (connected) {
-        connectionDot?.classList.add('connected');
-        if (connectionText) connectionText.textContent = 'Conectado';
-    } else {
-        connectionDot?.classList.remove('connected');
-        if (connectionText) connectionText.textContent = 'Desconectado';
+    // Atualizar indicador no header
+    const headerDot = document.getElementById('headerConnectionDot');
+    if (headerDot) {
+        if (connected) {
+            headerDot.classList.add('online');
+            headerDot.classList.remove('offline');
+            headerDot.style.backgroundColor = '#10b981';
+        } else {
+            headerDot.classList.remove('online');
+            headerDot.classList.add('offline');
+            headerDot.style.backgroundColor = '#ef4444';
+        }
     }
-}  
+
+    // Atualizar status textual (se existir)
+    const connectionText = document.getElementById('connectionText');
+    if (connectionText) {
+        connectionText.textContent = connected ? 'Conectado' : 'Desconectado';
+    }
+    
+    console.log(`📊 [ECHO] Status de conexão: ${connected ? 'ONLINE ✅' : 'OFFLINE ❌'}`);
+}

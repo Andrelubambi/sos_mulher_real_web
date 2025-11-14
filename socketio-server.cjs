@@ -71,13 +71,13 @@ redis.on('pmessage', (pattern, channel, message) => {
   } catch (e) {
     console.error('❌ Erro ao analisar a mensagem do Redis:', e);
   }
-});
+}); 
 
 io.on('connection', (socket) => {
   console.log(`🔌 Cliente conectado: ${socket.id}`);
 
   socket.on('disconnect', () => {
-    console.log(`🔌 Cliente desconectado: ${socket.id}`);
+    console.log(`🔌 Cliente desconectado: ${socket.id}`); 
   });
 
   socket.on('subscribe', (data) => {

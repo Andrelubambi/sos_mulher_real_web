@@ -30,20 +30,20 @@ export function setupUI() {
         });
     }
 
-   /* if (backBtn && sidebar && overlay && chatMain) {
+    if (backBtn && sidebar && overlay && chatMain) {
         backBtn.addEventListener('click', () => {
             sidebar.classList.add('active');
             overlay.classList.add('active');
             chatMain.classList.remove('active');
         });
-    }*/
+    }
 
     if (!tabMensagens || !tabUsuarios || !mensagensRecentes || !listaUsuarios) {
         console.warn("UI Setup Warning: Elementos de tabulação (mensagens/usuários) não encontrados. Tabs desativadas.");
     }
 
     if (tabMensagens && mensagensRecentes && listaUsuarios && tabUsuarios) {
-        tabMensagens.addEventListener('click', () => {
+        tabMensagens.addEventListener('click', () => { 
             mensagensRecentes.classList.add('active');
             listaUsuarios.classList.remove('active');
             tabMensagens.classList.add('active');

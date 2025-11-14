@@ -85,7 +85,7 @@
                 <div class="user-notification">
                     <form action="{{ route('mensagem_sos.send') }}" method="POST" style="display:inline-block; margin-left: 10px;">
                         @csrf
-                        <input type="hidden" name="mensagem" value="conteudo da mensagem sos">
+                        <input type="hidden" name="mensagem" value="Estou precisando de ajuda, urgente!">
                         <button type="submit" title="Enviar SOS" style="background:none; border:none; cursor:pointer;">
                             <i class="fa fa-exclamation-triangle" style="color:red; font-size: 20px;"></i>
                         </button>
